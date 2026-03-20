@@ -60,6 +60,18 @@ class Usuario {
             return;
         }
 
+        // Verificar se é login via Google (senha especial)
+        if (user.password === 'GOOGLE_AUTH') {
+            // Login via Google - usuário já autenticado
+            this.user = {
+                id: user.id,
+                email: user.email,
+                avatar: user.avatar,
+                isAdmin: user.isAdmin
+            };
+            return;
+        }
+
         const senhaValida = await bcrypt.compare(
             this.body.password, 
             user.password
@@ -87,6 +99,7 @@ class Usuario {
         if(user) this.errors.push('Usuário já existe');
     }
 
+    // Método para atualizar avatar
     static async atualizarAvatar(id, avatarPath) {
         await db.run(
             `UPDATE usuarios SET avatar = ? WHERE id = ?`,
@@ -94,6 +107,7 @@ class Usuario {
         );
     }
 
+    // Método para buscar usuário por ID
     static async buscarPorId(id) {
         return await db.get(
             `SELECT id, email, avatar, isAdmin FROM usuarios WHERE id = ?`,

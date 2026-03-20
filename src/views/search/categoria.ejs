@@ -1,92 +1,83 @@
 <%- include('../includes/head') %>
 <%- include('../includes/nav1') %>
 
-<!-- Header da Categoria -->
-<section class="category-header py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center text-white">
-                <h1 class="display-4 fw-bold mb-3">
-                    <i class="bi bi-tags me-3"></i>
-                    <%= categoria %>
-                </h1>
-                <p class="lead">
-                    <%= total %> produto(s) disponível(is) nesta categoria
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Breadcrumb -->
-<section class="bg-light py-3">
+<section class="breadcrumb-section">
     <div class="container">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
+            <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
                 <li class="breadcrumb-item"><a href="/busca">Busca</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><%= categoria %></li>
+                <li class="breadcrumb-item active"><%= categoria %></li>
             </ol>
         </nav>
     </div>
 </section>
 
+<!-- Header da Categoria -->
+<section class="hero-section" style="min-height: 40vh; padding: 60px 0;">
+    <div class="container text-center">
+        <h1 class="hero-title">
+            <span><%= categoria %></span>
+        </h1>
+        <p class="hero-subtitle">Explore os melhores produtos nesta categoria</p>
+        <div class="mt-3">
+            <span class="badge bg-primary fs-6"><%= total %> produtos encontrados</span>
+        </div>
+    </div>
+</section>
+
 <!-- Produtos da Categoria -->
-<section class="category-products py-5">
+<section class="py-5">
     <div class="container">
-        <% if (produtos.length > 0) { %>
+        <% if (produtos && produtos.length > 0) { %>
             <div class="row g-4">
                 <% produtos.forEach((produto, index) => { %>
-                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="<%= index * 50 %>">
-                        <div class="card product-card h-100 border-0 shadow-hover">
-                            <div class="position-relative">
+                <div class="col-md-6 col-lg-4">
+                    <a href="/produto/<%= produto.id %>" class="text-decoration-none">
+                        <div class="card-elegante h-100">
+                            <div class="product-image-elegante" style="height: 200px;">
                                 <% if (produto.imagemUrl) { %>
-                                    <img src="<%= produto.imagemUrl %>" class="card-img-top" alt="<%= produto.name %>">
+                                    <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
                                 <% } else { %>
-                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
                                         <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
                                     </div>
                                 <% } %>
                             </div>
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold"><%= produto.name %></h5>
-                                <p class="card-text text-muted small">
-                                    <%= produto.description.substring(0, 80) %>...
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <span class="h5 text-success fw-bold mb-0"><%= produto.precoFormatado %></span>
-                                    <div class="d-flex align-items-center">
-                                        <% if (produto.avatar) { %>
-                                            <img src="/<%= produto.avatar %>" class="rounded-circle me-2" 
-                                                 style="width: 24px; height: 24px; object-fit: cover;">
-                                        <% } else { %>
-                                            <i class="bi bi-person-circle text-secondary me-2"></i>
+                            <div class="p-3">
+                                <h5 class="fw-bold text-truncate"><%= produto.name %></h5>
+                                <p class="text-muted small mb-2"><%= produto.description.substring(0, 80) %>...</p>
+                                
+                                <!-- Avaliações -->
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div class="text-warning small">
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <i class="bi <%= i <= Math.round(produto.mediaAvaliacoes) ? 'bi-star-fill' : 'bi-star' %>"></i>
                                         <% } %>
-                                        <small class="text-muted"><%= produto.email.split('@')[0] %></small>
                                     </div>
+                                    <small class="text-muted">(<%= produto.totalAvaliacoes %>)</small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-primary fw-bold h5 mb-0"><%= produto.precoFormatado %></span>
+                                    <small class="text-muted">
+                                        <i class="bi bi-person-circle"></i> <%= produto.email.split('@')[0] %>
+                                    </small>
                                 </div>
                             </div>
-                            <div class="card-footer bg-transparent border-0 pb-3">
-                                <a href="/usuario/<%= produto.usuario_id %>/produtos" class="btn btn-outline-primary w-100">
-                                    Ver detalhes
-                                </a>
-                            </div>
                         </div>
-                    </div>
+                    </a>
+                </div>
                 <% }) %>
             </div>
         <% } else { %>
             <div class="text-center py-5">
-                <div class="mb-4">
-                    <i class="bi bi-box display-1 text-muted"></i>
-                </div>
-                <h3 class="fw-light mb-3">Nenhum produto nesta categoria ainda</h3>
-                <p class="text-muted mb-4">
-                    Seja o primeiro a anunciar um produto em <%= categoria %>!
-                </p>
-                <a href="/produtos/adicionar" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-2"></i>
-                    Anunciar produto
+                <i class="bi bi-box display-1 text-muted"></i>
+                <h3 class="fw-light mt-3">Nenhum produto encontrado</h3>
+                <p class="text-muted">Ainda não há produtos cadastrados na categoria <%= categoria %>.</p>
+                <a href="/produtos/adicionar" class="btn-elegante primary mt-3">
+                    <i class="bi bi-plus-circle"></i> Anunciar produto
                 </a>
             </div>
         <% } %>
@@ -95,74 +86,34 @@
 
 <!-- Produtos Relacionados -->
 <% if (relacionados && relacionados.length > 0) { %>
-<section class="related-products py-5 bg-light">
+<section class="bg-light py-5">
     <div class="container">
-        <h2 class="text-center fw-bold mb-5">Você também pode gostar</h2>
+        <h2 class="fw-light mb-4">Você também pode <span class="fw-bold">gostar</span></h2>
         <div class="row g-4">
             <% relacionados.forEach((produto, index) => { %>
-                <div class="col-md-3" data-aos="fade-up" data-aos-delay="<%= index * 50 %>">
-                    <div class="card product-card h-100 border-0 shadow-sm">
-                        <div class="position-relative">
+            <div class="col-md-3">
+                <a href="/produto/<%= produto.id %>" class="text-decoration-none">
+                    <div class="card-elegante h-100">
+                        <div class="product-image-elegante" style="height: 150px;">
                             <% if (produto.imagemUrl) { %>
-                                <img src="<%= produto.imagemUrl %>" class="card-img-top" alt="<%= produto.name %>">
+                                <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
                             <% } else { %>
-                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
                                     <i class="bi bi-image text-secondary" style="font-size: 2rem;"></i>
                                 </div>
                             <% } %>
                         </div>
-                        <div class="card-body p-3">
-                            <h6 class="card-title text-truncate"><%= produto.name %></h6>
-                            <p class="text-success fw-bold mb-0"><%= produto.precoFormatado %></p>
+                        <div class="p-3">
+                            <h6 class="text-truncate mb-0"><%= produto.name %></h6>
+                            <span class="text-primary fw-bold"><%= produto.precoFormatado %></span>
                         </div>
                     </div>
-                </div>
+                </a>
+            </div>
             <% }) %>
         </div>
     </div>
 </section>
 <% } %>
-
-<style>
-    .product-card {
-        border-radius: 15px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-    
-    .product-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 30px rgba(0,0,0,0.15) !important;
-    }
-    
-    .product-card .card-img-top {
-        height: 200px;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    
-    .product-card:hover .card-img-top {
-        transform: scale(1.1);
-    }
-    
-    [data-aos] {
-        opacity: 0;
-        transition: all 0.8s ease;
-    }
-    
-    [data-aos].aos-animate {
-        opacity: 1;
-    }
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar AOS
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-    });
-</script>
 
 <%- include('../includes/footer') %>

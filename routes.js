@@ -11,9 +11,9 @@ const searchController = require('./src/controllers/searchController');
 const categoriaController = require('./src/controllers/categoriaController');
 const avaliacaoController = require('./src/controllers/avaliacaoController');
 const carrinhoController = require('./src/controllers/carrinhoController');
+const googleAuthController = require('./src/controllers/googleAuthController'); // DESCOMENTADO
 const produtoController = require('./src/controllers/produtoController');
 const produtoListController = require('./src/controllers/produtoListController');
-// NOVOS: Importando os controllers de adicionar e deletar produtos
 const produtoAdcController = require('./src/controllers/produtoAdcController');
 const produtoDeleteController = require('./src/controllers/produtoDeleteController');
 
@@ -25,6 +25,10 @@ router.get('/login/index', loginController.index);
 router.get('/login/logout', loginController.logout);
 router.post('/login/login', loginController.login);
 router.post('/login/register', loginController.register);
+
+// ===== ROTAS GOOGLE AUTH =====
+router.get('/login/google', googleAuthController.login);
+router.get('/oauth2/redirect/google', googleAuthController.callback);
 
 //Rotas Perfil Usuário
 router.get('/usuario/perfil', perfilController.index);
@@ -75,25 +79,16 @@ router.get('/admin/analytics/exportar', adminAnalyticsController.exportarRelator
 router.get('/api/analytics/dados', adminAnalyticsController.apiDados);
 
 // Rotas de Produtos
-// Listar produtos do usuário logado
 router.get('/meus-produtos', produtoListController.index);
-
-// Adicionar produto
 router.get('/produtos/adicionar', produtoAdcController.renderAddForm);
 router.post('/produtos/adicionar', 
     produtoAdcController.uploadImagem,
     produtoAdcController.addProduto
 );
-
-// Editar produto
 router.get('/produtos/editar/:id', produtoController.renderEditForm);
 router.post('/produtos/editar/:id', produtoController.updateProduto);
-
-// Deletar produto
 router.get('/produtos/deletar/:id', produtoDeleteController.confirmDelete);
 router.post('/produtos/deletar/:id', produtoDeleteController.deleteProduto);
-
-// Rota para listar produtos de um usuário específico (para perfil público)
 router.get('/usuario/:id/produtos', produtoListController.listarPorUsuarioId);
 
 module.exports = router;

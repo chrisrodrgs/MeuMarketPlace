@@ -1,478 +1,6 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
-<style>
-    /* ===== VARIÁVEIS ===== */
-    :root {
-        --primary: #667eea;
-        --secondary: #764ba2;
-        --light-bg: #fafaff;
-        --text-dark: #2d3436;
-        --text-light: #636e72;
-        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
-        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
-        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
-        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
-        --danger: #f56565;
-        --warning: #ecc94b;
-        --success: #48bb78;
-    }
-
-    /* ===== BREADCRUMB ===== */
-    .breadcrumb-section {
-        background: white;
-        padding: 20px 0;
-        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-    }
-
-    .breadcrumb {
-        background: transparent;
-        padding: 0;
-        margin: 0;
-    }
-
-    .breadcrumb-item a {
-        color: var(--text-light);
-        text-decoration: none;
-    }
-
-    .breadcrumb-item a:hover {
-        color: var(--primary);
-    }
-
-    .breadcrumb-item.active {
-        color: var(--primary);
-        font-weight: 500;
-    }
-
-    /* ===== HEADER ===== */
-    .cart-header {
-        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
-        padding: 60px 0;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .cart-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
-        animation: spinSlow 90s linear infinite;
-    }
-
-    @keyframes spinSlow {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .cart-header h1 {
-        font-size: 2.5rem;
-        font-weight: 300;
-        color: var(--text-dark);
-        position: relative;
-        z-index: 2;
-    }
-
-    .cart-header h1 span {
-        font-weight: 700;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* ===== AVISO DE ESTOQUE ===== */
-    .estoque-aviso {
-        background: linear-gradient(135deg, rgba(236, 201, 75, 0.1), rgba(236, 201, 75, 0.2));
-        border-left: 4px solid var(--warning);
-        padding: 15px 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .estoque-aviso i {
-        color: var(--warning);
-        font-size: 1.5rem;
-    }
-
-    .item-indisponivel {
-        opacity: 0.7;
-        background: #fff5f5;
-        border-left: 4px solid var(--danger);
-    }
-
-    .estoque-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-
-    .estoque-badge.disponivel {
-        background: rgba(72, 187, 120, 0.1);
-        color: #2f855a;
-    }
-
-    .estoque-badge.indisponivel {
-        background: rgba(245, 101, 101, 0.1);
-        color: #c53030;
-    }
-
-    /* ===== CART CONTAINER ===== */
-    .cart-container {
-        margin-top: -40px;
-        position: relative;
-        z-index: 3;
-        margin-bottom: 60px;
-    }
-
-    .cart-card {
-        background: white;
-        border-radius: 30px;
-        box-shadow: var(--shadow-lg);
-        overflow: hidden;
-    }
-
-    .cart-card-header {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        padding: 25px 30px;
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .cart-card-header h3 {
-        margin: 0;
-        font-size: 1.3rem;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .cart-card-body {
-        padding: 30px;
-    }
-
-    /* ===== ITENS DO CARRINHO ===== */
-    .cart-item {
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-        position: relative;
-    }
-
-    .cart-item:hover {
-        background: var(--light-bg);
-    }
-
-    .cart-item:last-child {
-        border-bottom: none;
-    }
-
-    .cart-item-image {
-        width: 100px;
-        height: 100px;
-        border-radius: 15px;
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-
-    .cart-item-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .cart-item-info {
-        flex: 1;
-    }
-
-    .cart-item-title {
-        font-size: 1.2rem;
-        font-weight: 500;
-        color: var(--text-dark);
-        margin-bottom: 5px;
-    }
-
-    .cart-item-category {
-        font-size: 0.85rem;
-        color: var(--text-light);
-        margin-bottom: 5px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .cart-item-estoque {
-        font-size: 0.8rem;
-        color: var(--text-light);
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .cart-item-estoque i {
-        color: var(--primary);
-    }
-
-    .cart-item-seller {
-        font-size: 0.9rem;
-        color: var(--primary);
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .cart-item-price {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--primary);
-        margin-bottom: 10px;
-    }
-
-    .cart-item-actions {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-top: 10px;
-    }
-
-    .quantity-control {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: white;
-        border: 1px solid rgba(102, 126, 234, 0.2);
-        border-radius: 50px;
-        padding: 5px;
-    }
-
-    .quantity-btn {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        border: none;
-        background: var(--gradient);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .quantity-btn:hover:not(:disabled) {
-        transform: scale(1.1);
-    }
-
-    .quantity-btn:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-    }
-
-    .quantity-input {
-        width: 50px;
-        text-align: center;
-        border: none;
-        font-weight: 500;
-        color: var(--text-dark);
-    }
-
-    .quantity-input:focus {
-        outline: none;
-    }
-
-    .remove-btn {
-        background: none;
-        border: none;
-        color: var(--danger);
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .remove-btn:hover {
-        transform: scale(1.1);
-    }
-
-    .cart-item-subtotal {
-        text-align: right;
-        min-width: 120px;
-    }
-
-    .subtotal-label {
-        font-size: 0.85rem;
-        color: var(--text-light);
-        margin-bottom: 5px;
-    }
-
-    .subtotal-value {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: var(--primary);
-    }
-
-    .mensagem-estoque {
-        font-size: 0.85rem;
-        color: var(--danger);
-        margin-top: 5px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    /* ===== RESUMO DO CARRINHO ===== */
-    .cart-summary {
-        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
-        border-radius: 30px;
-        padding: 30px;
-        margin-top: 30px;
-    }
-
-    .summary-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .summary-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-
-    .summary-row:last-child {
-        border-bottom: none;
-        font-weight: 600;
-        font-size: 1.1rem;
-        color: var(--primary);
-    }
-
-    .summary-label {
-        color: var(--text-light);
-    }
-
-    .summary-value {
-        font-weight: 500;
-    }
-
-    .checkout-btn {
-        width: 100%;
-        padding: 15px;
-        background: var(--gradient);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        font-weight: 500;
-        font-size: 1.1rem;
-        margin-top: 20px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .checkout-btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .checkout-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .continue-shopping {
-        display: block;
-        text-align: center;
-        margin-top: 20px;
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 500;
-    }
-
-    .continue-shopping:hover {
-        text-decoration: underline;
-    }
-
-    /* ===== CARRINHO VAZIO ===== */
-    .empty-cart {
-        text-align: center;
-        padding: 60px 20px;
-    }
-
-    .empty-cart i {
-        font-size: 5rem;
-        color: #cbd5e0;
-        margin-bottom: 20px;
-    }
-
-    .empty-cart h3 {
-        font-size: 1.8rem;
-        font-weight: 300;
-        color: var(--text-dark);
-        margin-bottom: 10px;
-    }
-
-    .empty-cart p {
-        color: var(--text-light);
-        margin-bottom: 30px;
-    }
-
-    .btn-elegante {
-        padding: 12px 30px;
-        border-radius: 50px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--gradient);
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-elegante:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    /* ===== RESPONSIVIDADE ===== */
-    @media (max-width: 768px) {
-        .cart-item {
-            flex-direction: column;
-        }
-        
-        .cart-item-image {
-            width: 100%;
-            height: 200px;
-        }
-        
-        .cart-item-actions {
-            flex-wrap: wrap;
-        }
-        
-        .cart-item-subtotal {
-            text-align: left;
-        }
-    }
-</style>
-
 <!-- Breadcrumb -->
 <section class="breadcrumb-section">
     <div class="container">
@@ -485,146 +13,141 @@
     </div>
 </section>
 
-<!-- Header -->
-<section class="cart-header">
+<!-- Header Centralizado -->
+<section class="hero-section" style="min-height: 30vh; padding: 60px 0;">
     <div class="container text-center">
-        <h1>
+        <h1 class="hero-title">
             Meu <span>Carrinho</span>
         </h1>
-        <p class="text-muted"><%= quantidadeItens %> <%= quantidadeItens === 1 ? 'item' : 'itens' %></p>
+        <p class="hero-subtitle mx-auto"><%= quantidadeItens %> <%= quantidadeItens === 1 ? 'item' : 'itens' %></p>
     </div>
 </section>
 
-<!-- Conteúdo do Carrinho -->
-<div class="container cart-container">
-    <div class="cart-card">
-        <div class="cart-card-header">
-            <h3>
-                <i class="bi bi-cart"></i>
-                Itens do Carrinho
-            </h3>
-            <% if (itens.length > 0) { %>
-            <button class="btn btn-link text-white" onclick="limparCarrinho()">
-                <i class="bi bi-trash"></i> Limpar
-            </button>
-            <% } %>
+<!-- Conteúdo -->
+<div class="container py-5">
+    <div class="card-elegante">
+        <div class="card-header bg-gradient-primary text-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-cart me-2"></i>Itens do Carrinho</h5>
+                <% if (itens && itens.length > 0) { %>
+                    <button class="btn btn-link text-white p-0" onclick="limparCarrinho()">
+                        <i class="bi bi-trash"></i> Limpar
+                    </button>
+                <% } %>
+            </div>
         </div>
-        
-        <div class="cart-card-body">
-            <% if (itens.length > 0) { %>
-                
+        <div class="card-body p-4">
+            <!-- MENSAGENS FLASH CORRIGIDAS - verificando se há conteúdo -->
+            <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <%= errors %>
+                </div>
+            <% } %>
+
+            <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <%= success %>
+                </div>
+            <% } %>
+
+            <% if (itens && itens.length > 0) { %>
                 <!-- Aviso de itens indisponíveis -->
                 <% if (itensIndisponiveis > 0) { %>
-                <div class="estoque-aviso">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <div>
-                        <strong>Atenção:</strong> <%= itensIndisponiveis %> <%= itensIndisponiveis === 1 ? 'item está' : 'itens estão' %> com quantidade superior ao estoque disponível.
-                        Por favor, ajuste as quantidades para continuar.
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <%= itensIndisponiveis %> item(ns) com quantidade superior ao estoque disponível.
                     </div>
-                </div>
                 <% } %>
-                
-                <!-- Lista de Itens -->
-                <% itens.forEach(item => { %>
-                <div class="cart-item <%= !item.disponivel ? 'item-indisponivel' : '' %>" id="item-<%= item.id %>">
-                    <div class="cart-item-image">
-                        <% if (item.imagemUrl) { %>
-                            <img src="<%= item.imagemUrl %>" alt="<%= item.name %>">
-                        <% } else { %>
-                            <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
-                                <i class="bi bi-image text-secondary"></i>
+
+                <!-- Lista de itens -->
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Preço</th>
+                                <th>Quantidade</th>
+                                <th>Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% itens.forEach(item => { %>
+                            <tr id="item-<%= item.id %>" class="<%= !item.disponivel ? 'table-warning' : '' %>">
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <% if (item.imagemUrl) { %>
+                                            <img src="<%= item.imagemUrl %>" style="width: 50px; height: 50px; object-fit: cover;" class="rounded-2">
+                                        <% } else { %>
+                                            <div class="bg-light rounded-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                <i class="bi bi-image text-secondary"></i>
+                                            </div>
+                                        <% } %>
+                                        <div>
+                                            <h6 class="mb-0"><%= item.name %></h6>
+                                            <small class="text-muted"><%= item.categoria %></small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="fw-bold"><%= item.precoFormatado %></td>
+                                <td>
+                                    <div class="input-group" style="width: 110px;">
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="atualizarQuantidade(<%= item.id %>, <%= item.quantidade - 1 %>)" <%= item.quantidade <= 1 ? 'disabled' : '' %>>-</button>
+                                        <input type="text" class="form-control text-center" value="<%= item.quantidade %>" readonly style="width: 45px;">
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="atualizarQuantidade(<%= item.id %>, <%= item.quantidade + 1 %>)" <%= item.quantidade >= item.estoqueDisponivel ? 'disabled' : '' %>>+</button>
+                                    </div>
+                                    <% if (!item.disponivel) { %>
+                                        <small class="text-danger d-block mt-1"><%= item.mensagemEstoque %></small>
+                                    <% } %>
+                                </td>
+                                <td class="fw-bold text-primary" id="subtotal-<%= item.id %>"><%= item.subtotalFormatado %></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="removerItem(<%= item.id %>)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Resumo -->
+                <div class="bg-light rounded-3 p-4 mt-4">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-6">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal (<%= quantidadeItens %> itens):</span>
+                                <span class="fw-bold"><%= subtotal %></span>
                             </div>
-                        <% } %>
-                    </div>
-                    
-                    <div class="cart-item-info">
-                        <h3 class="cart-item-title"><%= item.name %></h3>
-                        <div class="cart-item-category">
-                            <i class="bi bi-tag"></i> <%= item.categoria %>
-                            <span class="estoque-badge <%= item.disponivel ? 'disponivel' : 'indisponivel' %>">
-                                <i class="bi bi-box"></i> Estoque: <%= item.estoqueDisponivel %>
-                            </span>
-                        </div>
-                        <div class="cart-item-seller">
-                            <i class="bi bi-person-circle"></i> <%= item.vendedor.split('@')[0] %>
-                        </div>
-                        <div class="cart-item-price"><%= item.precoFormatado %> cada</div>
-                        
-                        <div class="cart-item-actions">
-                            <div class="quantity-control">
-                                <button class="quantity-btn" onclick="atualizarQuantidade(<%= item.id %>, <%= item.quantidade - 1 %>)" 
-                                        <%= item.quantidade <= 1 || !item.disponivel ? 'disabled' : '' %>>
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <input type="text" class="quantity-input" value="<%= item.quantidade %>" readonly>
-                                <button class="quantity-btn" onclick="atualizarQuantidade(<%= item.id %>, <%= item.quantidade + 1 %>)"
-                                        <%= item.quantidade >= item.estoqueDisponivel || !item.disponivel ? 'disabled' : '' %>>
-                                    <i class="bi bi-plus"></i>
-                                </button>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Frete:</span>
+                                <span>A calcular</span>
                             </div>
-                            
-                            <button class="remove-btn" onclick="removerItem(<%= item.id %>)">
-                                <i class="bi bi-trash3 fs-5"></i>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="h5 mb-0">Total:</span>
+                                <span class="h5 text-primary mb-0"><%= total %></span>
+                            </div>
+                            <button class="btn-elegante primary w-100" onclick="finalizarCompra()" <%= itensIndisponiveis > 0 ? 'disabled' : '' %>>
+                                <i class="bi bi-check2-circle me-2"></i> Finalizar Compra
                             </button>
+                            <a href="/" class="btn-elegante secondary w-100 mt-2">
+                                <i class="bi bi-arrow-left me-2"></i> Continuar comprando
+                            </a>
                         </div>
-                        
-                        <% if (!item.disponivel) { %>
-                        <div class="mensagem-estoque">
-                            <i class="bi bi-exclamation-circle"></i>
-                            <%= item.mensagemEstoque %>
-                        </div>
-                        <% } %>
-                    </div>
-                    
-                    <div class="cart-item-subtotal">
-                        <div class="subtotal-label">Subtotal</div>
-                        <div class="subtotal-value" id="subtotal-<%= item.id %>"><%= item.subtotalFormatado %></div>
                     </div>
                 </div>
-                <% }) %>
-                
-                <!-- Resumo do Carrinho -->
-                <div class="cart-summary">
-                    <h4 class="summary-title">
-                        <i class="bi bi-receipt"></i>
-                        Resumo do Pedido
-                    </h4>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">Subtotal (<%= quantidadeItens %> itens)</span>
-                        <span class="summary-value"><%= subtotal %></span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">Frete</span>
-                        <span class="summary-value">A calcular</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">Total</span>
-                        <span class="summary-value"><%= total %></span>
-                    </div>
-                    
-                    <button class="checkout-btn" onclick="finalizarCompra()" <%= itensIndisponiveis > 0 ? 'disabled' : '' %>>
-                        <i class="bi bi-check2-circle me-2"></i>
-                        Finalizar Compra
-                    </button>
-                    
-                    <a href="/" class="continue-shopping">
-                        <i class="bi bi-arrow-left me-1"></i>
-                        Continuar comprando
-                    </a>
-                </div>
-                
             <% } else { %>
                 <!-- Carrinho Vazio -->
-                <div class="empty-cart">
-                    <i class="bi bi-cart-x"></i>
-                    <h3>Seu carrinho está vazio</h3>
-                    <p>Explore nossos produtos e adicione itens ao carrinho</p>
-                    <a href="/" class="btn-elegante">
-                        <i class="bi bi-shop me-2"></i>
-                        Continuar Comprando
+                <div class="text-center py-5">
+                    <i class="bi bi-cart-x display-1 text-muted"></i>
+                    <h3 class="fw-light mt-3">Seu carrinho está vazio</h3>
+                    <p class="text-muted">Explore nossos produtos e adicione itens ao carrinho</p>
+                    <a href="/" class="btn-elegante primary mt-3">
+                        <i class="bi bi-shop me-2"></i> Continuar Comprando
                     </a>
                 </div>
             <% } %>
@@ -633,76 +156,35 @@
 </div>
 
 <script>
-    // Atualizar quantidade
     function atualizarQuantidade(itemId, novaQuantidade) {
         if (novaQuantidade < 1) return;
-        
         fetch(`/carrinho/item/${itemId}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ quantidade: novaQuantidade })
         })
         .then(res => res.json())
         .then(data => {
-            if (data.success) {
-                // Atualizar display
-                document.getElementById(`subtotal-${itemId}`).textContent = data.novoSubtotal;
-                location.reload(); // Recarregar para atualizar totais
-            } else {
-                alert(data.error || 'Erro ao atualizar quantidade');
-            }
+            if (data.success) location.reload();
+            else alert(data.error);
         })
-        .catch(err => {
-            console.error('Erro:', err);
-            alert('Erro ao atualizar quantidade');
-        });
+        .catch(err => console.error('Erro:', err));
     }
 
-    // Remover item
     function removerItem(itemId) {
         if (!confirm('Remover este item do carrinho?')) return;
-        
-        fetch(`/carrinho/item/${itemId}`, {
-            method: 'DELETE'
-        })
+        fetch(`/carrinho/item/${itemId}`, { method: 'DELETE' })
         .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert(data.error || 'Erro ao remover item');
-            }
-        })
-        .catch(err => {
-            console.error('Erro:', err);
-            alert('Erro ao remover item');
-        });
+        .then(data => { if (data.success) location.reload(); });
     }
 
-    // Limpar carrinho
     function limparCarrinho() {
         if (!confirm('Limpar todo o carrinho?')) return;
-        
-        fetch('/carrinho/limpar', {
-            method: 'POST'
-        })
+        fetch('/carrinho/limpar', { method: 'POST' })
         .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert(data.error || 'Erro ao limpar carrinho');
-            }
-        })
-        .catch(err => {
-            console.error('Erro:', err);
-            alert('Erro ao limpar carrinho');
-        });
+        .then(data => { if (data.success) location.reload(); });
     }
 
-    // Finalizar compra (placeholder)
     function finalizarCompra() {
         alert('Funcionalidade de checkout será implementada em breve!');
     }

@@ -8,11 +8,11 @@ const app = express();
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const flash = require('connect-flash');
-// const passport = require('passport'); // COMENTADO
+const passport = require('passport');
 const { middlewareGlobal } = require('./src/middlewares/middlewares');
 
-// Configurar Passport (Google Auth) - COMENTADO
-// require('./src/config/passport-google')();
+// Configurar Passport (Google Auth) - AGORA DESCOMENTADO
+require('./src/config/passport-google')();
 
 // Criar servidor HTTP para Socket.IO
 const server = http.createServer(app);
@@ -41,9 +41,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Inicializar Passport - COMENTADO
-// app.use(passport.initialize());
-// app.use(passport.session());
+// Inicializar Passport - AGORA DESCOMENTADO
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(flash());
 app.use(middlewareGlobal);

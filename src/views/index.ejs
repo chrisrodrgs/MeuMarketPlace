@@ -1,491 +1,7 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
-<style>
-    /* ===== VARIÁVEIS ===== */
-    :root {
-        --primary: #667eea;
-        --secondary: #764ba2;
-        --light-bg: #fafaff;
-        --text-dark: #2d3436;
-        --text-light: #636e72;
-        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
-        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
-        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
-        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
-    }
-
-    /* ===== HERO SECTION ELEGANTE ===== */
-    .hero-section {
-        min-height: 80vh;
-        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-    }
-
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
-        animation: spinSlow 90s linear infinite;
-    }
-
-    .hero-section::after {
-        content: '';
-        position: absolute;
-        bottom: -50%;
-        left: -50%;
-        width: 100%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(102,126,234,0.03) 0%, transparent 60%);
-        animation: spinSlow 120s linear infinite reverse;
-    }
-
-    @keyframes spinSlow {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .hero-title {
-        font-size: 3.5rem;
-        font-weight: 300;
-        line-height: 1.2;
-        color: var(--text-dark);
-    }
-
-    .hero-title span {
-        font-weight: 700;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: inline-block;
-        animation: fadeUp 1s ease;
-    }
-
-    .hero-subtitle {
-        font-size: 1.2rem;
-        color: var(--text-light);
-        font-weight: 300;
-        letter-spacing: 0.5px;
-        line-height: 1.8;
-        max-width: 600px;
-    }
-
-    .btn-elegante {
-        position: relative;
-        padding: 15px 40px;
-        border-radius: 50px;
-        font-weight: 500;
-        transition: all 0.4s ease;
-        overflow: hidden;
-        z-index: 1;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .btn-elegante::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: white;
-        transform: translate(-50%, -50%);
-        transition: width 0.6s ease, height 0.6s ease;
-        z-index: -1;
-    }
-
-    .btn-elegante:hover::before {
-        width: 300px;
-        height: 300px;
-    }
-
-    .btn-elegante.primary {
-        background: var(--gradient);
-        color: white;
-        border: none;
-    }
-
-    .btn-elegante.primary:hover {
-        color: var(--primary);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .btn-elegante.outline {
-        background: transparent;
-        border: 2px solid var(--primary);
-        color: var(--primary);
-    }
-
-    .btn-elegante.outline:hover {
-        color: white;
-        border-color: transparent;
-    }
-
-    /* ===== STATS CARDS ELEGANTES ===== */
-    .stats-section {
-        padding: 80px 0;
-        background: white;
-    }
-
-    .stat-card-elegante {
-        text-align: center;
-        padding: 30px;
-        background: white;
-        border-radius: 30px;
-        transition: all 0.4s ease;
-        border: 1px solid rgba(102, 126, 234, 0.05);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .stat-card-elegante:hover {
-        transform: translateY(-10px);
-        box-shadow: var(--shadow-lg);
-        border-color: rgba(102, 126, 234, 0.1);
-    }
-
-    .stat-card-elegante i {
-        font-size: 2.5rem;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 20px;
-        transition: transform 0.4s ease;
-    }
-
-    .stat-card-elegante:hover i {
-        transform: scale(1.2) rotate(5deg);
-    }
-
-    .stat-card-elegante h3 {
-        font-size: 2.5rem;
-        font-weight: 300;
-        color: var(--text-dark);
-        margin-bottom: 5px;
-    }
-
-    .stat-card-elegante p {
-        color: var(--text-light);
-        font-weight: 300;
-        letter-spacing: 0.5px;
-        margin: 0;
-    }
-
-    .counter {
-        display: inline-block;
-    }
-
-    /* ===== CATEGORIAS ELEGANTES ===== */
-    .categories-section {
-        padding: 80px 0;
-        background: var(--light-bg);
-    }
-
-    .section-title {
-        text-align: center;
-        margin-bottom: 60px;
-    }
-
-    .section-title h2 {
-        font-size: 2.5rem;
-        font-weight: 300;
-        color: var(--text-dark);
-        margin-bottom: 15px;
-    }
-
-    .section-title h2 span {
-        font-weight: 700;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .section-title p {
-        color: var(--text-light);
-        font-weight: 300;
-        font-size: 1.1rem;
-    }
-
-    .category-card-elegante {
-        background: white;
-        border-radius: 30px;
-        padding: 40px 20px;
-        text-align: center;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        cursor: pointer;
-        border: 1px solid rgba(102, 126, 234, 0.05);
-        box-shadow: var(--shadow-sm);
-        position: relative;
-        overflow: hidden;
-        text-decoration: none;
-        display: block;
-        color: inherit;
-    }
-
-    .category-card-elegante::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(102,126,234,0.03) 0%, transparent 70%);
-        transition: all 0.6s ease;
-        opacity: 0;
-    }
-
-    .category-card-elegante:hover::before {
-        opacity: 1;
-        transform: scale(1.2);
-    }
-
-    .category-card-elegante:hover {
-        transform: translateY(-15px) scale(1.02);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .category-card-elegante i {
-        font-size: 3rem;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 20px;
-        transition: all 0.4s ease;
-    }
-
-    .category-card-elegante:hover i {
-        transform: scale(1.2) rotate(360deg);
-    }
-
-    .category-card-elegante h5 {
-        color: var(--text-dark);
-        font-weight: 400;
-        margin-bottom: 0;
-    }
-
-    /* ===== PRODUTOS ELEGANTES ===== */
-    .featured-section {
-        padding: 80px 0;
-        background: white;
-    }
-
-    .product-card-elegante {
-        background: white;
-        border-radius: 30px;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 1px solid rgba(102, 126, 234, 0.05);
-        box-shadow: var(--shadow-sm);
-        height: 100%;
-        text-decoration: none;
-        display: block;
-        color: inherit;
-    }
-
-    .product-card-elegante:hover {
-        transform: translateY(-15px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .product-image-elegante {
-        height: 220px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .product-image-elegante img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.8s ease;
-    }
-
-    .product-card-elegante:hover .product-image-elegante img {
-        transform: scale(1.15);
-    }
-
-    .product-badge-elegante {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: white;
-        color: var(--primary);
-        padding: 8px 20px;
-        border-radius: 50px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        box-shadow: var(--shadow-sm);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(102, 126, 234, 0.1);
-    }
-
-    .product-content-elegante {
-        padding: 25px;
-    }
-
-    .product-content-elegante h5 {
-        font-size: 1.2rem;
-        font-weight: 400;
-        color: var(--text-dark);
-        margin-bottom: 10px;
-        line-height: 1.4;
-    }
-
-    .product-content-elegante .price {
-        font-size: 1.5rem;
-        font-weight: 300;
-        color: var(--primary);
-        margin-bottom: 15px;
-    }
-
-    .product-content-elegante .seller {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--text-light);
-        font-size: 0.9rem;
-        font-weight: 300;
-    }
-
-    .product-content-elegante .seller i {
-        font-size: 1.2rem;
-        color: var(--primary);
-    }
-
-    /* ===== NEWSLETTER ELEGANTE ===== */
-    .newsletter-section {
-        padding: 80px 0;
-        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .newsletter-card {
-        background: white;
-        border-radius: 50px;
-        padding: 60px;
-        box-shadow: var(--shadow-lg);
-        position: relative;
-        z-index: 2;
-    }
-
-    .newsletter-card h3 {
-        font-size: 2rem;
-        font-weight: 300;
-        color: var(--text-dark);
-        margin-bottom: 10px;
-    }
-
-    .newsletter-card p {
-        color: var(--text-light);
-        font-weight: 300;
-    }
-
-    .newsletter-input {
-        border: 2px solid rgba(102, 126, 234, 0.1);
-        border-radius: 50px;
-        padding: 15px 25px;
-        transition: all 0.4s ease;
-        width: 100%;
-    }
-
-    .newsletter-input:focus {
-        border-color: var(--primary);
-        box-shadow: var(--shadow-md);
-        outline: none;
-    }
-
-    .newsletter-btn {
-        background: var(--gradient);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 15px 40px;
-        font-weight: 500;
-        transition: all 0.4s ease;
-        white-space: nowrap;
-    }
-
-    .newsletter-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    /* ===== ANIMAÇÕES ===== */
-    @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .fade-up {
-        animation: fadeUp 1s ease;
-    }
-
-    .float {
-        animation: float 6s ease-in-out infinite;
-    }
-
-    /* ===== RESPONSIVIDADE ===== */
-    @media (max-width: 768px) {
-        .hero-title {
-            font-size: 2.5rem;
-        }
-        
-        .section-title h2 {
-            font-size: 2rem;
-        }
-        
-        .newsletter-card {
-            padding: 30px;
-        }
-        
-        .col-md-2-4 {
-            flex: 0 0 50%;
-            max-width: 50%;
-        }
-        
-        .newsletter-card .d-flex {
-            flex-direction: column;
-        }
-        
-        .newsletter-btn {
-            width: 100%;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .col-md-2-4 {
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
-    }
-
-    .col-md-2-4 {
-        flex: 0 0 20%;
-        max-width: 20%;
-    }
-</style>
-
-<!-- Hero Section Elegante -->
+<!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
@@ -517,7 +33,7 @@
     </div>
 </section>
 
-<!-- Estatísticas Elegantes COM DADOS REAIS -->
+<!-- Estatísticas -->
 <section class="stats-section">
     <div class="container">
         <div class="row g-4">
@@ -546,7 +62,7 @@
     </div>
 </section>
 
-<!-- Categorias Elegantes com Links -->
+<!-- Categorias -->
 <section id="categorias" class="categories-section">
     <div class="container">
         <div class="section-title">
@@ -555,39 +71,30 @@
         </div>
         
         <div class="row g-4">
-            <!-- Categoria: Café da manhã -->
             <div class="col-md-2-4">
                 <a href="/categoria/Café%20da%20manhã" class="category-card-elegante">
                     <i class="bi bi-cup-hot-fill"></i>
                     <h5>Café da manhã</h5>
                 </a>
             </div>
-            
-            <!-- Categoria: Doces -->
             <div class="col-md-2-4">
                 <a href="/categoria/Doces" class="category-card-elegante">
                     <i class="bi bi-cake-fill"></i>
                     <h5>Doces</h5>
                 </a>
             </div>
-            
-            <!-- Categoria: Salgados -->
             <div class="col-md-2-4">
                 <a href="/categoria/Salgados" class="category-card-elegante">
                     <i class="bi bi-egg-fried"></i>
                     <h5>Salgados</h5>
                 </a>
             </div>
-            
-            <!-- Categoria: Bebidas -->
             <div class="col-md-2-4">
                 <a href="/categoria/Bebidas" class="category-card-elegante">
                     <i class="bi bi-cup-straw"></i>
                     <h5>Bebidas</h5>
                 </a>
             </div>
-            
-            <!-- Categoria: Descartáveis -->
             <div class="col-md-2-4">
                 <a href="/categoria/Descart%C3%A1veis" class="category-card-elegante">
                     <i class="bi bi-box-seam"></i>
@@ -596,7 +103,6 @@
             </div>
         </div>
         
-        <!-- Link para todas as categorias -->
         <div class="text-center mt-5">
             <a href="/categorias" class="btn-elegante outline">
                 Ver todas as categorias <i class="bi bi-arrow-right ms-2"></i>
@@ -648,7 +154,7 @@
     </div>
 </section>
 
-<!-- Newsletter Elegante -->
+<!-- Newsletter -->
 <section class="newsletter-section">
     <div class="container">
         <div class="newsletter-card">
@@ -670,7 +176,6 @@
     </div>
 </section>
 
-<!-- Scripts -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Contadores animados

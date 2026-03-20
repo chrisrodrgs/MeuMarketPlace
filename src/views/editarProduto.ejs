@@ -1,520 +1,6 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
-<style>
-    /* ===== VARIÁVEIS ===== */
-    :root {
-        --primary: #667eea;
-        --secondary: #764ba2;
-        --light-bg: #fafaff;
-        --text-dark: #2d3436;
-        --text-light: #636e72;
-        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
-        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
-        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
-        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
-        --success: #48bb78;
-        --danger: #f56565;
-        --warning: #ecc94b;
-        --info: #4299e1;
-    }
-
-    /* ===== BREADCRUMB ===== */
-    .breadcrumb-section {
-        background: white;
-        padding: 20px 0;
-        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-    }
-
-    .breadcrumb {
-        background: transparent;
-        padding: 0;
-        margin: 0;
-    }
-
-    .breadcrumb-item a {
-        color: var(--text-light);
-        text-decoration: none;
-    }
-
-    .breadcrumb-item a:hover {
-        color: var(--primary);
-    }
-
-    .breadcrumb-item.active {
-        color: var(--primary);
-        font-weight: 500;
-    }
-
-    /* ===== HEADER DA PÁGINA ===== */
-    .page-header {
-        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
-        padding: 60px 0;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 40px;
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
-        animation: spinSlow 90s linear infinite;
-    }
-
-    .page-header::after {
-        content: '';
-        position: absolute;
-        bottom: -50%;
-        left: -50%;
-        width: 100%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(102,126,234,0.03) 0%, transparent 60%);
-        animation: spinSlow 120s linear infinite reverse;
-    }
-
-    @keyframes spinSlow {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .page-header-content {
-        position: relative;
-        z-index: 2;
-    }
-
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 300;
-        color: var(--text-dark);
-        margin-bottom: 10px;
-    }
-
-    .page-title span {
-        font-weight: 700;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .page-subtitle {
-        color: var(--text-light);
-        font-weight: 300;
-        font-size: 1.1rem;
-    }
-
-    /* ===== FORM CARD ===== */
-    .form-card {
-        background: white;
-        border-radius: 40px;
-        box-shadow: var(--shadow-lg);
-        overflow: hidden;
-        margin-top: -40px;
-        position: relative;
-        z-index: 3;
-        margin-bottom: 60px;
-    }
-
-    .form-card-header {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        padding: 30px 40px;
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    .form-card-header h2 {
-        font-size: 1.8rem;
-        font-weight: 500;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .form-card-header h2 i {
-        font-size: 2rem;
-    }
-
-    .product-badge {
-        background: rgba(255,255,255,0.2);
-        padding: 8px 20px;
-        border-radius: 50px;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .product-badge i {
-        font-size: 1rem;
-    }
-
-    .form-card-body {
-        padding: 40px;
-    }
-
-    /* ===== STATUS BADGES ===== */
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 5px 12px;
-        border-radius: 50px;
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
-
-    .status-badge.active {
-        background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(72, 187, 120, 0.2));
-        color: #2f855a;
-    }
-
-    .status-badge.inactive {
-        background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(245, 101, 101, 0.2));
-        color: #c53030;
-    }
-
-    .status-badge i {
-        font-size: 0.9rem;
-    }
-
-    /* ===== CAMPO COM STATUS ATUAL ===== */
-    .field-container {
-        margin-bottom: 30px;
-        border: 2px solid rgba(102, 126, 234, 0.05);
-        border-radius: 30px;
-        padding: 20px;
-        background: var(--light-bg);
-        transition: all 0.3s ease;
-    }
-
-    .field-container:hover {
-        border-color: rgba(102, 126, 234, 0.2);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .field-current {
-        background: white;
-        border-radius: 20px;
-        padding: 15px 20px;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        border-left: 4px solid var(--primary);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .field-current-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary);
-        font-size: 1.3rem;
-        flex-shrink: 0;
-    }
-
-    .field-current-content {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .field-current-label {
-        font-size: 0.85rem;
-        color: var(--text-light);
-        margin-bottom: 3px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .field-current-value {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        word-break: break-word;
-    }
-
-    .field-current-value.small {
-        font-size: 1rem;
-    }
-
-    .field-current-value.price {
-        color: var(--primary);
-    }
-
-    .field-current-value.stock {
-        color: var(--success);
-    }
-
-    .field-new {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        border: 2px dashed rgba(102, 126, 234, 0.2);
-    }
-
-    .field-new-label {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .field-new-label i {
-        color: var(--primary);
-    }
-
-    /* ===== FORM ELEMENTS ===== */
-    .form-control {
-        border: 2px solid rgba(102, 126, 234, 0.1);
-        border-radius: 15px;
-        padding: 12px 18px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        background: white;
-        width: 100%;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-    }
-
-    .form-control-lg {
-        padding: 14px 20px;
-        font-size: 1.1rem;
-    }
-
-    textarea.form-control {
-        min-height: 100px;
-        resize: vertical;
-    }
-
-    select.form-control {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L0 4h16L8 12z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 18px center;
-        background-size: 14px;
-        padding-right: 45px;
-    }
-
-    /* ===== PREVIEW CARD ===== */
-    .preview-card {
-        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
-        border-radius: 30px;
-        padding: 25px;
-        margin-bottom: 30px;
-        border: 2px solid rgba(102, 126, 234, 0.1);
-    }
-
-    .preview-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .preview-title i {
-        color: var(--primary);
-    }
-
-    .preview-content {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-
-    .preview-image {
-        width: 100px;
-        height: 100px;
-        border-radius: 20px;
-        object-fit: cover;
-        border: 4px solid white;
-        box-shadow: var(--shadow-lg);
-        flex-shrink: 0;
-    }
-
-    .preview-info {
-        flex: 1;
-        min-width: 200px;
-    }
-
-    .preview-info h4 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin: 0 0 8px 0;
-        word-break: break-word;
-    }
-
-    .preview-info .preview-price {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: var(--primary);
-        margin: 0 0 5px 0;
-    }
-
-    .preview-info .preview-stock {
-        font-size: 0.95rem;
-        color: var(--text-light);
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    /* ===== BOTÕES ELEGANTES ===== */
-    .btn-elegante {
-        padding: 14px 28px;
-        border-radius: 50px;
-        font-weight: 500;
-        transition: all 0.4s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        border: none;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-        font-size: 1rem;
-    }
-
-    .btn-elegante::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.2);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s ease, height 0.6s ease;
-        z-index: -1;
-    }
-
-    .btn-elegante:hover::before {
-        width: 300px;
-        height: 300px;
-    }
-
-    .btn-elegante.primary {
-        background: var(--gradient);
-        color: white;
-    }
-
-    .btn-elegante.primary:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .btn-elegante.secondary {
-        background: white;
-        color: var(--primary);
-        border: 2px solid rgba(102, 126, 234, 0.2);
-    }
-
-    .btn-elegante.secondary:hover {
-        border-color: var(--primary);
-        transform: translateY(-2px);
-    }
-
-    .btn-elegante.danger {
-        background: linear-gradient(135deg, var(--danger), #c53030);
-        color: white;
-    }
-
-    .btn-elegante.danger:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(245, 101, 101, 0.3);
-    }
-
-    /* ===== MENSAGENS FLASH ===== */
-    .alert {
-        border-radius: 20px;
-        border: none;
-        padding: 15px 20px;
-        margin-bottom: 25px;
-        animation: slideDown 0.5s ease;
-    }
-
-    .alert-success {
-        background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(72, 187, 120, 0.2));
-        color: #2f855a;
-    }
-
-    .alert-danger {
-        background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(245, 101, 101, 0.2));
-        color: #c53030;
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* ===== RESPONSIVIDADE ===== */
-    @media (max-width: 768px) {
-        .page-title {
-            font-size: 2rem;
-        }
-        
-        .form-card-header {
-            padding: 25px;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        
-        .form-card-body {
-            padding: 25px;
-        }
-        
-        .preview-content {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .field-current {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .field-current-icon {
-            margin-bottom: 10px;
-        }
-    }
-</style>
-
 <!-- Breadcrumb -->
 <section class="breadcrumb-section">
     <div class="container">
@@ -528,317 +14,263 @@
     </div>
 </section>
 
-<!-- Header da Página -->
-<section class="page-header">
-    <div class="container page-header-content">
-        <div class="text-center">
-            <h1 class="page-title">
-                Editar <span>Produto</span>
-            </h1>
-            <p class="page-subtitle">
-                Atualize as informações do seu produto
-            </p>
-        </div>
+<!-- Header Centralizado -->
+<section class="hero-section" style="min-height: 30vh; padding: 60px 0;">
+    <div class="container text-center">
+        <h1 class="hero-title">
+            Editar <span>Produto</span>
+        </h1>
+        <p class="hero-subtitle mx-auto">Atualize as informações do seu produto</p>
     </div>
 </section>
 
-<!-- Formulário Principal -->
-<div class="container">
-    <div class="form-card">
-        <div class="form-card-header">
-            <h2>
-                <i class="bi bi-pencil-square"></i>
-                Editando: <%= produto.name %>
-            </h2>
-            <div class="product-badge">
-                <i class="bi bi-tag"></i>
-                ID: <%= produto.id %> &nbsp;|&nbsp;
-                <span class="status-badge <%= produto.status === 'ativo' ? 'active' : 'inactive' %>">
-                    <i class="bi bi-circle-fill"></i>
-                    <%= produto.status === 'ativo' ? 'Ativo' : 'Inativo' %>
-                </span>
-            </div>
-        </div>
-        
-        <div class="form-card-body">
-            <!-- Mensagens Flash -->
-            <% if (typeof errors !== 'undefined' && errors) { %>
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <%= errors %>
+<!-- Formulário -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card-elegante shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h4 mb-0">
+                            <i class="bi bi-pencil-square me-2"></i>
+                            Editando: <%= produto.name %>
+                        </h2>
+                        <span class="badge bg-light text-dark px-3 py-2 rounded-pill">ID: <%= produto.id %></span>
+                    </div>
                 </div>
-            <% } %>
-
-            <% if (typeof success !== 'undefined' && success) { %>
-                <div class="alert alert-success">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    <%= success %>
-                </div>
-            <% } %>
-
-            <!-- Preview do Produto -->
-            <div class="preview-card">
-                <div class="preview-title">
-                    <i class="bi bi-eye"></i>
-                    Prévia do Produto
-                </div>
-                <div class="preview-content">
-                    <% if (produto.imagemUrl) { %>
-                        <img src="<%= produto.imagemUrl %>" class="preview-image" id="previewImage" alt="<%= produto.name %>">
-                    <% } else { %>
-                        <div class="preview-image bg-light d-flex align-items-center justify-content-center">
-                            <i class="bi bi-image text-secondary" style="font-size: 2rem;"></i>
+                <div class="card-body p-4">
+                    <!-- Mensagens Flash -->
+                    <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <%= errors %>
                         </div>
                     <% } %>
-                    <div class="preview-info">
-                        <h4 id="previewName"><%= produto.name %></h4>
-                        <div class="preview-price" id="previewPrice">R$ <%= Number(produto.price).toFixed(2) %></div>
-                        <div class="preview-stock">
-                            <i class="bi bi-box"></i>
-                            <span id="previewStock">Estoque: <%= produto.estoque || 0 %> unidades</span>
+                    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <%= success %>
+                        </div>
+                    <% } %>
+
+                    <!-- Preview do Produto - MAIS DESTAQUE -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3 p-4 mb-4 border border-primary border-opacity-25 shadow-md">
+                        <h6 class="fw-semibold mb-3">
+                            <i class="bi bi-eye text-primary me-2"></i>
+                            Prévia do Produto
+                        </h6>
+                        <div class="d-flex align-items-center gap-4">
+                            <% if (produto.imagemUrl) { %>
+                                <img src="<%= produto.imagemUrl %>" class="rounded-3 shadow-sm" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid white;">
+                            <% } else { %>
+                                <div class="bg-white rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-image text-secondary fs-2"></i>
+                                </div>
+                            <% } %>
+                            <div>
+                                <h5 id="previewName" class="mb-1 fw-bold text-dark"><%= produto.name %></h5>
+                                <span class="text-primary fw-bold fs-4" id="previewPrice">R$ <%= Number(produto.price).toFixed(2) %></span>
+                                <div class="mt-1">
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-box me-1"></i> <span id="previewStock">Estoque: <%= produto.estoque || 0 %></span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <form action="/produtos/editar/<%= produto.id %>" method="POST">
+                        <!-- Nome - MAIOR CONTRASTE -->
+                        <div class="field-container mb-4 bg-white rounded-3 p-3 shadow-sm border-start border-4 border-primary">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                                    <i class="bi bi-tag fs-4 text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="mb-2 pb-2 border-bottom border-dashed">
+                                        <small class="text-muted text-uppercase fw-semibold">Valor atual</small>
+                                        <div class="fw-bold fs-5 text-dark"><%= produto.name %></div>
+                                    </div>
+                                    <div>
+                                        <label class="form-label fw-semibold">
+                                            <i class="bi bi-pencil text-primary me-1"></i> Novo nome
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" id="nome" name="nome" 
+                                               value="<%= produto.name %>" oninput="document.getElementById('previewName').textContent = this.value">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Descrição -->
+                        <div class="field-container mb-4 bg-white rounded-3 p-3 shadow-sm border-start border-4 border-primary">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                                    <i class="bi bi-card-text fs-4 text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="mb-2 pb-2 border-bottom border-dashed">
+                                        <small class="text-muted text-uppercase fw-semibold">Descrição atual</small>
+                                        <div class="small text-dark"><%= produto.description %></div>
+                                    </div>
+                                    <div>
+                                        <label class="form-label fw-semibold">
+                                            <i class="bi bi-pencil text-primary me-1"></i> Nova descrição
+                                        </label>
+                                        <textarea class="form-control" id="descricao" name="descricao" rows="3"><%= produto.description %></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preço, Estoque, Categoria -->
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="field-container bg-white rounded-3 p-3 shadow-sm border-start border-4 border-success">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-currency-dollar fs-4 text-success"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="mb-2 pb-1">
+                                                <small class="text-muted">Preço atual</small>
+                                                <div class="fw-bold text-success fs-5">R$ <%= Number(produto.price).toFixed(2) %></div>
+                                            </div>
+                                            <label class="form-label fw-semibold small">Novo preço</label>
+                                            <input type="number" class="form-control" id="preco" name="preco" 
+                                                   step="0.01" min="0.01" value="<%= produto.price %>"
+                                                   oninput="document.getElementById('previewPrice').textContent = 'R$ ' + (parseFloat(this.value) || 0).toFixed(2)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="field-container bg-white rounded-3 p-3 shadow-sm border-start border-4 border-warning">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-box fs-4 text-warning"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="mb-2 pb-1">
+                                                <small class="text-muted">Estoque atual</small>
+                                                <div class="fw-bold text-warning"><%= produto.estoque || 0 %> unid.</div>
+                                            </div>
+                                            <label class="form-label fw-semibold small">Novo estoque</label>
+                                            <input type="number" class="form-control" id="estoque" name="estoque" 
+                                                   min="0" value="<%= produto.estoque || 0 %>"
+                                                   oninput="document.getElementById('previewStock').textContent = 'Estoque: ' + (parseInt(this.value) || 0)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="field-container bg-white rounded-3 p-3 shadow-sm border-start border-4 border-info">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-grid fs-4 text-info"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="mb-2 pb-1">
+                                                <small class="text-muted">Categoria atual</small>
+                                                <div><%= produto.categoria || 'Não definida' %></div>
+                                            </div>
+                                            <label class="form-label fw-semibold small">Nova categoria</label>
+                                            <select class="form-select" id="categoria" name="categoria">
+                                                <option value="<%= produto.categoria %>"><%= produto.categoria || 'Selecione' %></option>
+                                                <option value="Café da manhã">Café da manhã</option>
+                                                <option value="Doces">Doces</option>
+                                                <option value="Salgados">Salgados</option>
+                                                <option value="Bebidas">Bebidas</option>
+                                                <option value="Descartáveis">Descartáveis</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="field-container mt-4 bg-white rounded-3 p-3 shadow-sm border-start border-4 border-danger">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="bg-danger bg-opacity-10 rounded-circle p-2">
+                                    <i class="bi bi-toggle-on fs-4 text-danger"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="mb-2 pb-2 border-bottom border-dashed">
+                                        <small class="text-muted text-uppercase fw-semibold">Status atual</small>
+                                        <div>
+                                            <span class="badge bg-<%= produto.status === 'ativo' ? 'success' : 'secondary' %> px-3 py-2">
+                                                <i class="bi bi-<%= produto.status === 'ativo' ? 'check-circle' : 'x-circle' %> me-1"></i>
+                                                <%= produto.status === 'ativo' ? 'Ativo (visível para compra)' : 'Inativo (não visível)' %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="form-label fw-semibold">
+                                            <i class="bi bi-pencil text-primary me-1"></i> Novo status
+                                        </label>
+                                        <select class="form-select" name="status">
+                                            <option value="ativo" <%= produto.status === 'ativo' ? 'selected' : '' %>>Ativo (visível para compra)</option>
+                                            <option value="inativo" <%= produto.status === 'inativo' ? 'selected' : '' %>>Inativo (não visível)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-flex gap-3 mt-5">
+                            <button type="submit" class="btn-elegante primary flex-grow-1 py-3">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Salvar Alterações
+                            </button>
+                            <a href="/meus-produtos" class="btn-elegante secondary flex-grow-1 py-3">
+                                <i class="bi bi-x-lg me-2"></i>
+                                Cancelar
+                            </a>
+                            <button type="button" class="btn-elegante danger py-3 px-4" onclick="confirmarDelecao()">
+                                <i class="bi bi-trash"></i> Deletar
+                            </button>
+                        </div>
+                    </form>
+                    <form id="deleteForm" action="/produtos/deletar/<%= produto.id %>" method="POST" style="display: none;"></form>
                 </div>
             </div>
-
-            <form action="/produtos/editar/<%= produto.id %>" method="POST">
-                <!-- Campo: Nome -->
-                <div class="field-container">
-                    <div class="field-current">
-                        <div class="field-current-icon">
-                            <i class="bi bi-tag"></i>
-                        </div>
-                        <div class="field-current-content">
-                            <div class="field-current-label">
-                                <i class="bi bi-info-circle"></i>
-                                Nome atual
-                            </div>
-                            <div class="field-current-value" id="currentName">
-                                <%= produto.name %>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field-new">
-                        <div class="field-new-label">
-                            <i class="bi bi-pencil"></i>
-                            Novo nome
-                        </div>
-                        <input type="text" class="form-control form-control-lg" id="nome" name="nome" 
-                               value="<%= produto.name %>" placeholder="Digite o novo nome do produto"
-                               oninput="document.getElementById('previewName').textContent = this.value || '<%= produto.name %>'">
-                    </div>
-                </div>
-
-                <!-- Campo: Descrição -->
-                <div class="field-container">
-                    <div class="field-current">
-                        <div class="field-current-icon">
-                            <i class="bi bi-card-text"></i>
-                        </div>
-                        <div class="field-current-content">
-                            <div class="field-current-label">
-                                <i class="bi bi-info-circle"></i>
-                                Descrição atual
-                            </div>
-                            <div class="field-current-value small">
-                                <%= produto.description %>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field-new">
-                        <div class="field-new-label">
-                            <i class="bi bi-pencil"></i>
-                            Nova descrição
-                        </div>
-                        <textarea class="form-control form-control-lg" id="descricao" name="descricao" 
-                                  placeholder="Digite a nova descrição do produto" rows="4"><%= produto.description %></textarea>
-                    </div>
-                </div>
-
-                <!-- Campo: Preço -->
-                <div class="field-container">
-                    <div class="field-current">
-                        <div class="field-current-icon">
-                            <i class="bi bi-currency-dollar"></i>
-                        </div>
-                        <div class="field-current-content">
-                            <div class="field-current-label">
-                                <i class="bi bi-info-circle"></i>
-                                Preço atual
-                            </div>
-                            <div class="field-current-value price">
-                                R$ <%= Number(produto.price).toFixed(2) %>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field-new">
-                        <div class="field-new-label">
-                            <i class="bi bi-pencil"></i>
-                            Novo preço
-                        </div>
-                        <input type="number" class="form-control form-control-lg" id="preco" name="preco" 
-                               step="0.01" min="0.01" value="<%= produto.price %>"
-                               placeholder="Digite o novo preço"
-                               oninput="document.getElementById('previewPrice').textContent = 'R$ ' + (parseFloat(this.value) || 0).toFixed(2)">
-                    </div>
-                </div>
-
-                <!-- Campo: Estoque -->
-                <div class="field-container">
-                    <div class="field-current">
-                        <div class="field-current-icon">
-                            <i class="bi bi-box"></i>
-                        </div>
-                        <div class="field-current-content">
-                            <div class="field-current-label">
-                                <i class="bi bi-info-circle"></i>
-                                Estoque atual
-                            </div>
-                            <div class="field-current-value stock">
-                                <%= produto.estoque || 0 %> unidades
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field-new">
-                        <div class="field-new-label">
-                            <i class="bi bi-pencil"></i>
-                            Novo estoque
-                        </div>
-                        <input type="number" class="form-control form-control-lg" id="estoque" name="estoque" 
-                               min="0" step="1" value="<%= produto.estoque || 0 %>"
-                               placeholder="Digite a nova quantidade em estoque"
-                               oninput="document.getElementById('previewStock').textContent = 'Estoque: ' + (parseInt(this.value) || 0) + ' unidades'">
-                    </div>
-                </div>
-
-                <!-- Campo: Categoria -->
-                <div class="field-container">
-                    <div class="field-current">
-                        <div class="field-current-icon">
-                            <i class="bi bi-grid"></i>
-                        </div>
-                        <div class="field-current-content">
-                            <div class="field-current-label">
-                                <i class="bi bi-info-circle"></i>
-                                Categoria atual
-                            </div>
-                            <div class="field-current-value">
-                                <%= produto.categoria || 'Não definida' %>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field-new">
-                        <div class="field-new-label">
-                            <i class="bi bi-pencil"></i>
-                            Nova categoria
-                        </div>
-                        <select class="form-control form-control-lg" id="categoria" name="categoria">
-                            <option value="<%= produto.categoria %>" selected><%= produto.categoria || 'Selecione' %></option>
-                            <option value="Café da manhã">Café da manhã</option>
-                            <option value="Doces">Doces</option>
-                            <option value="Salgados">Salgados</option>
-                            <option value="Bebidas">Bebidas</option>
-                            <option value="Descartáveis">Descartáveis</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Campo: Status -->
-                <div class="field-container">
-                    <div class="field-current">
-                        <div class="field-current-icon">
-                            <i class="bi bi-toggle-on"></i>
-                        </div>
-                        <div class="field-current-content">
-                            <div class="field-current-label">
-                                <i class="bi bi-info-circle"></i>
-                                Status atual
-                            </div>
-                            <div class="field-current-value">
-                                <span class="status-badge <%= produto.status === 'ativo' ? 'active' : 'inactive' %>">
-                                    <i class="bi bi-circle-fill"></i>
-                                    <%= produto.status === 'ativo' ? 'Ativo (visível para compra)' : 'Inativo (não visível)' %>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field-new">
-                        <div class="field-new-label">
-                            <i class="bi bi-pencil"></i>
-                            Novo status
-                        </div>
-                        <select class="form-control form-control-lg" id="status" name="status">
-                            <option value="ativo" <%= produto.status === 'ativo' ? 'selected' : '' %>>Ativo (visível para compra)</option>
-                            <option value="inativo" <%= produto.status === 'inativo' ? 'selected' : '' %>>Inativo (não visível)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Botões de Ação -->
-                <div class="d-flex gap-3 mt-5">
-                    <button type="submit" class="btn-elegante primary flex-grow-1">
-                        <i class="bi bi-check-circle"></i>
-                        Salvar Alterações
-                    </button>
-                    <a href="/meus-produtos" class="btn-elegante secondary">
-                        <i class="bi bi-x-lg"></i>
-                        Cancelar
-                    </a>
-                    <button type="button" class="btn-elegante danger" onclick="confirmarDelecao()">
-                        <i class="bi bi-trash"></i>
-                        Deletar
-                    </button>
-                </div>
-            </form>
-            
-            <!-- Formulário oculto para deleção -->
-            <form id="deleteForm" action="/produtos/deletar/<%= produto.id %>" method="POST" style="display: none;"></form>
         </div>
     </div>
 </div>
 
 <script>
-    // Função para confirmar deleção
     function confirmarDelecao() {
         if (confirm('Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita.')) {
             document.getElementById('deleteForm').submit();
         }
     }
-    
-    // Atualizar prévia em tempo real
-    document.addEventListener('DOMContentLoaded', function() {
-        const nomeInput = document.getElementById('nome');
-        const precoInput = document.getElementById('preco');
-        const estoqueInput = document.getElementById('estoque');
-        const previewName = document.getElementById('previewName');
-        const previewPrice = document.getElementById('previewPrice');
-        const previewStock = document.getElementById('previewStock');
-        
-        // Valores originais para fallback
-        const originalName = '<%= produto.name %>';
-        const originalPrice = <%= produto.price %>;
-        const originalStock = <%= produto.estoque || 0 %>;
-        
-        if (nomeInput && previewName) {
-            nomeInput.addEventListener('input', function() {
-                previewName.textContent = this.value || originalName;
-            });
-        }
-        
-        if (precoInput && previewPrice) {
-            precoInput.addEventListener('input', function() {
-                const value = parseFloat(this.value) || originalPrice;
-                previewPrice.textContent = 'R$ ' + value.toFixed(2);
-            });
-        }
-        
-        if (estoqueInput && previewStock) {
-            estoqueInput.addEventListener('input', function() {
-                const value = parseInt(this.value) || originalStock;
-                previewStock.textContent = 'Estoque: ' + value + ' unidades';
-            });
-        }
-    });
 </script>
+
+<style>
+    .field-container {
+        transition: all 0.3s ease;
+    }
+    .field-container:hover {
+        transform: translateX(4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important;
+    }
+    .border-dashed {
+        border-bottom: 1px dashed #e2e8f0;
+    }
+    .bg-gradient-to-br {
+        background: linear-gradient(135deg, #eef2ff 0%, #f5f0ff 100%);
+    }
+    .form-control, .form-select {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px 14px;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+    .badge.bg-light {
+        background: rgba(255,255,255,0.2) !important;
+        backdrop-filter: blur(4px);
+    }
+</style>
 
 <%- include('./includes/footer') %>
