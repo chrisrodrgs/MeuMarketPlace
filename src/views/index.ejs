@@ -15,7 +15,7 @@
         --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
     }
 
-    /* ===== HERO SECTION ELEGANTE ===== */
+    /* ===== HERO SECTION ===== */
     .hero-section {
         min-height: 80vh;
         background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
@@ -130,7 +130,7 @@
         border-color: transparent;
     }
 
-    /* ===== STATS CARDS ELEGANTES ===== */
+    /* ===== STATS CARDS ===== */
     .stats-section {
         padding: 80px 0;
         background: white;
@@ -183,7 +183,7 @@
         display: inline-block;
     }
 
-    /* ===== CATEGORIAS ELEGANTES ===== */
+    /* ===== CATEGORIAS ===== */
     .categories-section {
         padding: 80px 0;
         background: var(--light-bg);
@@ -271,7 +271,7 @@
         margin-bottom: 0;
     }
 
-    /* ===== PRODUTOS ELEGANTES ===== */
+    /* ===== PRODUTOS ===== */
     .featured-section {
         padding: 80px 0;
         background: white;
@@ -360,7 +360,7 @@
         color: var(--primary);
     }
 
-    /* ===== NEWSLETTER ELEGANTE ===== */
+    /* ===== NEWSLETTER ===== */
     .newsletter-section {
         padding: 80px 0;
         background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
@@ -485,7 +485,7 @@
     }
 </style>
 
-<!-- Hero Section Elegante -->
+<!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
@@ -517,7 +517,7 @@
     </div>
 </section>
 
-<!-- Estatísticas Elegantes -->
+<!-- Estatísticas -->
 <section class="stats-section">
     <div class="container">
         <div class="row g-4">
@@ -546,7 +546,7 @@
     </div>
 </section>
 
-<!-- Categorias Elegantes com Links -->
+<!-- Categorias -->
 <section id="categorias" class="categories-section">
     <div class="container">
         <div class="section-title">
@@ -555,39 +555,30 @@
         </div>
         
         <div class="row g-4">
-            <!-- Categoria: Café da manhã -->
             <div class="col-md-2-4">
                 <a href="/categoria/Café%20da%20manhã" class="category-card-elegante">
                     <i class="bi bi-cup-hot-fill"></i>
                     <h5>Café da manhã</h5>
                 </a>
             </div>
-            
-            <!-- Categoria: Doces -->
             <div class="col-md-2-4">
                 <a href="/categoria/Doces" class="category-card-elegante">
                     <i class="bi bi-cake-fill"></i>
                     <h5>Doces</h5>
                 </a>
             </div>
-            
-            <!-- Categoria: Salgados -->
             <div class="col-md-2-4">
                 <a href="/categoria/Salgados" class="category-card-elegante">
                     <i class="bi bi-egg-fried"></i>
                     <h5>Salgados</h5>
                 </a>
             </div>
-            
-            <!-- Categoria: Bebidas -->
             <div class="col-md-2-4">
                 <a href="/categoria/Bebidas" class="category-card-elegante">
                     <i class="bi bi-cup-straw"></i>
                     <h5>Bebidas</h5>
                 </a>
             </div>
-            
-            <!-- Categoria: Descartáveis -->
             <div class="col-md-2-4">
                 <a href="/categoria/Descart%C3%A1veis" class="category-card-elegante">
                     <i class="bi bi-box-seam"></i>
@@ -596,7 +587,6 @@
             </div>
         </div>
         
-        <!-- Link para todas as categorias -->
         <div class="text-center mt-5">
             <a href="/categorias" class="btn-elegante outline">
                 Ver todas as categorias <i class="bi bi-arrow-right ms-2"></i>
@@ -617,7 +607,8 @@
             <% if (produtosDestaque && produtosDestaque.length > 0) { %>
                 <% produtosDestaque.slice(0, 4).forEach((produto, index) => { %>
                 <div class="col-md-6 col-lg-3">
-                    <a href="/usuario/<%= produto.usuario_id %>/produtos" class="product-card-elegante">
+                    <!-- LINK ATUALIZADO - Agora vai para a página detalhada do produto -->
+                    <a href="/produto/<%= produto.id %>" class="product-card-elegante">
                         <div class="product-image-elegante">
                             <% if (produto.imagemUrl) { %>
                                 <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
@@ -648,7 +639,7 @@
     </div>
 </section>
 
-<!-- Newsletter Elegante -->
+<!-- Newsletter -->
 <section class="newsletter-section">
     <div class="container">
         <div class="newsletter-card">

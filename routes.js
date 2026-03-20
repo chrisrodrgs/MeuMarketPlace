@@ -6,7 +6,8 @@ const loginController = require('./src/controllers/loginController');
 const perfilController = require('./src/controllers/perfilController');
 const adminController = require('./src/controllers/adminController');
 const searchController = require('./src/controllers/searchController');
-const categoriaController = require('./src/controllers/categoriaController'); // NOVO
+const categoriaController = require('./src/controllers/categoriaController');
+const avaliacaoController = require('./src/controllers/avaliacaoController'); // NOVO
 const produtoController = require('./src/controllers/produtoController');
 const produtoListController = require('./src/controllers/produtoListController');
 const produtoAdcController = require('./src/controllers/produtoAdcController');
@@ -38,6 +39,12 @@ router.get('/busca/rapida', searchController.quickSearch);
 // NOVAS ROTAS DE CATEGORIAS
 router.get('/categorias', categoriaController.listarTodos);
 router.get('/categoria/:categoria', categoriaController.index);
+
+// NOVAS ROTAS DE AVALIAÇÕES
+router.get('/produto/:produtoId', avaliacaoController.paginaProduto);
+router.post('/produto/:produtoId/avaliar', avaliacaoController.avaliar);
+router.get('/avaliacao/:avaliacaoId/deletar', avaliacaoController.deletar);
+router.get('/api/produto/:produtoId/avaliacoes', avaliacaoController.getAvaliacoes);
 
 // NOVAS ROTAS DO ADMIN
 router.get('/admin', adminController.dashboard);

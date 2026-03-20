@@ -13,6 +13,8 @@
         --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
         --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
         --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        --star-color: #ffd700;
+        --star-empty: #e0e0e0;
     }
 
     /* ===== BREADCRUMB ===== */
@@ -350,7 +352,44 @@
         font-size: 1.5rem;
         font-weight: 300;
         color: var(--primary);
-        margin-bottom: 15px;
+        margin-bottom: 10px;
+    }
+
+    /* ===== ESTRELAS DE AVALIAÇÃO ===== */
+    .produto-avaliacoes {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .estrelas {
+        display: flex;
+        gap: 2px;
+    }
+
+    .estrelas i {
+        font-size: 0.9rem;
+        transition: transform 0.2s ease;
+    }
+
+    .produto-card:hover .estrelas i {
+        transform: scale(1.1);
+    }
+
+    .estrelas i.bi-star-fill {
+        color: var(--star-color);
+    }
+
+    .estrelas i.bi-star {
+        color: var(--star-empty);
+    }
+
+    .produto-avaliacoes span {
+        color: var(--text-light);
+        font-size: 0.85rem;
+        cursor: help;
+        border-bottom: 1px dotted #ccc;
     }
 
     .produto-vendedor {
@@ -443,6 +482,13 @@
         font-size: 1.5rem;
         font-weight: 400;
         color: var(--text-dark);
+        margin-bottom: 10px;
+    }
+
+    .produto-list-avaliacoes {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         margin-bottom: 10px;
     }
 
@@ -673,7 +719,9 @@
                         <div class="filtro-grupo">
                             <label class="filtro-label">Ordenar por</label>
                             <select name="ordenar" class="filtro-select" id="ordenar">
-                                <option value="recentes" <%= filtros.ordenar === 'recentes' ? 'selected' : '' %>>Mais recentes</option>
+                                <option value="recentes" <%= !filtros.ordenar || filtros.ordenar === 'recentes' ? 'selected' : '' %>>Mais recentes</option>
+                                <option value="melhores_avaliacoes" <%= filtros.ordenar === 'melhores_avaliacoes' ? 'selected' : '' %>>Melhores avaliações</option>
+                                <option value="mais_avaliados" <%= filtros.ordenar === 'mais_avaliados' ? 'selected' : '' %>>Mais avaliados</option>
                                 <option value="preco_asc" <%= filtros.ordenar === 'preco_asc' ? 'selected' : '' %>>Menor preço</option>
                                 <option value="preco_desc" <%= filtros.ordenar === 'preco_desc' ? 'selected' : '' %>>Maior preço</option>
                                 <option value="nome_asc" <%= filtros.ordenar === 'nome_asc' ? 'selected' : '' %>>Nome (A-Z)</option>
@@ -689,6 +737,18 @@
                                 <option value="50-100" <%= filtros.preco === '50-100' ? 'selected' : '' %>>R$ 50 - R$ 100</option>
                                 <option value="100-200" <%= filtros.preco === '100-200' ? 'selected' : '' %>>R$ 100 - R$ 200</option>
                                 <option value="200+" <%= filtros.preco === '200+' ? 'selected' : '' %>>Acima de R$ 200</option>
+                            </select>
+                        </div>
+                        
+                        <!-- NOVO: Filtro por avaliação -->
+                        <div class="filtro-grupo">
+                            <label class="filtro-label">Avaliação mínima</label>
+                            <select name="avaliacao" class="filtro-select" id="avaliacao">
+                                <option value="0" <%= !filtros.avaliacao || filtros.avaliacao === '0' ? 'selected' : '' %>>Qualquer avaliação</option>
+                                <option value="4" <%= filtros.avaliacao === '4' ? 'selected' : '' %>>4 estrelas ou mais</option>
+                                <option value="3" <%= filtros.avaliacao === '3' ? 'selected' : '' %>>3 estrelas ou mais</option>
+                                <option value="2" <%= filtros.avaliacao === '2' ? 'selected' : '' %>>2 estrelas ou mais</option>
+                                <option value="1" <%= filtros.avaliacao === '1' ? 'selected' : '' %>>1 estrela ou mais</option>
                             </select>
                         </div>
                         
@@ -725,26 +785,39 @@
                     <div class="produtos-grid" id="gridViewContainer">
                         <% produtos.forEach((produto) => { %>
                         <div class="produto-card">
-                            <div class="produto-imagem">
-                                <% if (produto.imagemUrl) { %>
-                                    <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
-                                <% } else { %>
-                                    <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
-                                    </div>
-                                <% } %>
-                            </div>
-                            <div class="produto-conteudo">
-                                <h3 class="produto-titulo"><%= produto.name %></h3>
-                                <div class="produto-preco"><%= produto.precoFormatado %></div>
-                                <div class="produto-vendedor">
-                                    <i class="bi bi-person-circle"></i>
-                                    <span><%= produto.email.split('@')[0] %></span>
+                            <a href="/produto/<%= produto.id %>" class="text-decoration-none text-dark">
+                                <div class="produto-imagem">
+                                    <% if (produto.imagemUrl) { %>
+                                        <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
+                                    <% } else { %>
+                                        <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                                        </div>
+                                    <% } %>
+                                    <span class="produto-badge"><%= produto.categoria %></span>
                                 </div>
-                                <a href="/usuario/<%= produto.usuario_id %>/produtos" class="produto-btn">
-                                    Ver detalhes
-                                </a>
-                            </div>
+                                <div class="produto-conteudo">
+                                    <h3 class="produto-titulo"><%= produto.name %></h3>
+                                    
+                                    <!-- NOVO: Avaliações no card -->
+                                    <div class="produto-avaliacoes">
+                                        <div class="estrelas">
+                                            <% for (let i = 1; i <= 5; i++) { %>
+                                                <i class="bi <%= i <= Math.round(produto.mediaAvaliacoes) ? 'bi-star-fill' : 'bi-star' %>"></i>
+                                            <% } %>
+                                        </div>
+                                        <span title="<%= produto.mediaAvaliacoes %> de 5 estrelas">
+                                            <%= produto.mediaAvaliacoes %> (<%= produto.totalAvaliacoes %>)
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="produto-preco"><%= produto.precoFormatado %></div>
+                                    <div class="produto-vendedor">
+                                        <i class="bi bi-person-circle"></i>
+                                        <span><%= produto.email.split('@')[0] %></span>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
                         <% }) %>
                     </div>
@@ -753,25 +826,36 @@
                     <div class="produtos-list" id="listViewContainer">
                         <% produtos.forEach((produto) => { %>
                         <div class="produto-list-item">
-                            <div class="produto-list-imagem">
-                                <% if (produto.imagemUrl) { %>
-                                    <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
-                                <% } else { %>
-                                    <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
-                                    </div>
-                                <% } %>
-                            </div>
-                            <div class="produto-list-conteudo">
-                                <h3 class="produto-list-titulo"><%= produto.name %></h3>
-                                <p class="produto-list-descricao"><%= produto.description %></p>
-                                <div class="produto-list-footer">
-                                    <span class="produto-list-preco"><%= produto.precoFormatado %></span>
-                                    <a href="/usuario/<%= produto.usuario_id %>/produtos" class="produto-list-btn">
-                                        Ver detalhes
-                                    </a>
+                            <a href="/produto/<%= produto.id %>" class="text-decoration-none text-dark d-flex w-100">
+                                <div class="produto-list-imagem">
+                                    <% if (produto.imagemUrl) { %>
+                                        <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
+                                    <% } else { %>
+                                        <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                                        </div>
+                                    <% } %>
                                 </div>
-                            </div>
+                                <div class="produto-list-conteudo">
+                                    <h3 class="produto-list-titulo"><%= produto.name %></h3>
+                                    
+                                    <!-- NOVO: Avaliações no list view -->
+                                    <div class="produto-list-avaliacoes">
+                                        <div class="estrelas">
+                                            <% for (let i = 1; i <= 5; i++) { %>
+                                                <i class="bi <%= i <= Math.round(produto.mediaAvaliacoes) ? 'bi-star-fill' : 'bi-star' %>"></i>
+                                            <% } %>
+                                        </div>
+                                        <span><%= produto.mediaAvaliacoes %> (<%= produto.totalAvaliacoes %>)</span>
+                                    </div>
+                                    
+                                    <p class="produto-list-descricao"><%= produto.description %></p>
+                                    <div class="produto-list-footer">
+                                        <span class="produto-list-preco"><%= produto.precoFormatado %></span>
+                                        <span class="produto-list-btn">Ver detalhes</span>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
                         <% }) %>
                     </div>
@@ -780,7 +864,7 @@
                     <% if (totalPaginas > 1) { %>
                     <div class="paginacao">
                         <% if (paginaAtual > 1) { %>
-                        <a href="?pagina=<%= paginaAtual - 1 %><%= filtros.ordenar ? '&ordenar=' + filtros.ordenar : '' %><%= filtros.preco ? '&preco=' + filtros.preco : '' %>" 
+                        <a href="?pagina=<%= paginaAtual - 1 %><%= filtros.ordenar ? '&ordenar=' + filtros.ordenar : '' %><%= filtros.preco ? '&preco=' + filtros.preco : '' %><%= filtros.avaliacao && filtros.avaliacao !== '0' ? '&avaliacao=' + filtros.avaliacao : '' %>" 
                            class="page-item">
                             <i class="bi bi-chevron-left"></i>
                         </a>
@@ -794,13 +878,13 @@
                             <% if (i === paginaAtual) { %>
                                 <span class="page-item active"><%= i %></span>
                             <% } else if (i >= paginaAtual - 2 && i <= paginaAtual + 2) { %>
-                                <a href="?pagina=<%= i %><%= filtros.ordenar ? '&ordenar=' + filtros.ordenar : '' %><%= filtros.preco ? '&preco=' + filtros.preco : '' %>" 
+                                <a href="?pagina=<%= i %><%= filtros.ordenar ? '&ordenar=' + filtros.ordenar : '' %><%= filtros.preco ? '&preco=' + filtros.preco : '' %><%= filtros.avaliacao && filtros.avaliacao !== '0' ? '&avaliacao=' + filtros.avaliacao : '' %>" 
                                    class="page-item"><%= i %></a>
                             <% } %>
                         <% } %>
                         
                         <% if (paginaAtual < totalPaginas) { %>
-                        <a href="?pagina=<%= paginaAtual + 1 %><%= filtros.ordenar ? '&ordenar=' + filtros.ordenar : '' %><%= filtros.preco ? '&preco=' + filtros.preco : '' %>" 
+                        <a href="?pagina=<%= paginaAtual + 1 %><%= filtros.ordenar ? '&ordenar=' + filtros.ordenar : '' %><%= filtros.preco ? '&preco=' + filtros.preco : '' %><%= filtros.avaliacao && filtros.avaliacao !== '0' ? '&avaliacao=' + filtros.avaliacao : '' %>" 
                            class="page-item">
                             <i class="bi bi-chevron-right"></i>
                         </a>
