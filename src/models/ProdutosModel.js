@@ -22,15 +22,19 @@ class Produtos {
                     categoria, 
                     usuario_id, 
                     imagem,
+                    estoque,
+                    status,
                     data_criacao
-                ) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
                 [
                     this.body.name,
                     this.body.description,
                     this.body.price,
                     this.body.categoria,
                     usuarioId,
-                    imagemPath
+                    imagemPath,
+                    this.body.estoque || 0,
+                    this.body.status || 'ativo'
                 ]
             );
 
@@ -51,12 +55,21 @@ class Produtos {
         if (this.errors.length > 0) return;
 
         await db.run(
-            `UPDATE products SET name = ?, description = ?, price = ? 
+            `UPDATE products SET 
+             name = ?, 
+             description = ?, 
+             price = ?,
+             categoria = ?,
+             estoque = ?,
+             status = ?
              WHERE id = ? AND usuario_id = ?`,
             [
                 this.body.name,
                 this.body.description,
                 this.body.price,
+                this.body.categoria,
+                this.body.estoque,
+                this.body.status,
                 id,
                 usuarioId
             ]
@@ -114,6 +127,9 @@ class Produtos {
         if (this.body.price && isNaN(this.body.price)) {
             this.errors.push('Preço deve ser um número válido!');
         }
+        if (this.body.estoque !== undefined && isNaN(this.body.estoque)) {
+            this.errors.push('Estoque deve ser um número válido!');
+        }
     }
 
     cleanUp() {
@@ -127,7 +143,9 @@ class Produtos {
             name: this.body.name || '',
             description: this.body.description || '',
             price: this.body.price || '',
-            categoria: this.body.categoria || ''
+            categoria: this.body.categoria || '',
+            estoque: this.body.estoque || 0,
+            status: this.body.status || 'ativo'
         };
     }
 }

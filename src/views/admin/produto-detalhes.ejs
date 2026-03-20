@@ -1,0 +1,323 @@
+<%- include('../includes/head') %>
+<%- include('../includes/nav1') %>
+
+<style>
+    :root {
+        --primary: #667eea;
+        --secondary: #764ba2;
+        --light-bg: #fafaff;
+        --text-dark: #2d3436;
+        --text-light: #636e72;
+        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
+        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
+        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
+        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .header-section {
+        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
+        padding: 40px 0;
+        margin-bottom: 30px;
+    }
+
+    .product-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 30px;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .image-placeholder {
+        width: 100%;
+        height: 300px;
+        background: var(--light-bg);
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: var(--text-light);
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 30px;
+        padding: 25px;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 30px;
+    }
+
+    .info-card h4 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-card h4 i {
+        color: var(--primary);
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: var(--text-light);
+        font-weight: 300;
+    }
+
+    .info-value {
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+
+    .badge {
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+    }
+
+    .badge.categoria {
+        background: var(--light-bg);
+        color: var(--primary);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .review-table {
+        background: white;
+        border-radius: 30px;
+        padding: 25px;
+        box-shadow: var(--shadow-md);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        padding: 15px 12px;
+        color: var(--text-light);
+        font-weight: 500;
+        font-size: 0.9rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+    }
+
+    td {
+        padding: 15px 12px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        color: var(--text-dark);
+    }
+
+    tr:hover td {
+        background: var(--light-bg);
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm.view {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-sm.delete {
+        background: linear-gradient(135deg, #f56565, #c53030);
+        color: white;
+    }
+
+    .btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: white;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        border-radius: 50px;
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+        border-color: var(--primary);
+        transform: translateX(-5px);
+    }
+
+    .star-rating {
+        color: #ffd700;
+    }
+</style>
+
+<!-- Header -->
+<section class="header-section">
+    <div class="container">
+        <a href="/admin/produtos" class="back-btn mb-4">
+            <i class="bi bi-arrow-left"></i> Voltar para lista de produtos
+        </a>
+        
+        <div class="row align-items-center mt-4">
+            <div class="col-md-4">
+                <% if (produto.imagem) { %>
+                    <img src="/uploads/produtos/<%= produto.imagem.split('/').pop() %>" class="product-image">
+                <% } else { %>
+                    <div class="image-placeholder">
+                        <i class="bi bi-image"></i>
+                    </div>
+                <% } %>
+            </div>
+            <div class="col-md-8">
+                <h1 class="fw-light mb-3"><%= produto.name %></h1>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="badge categoria"><%= produto.categoria %></span>
+                    <span class="star-rating">
+                        <% if (produto.media_avaliacoes) { %>
+                            <%= Number(produto.media_avaliacoes).toFixed(1) %> ⭐
+                        <% } %>
+                    </span>
+                </div>
+                <p class="text-muted"><%= produto.description %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Conteúdo -->
+<div class="container">
+    <!-- Mensagens Flash -->
+    <% if (typeof errors !== 'undefined' && errors) { %>
+        <div class="alert alert-danger"><%= errors %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <div class="row">
+        <!-- Coluna da Esquerda - Informações do Produto -->
+        <div class="col-md-4">
+            <div class="info-card">
+                <h4><i class="bi bi-info-circle"></i> Informações do Produto</h4>
+                
+                <div class="info-row">
+                    <span class="info-label">ID:</span>
+                    <span class="info-value">#<%= produto.id %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Vendedor:</span>
+                    <span class="info-value">
+                        <a href="/admin/usuarios/<%= produto.vendedor_id %>"><%= produto.vendedor_email %></a>
+                    </span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Preço:</span>
+                    <span class="info-value">R$ <%= Number(produto.price).toFixed(2) %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Estoque:</span>
+                    <span class="info-value"><%= produto.estoque || 0 %> unidades</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Categoria:</span>
+                    <span class="info-value"><%= produto.categoria %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Criado em:</span>
+                    <span class="info-value"><%= new Date(produto.data_criacao).toLocaleDateString('pt-BR') %></span>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="bi bi-bar-chart"></i> Estatísticas</h4>
+                
+                <div class="info-row">
+                    <span class="info-label">Total de avaliações:</span>
+                    <span class="info-value"><%= avaliacoes.length %></span>
+                </div>
+            </div>
+            
+            <!-- Ações Rápidas -->
+            <div class="d-grid gap-2">
+                <a href="/admin/produtos/<%= produto.id %>/deletar?redirect=/admin/produtos" 
+                   class="btn-sm delete d-block text-center"
+                   onclick="return confirm('Deletar este produto?')">
+                    <i class="bi bi-trash"></i> Deletar Produto
+                </a>
+            </div>
+        </div>
+        
+        <!-- Coluna da Direita - Avaliações -->
+        <div class="col-md-8">
+            <div class="review-table">
+                <h4><i class="bi bi-star"></i> Avaliações do Produto (<%= avaliacoes.length %>)</h4>
+                
+                <% if (avaliacoes.length > 0) { %>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Avaliador</th>
+                                    <th>Nota</th>
+                                    <th>Comentário</th>
+                                    <th>Data</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% avaliacoes.forEach(av => { %>
+                                <tr>
+                                    <td><%= av.avaliador_email.split('@')[0] %></td>
+                                    <td class="star-rating"><%= av.nota %> ⭐</td>
+                                    <td><%= av.comentario || '-' %></td>
+                                    <td><%= new Date(av.data_avaliacao).toLocaleDateString('pt-BR') %></td>
+                                    <td>
+                                        <a href="/admin/avaliacao/<%= av.id %>/deletar?redirect=/admin/produtos/<%= produto.id %>" 
+                                           class="btn-sm delete"
+                                           onclick="return confirm('Deletar esta avaliação?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <p class="text-muted text-center py-4">Este produto não possui avaliações.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../includes/footer') %>

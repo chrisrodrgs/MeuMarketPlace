@@ -1,0 +1,275 @@
+<%- include('../includes/head') %>
+<%- include('../includes/nav1') %>
+
+<style>
+    :root {
+        --primary: #667eea;
+        --secondary: #764ba2;
+        --light-bg: #fafaff;
+        --text-dark: #2d3436;
+        --text-light: #636e72;
+        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
+        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
+        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
+        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .header-section {
+        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
+        padding: 40px 0;
+        margin-bottom: 30px;
+    }
+
+    .filter-section {
+        background: white;
+        border-radius: 30px;
+        padding: 20px;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 30px;
+    }
+
+    .search-box, .filter-select {
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        border-radius: 50px;
+        padding: 10px 20px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .search-box:focus, .filter-select:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: var(--shadow-md);
+    }
+
+    .table-section {
+        background: white;
+        border-radius: 30px;
+        padding: 25px;
+        box-shadow: var(--shadow-md);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        padding: 15px 12px;
+        color: var(--text-light);
+        font-weight: 500;
+        font-size: 0.9rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+    }
+
+    td {
+        padding: 15px 12px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        color: var(--text-dark);
+    }
+
+    tr:hover td {
+        background: var(--light-bg);
+    }
+
+    .product-image-sm {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .badge {
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+    }
+
+    .badge.categoria {
+        background: var(--light-bg);
+        color: var(--primary);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm.view {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-sm.delete {
+        background: linear-gradient(135deg, #f56565, #c53030);
+        color: white;
+    }
+
+    .btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 30px;
+    }
+
+    .page-item {
+        padding: 8px 15px;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        border-radius: 10px;
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .page-item:hover,
+    .page-item.active {
+        background: var(--gradient);
+        border-color: transparent;
+        color: white;
+    }
+
+    .star-rating {
+        color: #ffd700;
+    }
+</style>
+
+<!-- Header -->
+<section class="header-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fw-light">Gerenciar <span class="fw-bold" style="background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Produtos</span></h1>
+                <p class="text-muted">Total de <%= total %> produtos cadastrados</p>
+            </div>
+            <a href="/admin" class="btn-sm view">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Filtros -->
+<div class="container">
+    <div class="filter-section">
+        <form method="GET" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="search" class="search-box" placeholder="Buscar produtos..." value="<%= search %>">
+            </div>
+            <div class="col-md-4">
+                <select name="categoria" class="filter-select">
+                    <option value="">Todas as categorias</option>
+                    <% categorias.forEach(cat => { %>
+                        <option value="<%= cat.categoria %>" <%= categoriaFiltro === cat.categoria ? 'selected' : '' %>>
+                            <%= cat.categoria %> (<%= cat.total %>)
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn-sm view" style="width: 100%;">
+                    <i class="bi bi-search"></i> Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Mensagens Flash -->
+    <% if (typeof errors !== 'undefined' && errors) { %>
+        <div class="alert alert-danger"><%= errors %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <!-- Tabela de Produtos -->
+    <div class="table-section">
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagem</th>
+                        <th>Produto</th>
+                        <th>Vendedor</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Estoque</th>
+                        <th>Avaliações</th>
+                        <th>Média</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% produtos.forEach(prod => { %>
+                    <tr>
+                        <td><%= prod.id %></td>
+                        <td>
+                            <% if (prod.imagem) { %>
+                                <img src="/uploads/produtos/<%= prod.imagem.split('/').pop() %>" class="product-image-sm">
+                            <% } else { %>
+                                <div class="product-image-sm bg-light d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-image text-secondary"></i>
+                                </div>
+                            <% } %>
+                        </td>
+                        <td><%= prod.name %></td>
+                        <td><%= prod.vendedor_email.split('@')[0] %></td>
+                        <td>
+                            <span class="badge categoria"><%= prod.categoria %></span>
+                        </td>
+                        <td>R$ <%= Number(prod.price).toFixed(2) %></td>
+                        <td><%= prod.estoque || 0 %></td>
+                        <td><%= prod.total_avaliacoes || 0 %></td>
+                        <td class="star-rating">
+                            <% if (prod.media_avaliacoes) { %>
+                                <%= Number(prod.media_avaliacoes).toFixed(1) %> ⭐
+                            <% } else { %>
+                                -
+                            <% } %>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="/admin/produtos/<%= prod.id %>" class="btn-sm view">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="/admin/produtos/<%= prod.id %>/deletar" 
+                                   class="btn-sm delete"
+                                   onclick="return confirm('Deletar este produto?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    <% if (totalPaginas > 1) { %>
+    <div class="pagination">
+        <% for (let i = 1; i <= totalPaginas; i++) { %>
+            <a href="?page=<%= i %><%= search ? '&search=' + search : '' %><%= categoriaFiltro ? '&categoria=' + categoriaFiltro : '' %>" 
+               class="page-item <%= i === paginaAtual ? 'active' : '' %>">
+                <%= i %>
+            </a>
+        <% } %>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../includes/footer') %>

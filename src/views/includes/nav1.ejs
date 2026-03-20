@@ -48,20 +48,32 @@
             </ul>
             
             <ul class="navbar-nav">
+                <!-- Ícone do Carrinho (sempre visível) -->
+                <li class="nav-item position-relative me-2">
+                    <a class="nav-link" href="/carrinho" id="carrinhoLink">
+                        <i class="bi bi-cart3 fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                              id="carrinhoBadge" style="font-size: 0.7rem; display: none;">
+                            0
+                        </span>
+                    </a>
+                </li>
+                
                 <% if (user) { %>
+                    <!-- Dropdown do usuário -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" 
                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <% if (user.avatar) { %>
                                 <img src="/<%= user.avatar %>" alt="Avatar" 
-                                     class="rounded-circle me-1" 
+                                     class="rounded-circle me-2" 
                                      style="width: 30px; height: 30px; object-fit: cover;">
                             <% } else { %>
-                                <i class="bi bi-person-circle me-1"></i>
+                                <i class="bi bi-person-circle fs-5 me-2"></i>
                             <% } %>
-                            <%= user.email.split('@')[0] %>
+                            <span><%= user.email.split('@')[0] %></span>
                             <% if (user.isAdmin) { %>
-                                <span class="badge bg-danger ms-1">Admin</span>
+                                <span class="badge bg-danger ms-2">Admin</span>
                             <% } %>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -153,6 +165,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 <span class="mx-2">•</span>
                                                 <span>${prod.vendedor}</span>
                                             </div>
+                                            ${prod.mediaAvaliacoes ? `
+                                            <div class="small">
+                                                ${'⭐'.repeat(Math.round(prod.mediaAvaliacoes))} (${prod.mediaAvaliacoes})
+                                            </div>
+                                            ` : ''}
                                         </div>
                                     </div>
                                 </div>
@@ -176,6 +193,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Atualizar contagem do carrinho
+    function atualizarCarrinhoBadge() {
+        fetch('/carrinho/contagem')
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('carrinhoBadge');
+                if (data.total > 0) {
+                    badge.textContent = data.total;
+                    badge.style.display = 'inline';
+                } else {
+                    badge.style.display = 'none';
+                }
+            })
+            .catch(err => console.error('Erro ao carregar carrinho:', err));
+    }
+    
+    // Atualizar a cada 30 segundos
+    atualizarCarrinhoBadge();
+    setInterval(atualizarCarrinhoBadge, 30000);
 });
 </script>
 

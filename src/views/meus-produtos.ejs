@@ -1,352 +1,542 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
-<div class="container py-5">
-    <div class="row">
-        <div class="col-12">
-            <!-- Header com saudação e avatar -->
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 pb-2 border-bottom">
-                <div class="d-flex align-items-center">
-                    <% if (user.avatar) { %>
-                        <img src="/<%= user.avatar %>" alt="Avatar" 
-                             class="rounded-circle me-3 border border-2 border-primary"
-                             style="width: 60px; height: 60px; object-fit: cover;">
-                    <% } else { %>
-                        <div class="bg-light rounded-circle me-3 d-flex align-items-center justify-content-center border border-2 border-primary"
-                             style="width: 60px; height: 60px;">
-                            <i class="bi bi-person-circle text-secondary" style="font-size: 2rem;"></i>
-                        </div>
-                    <% } %>
-                    <div>
-                        <h1 class="display-5 fw-bold text-dark mb-1">
-                            <i class="bi bi-shop text-primary me-2"></i> Minha Vitrine
-                        </h1>
-                        <p class="text-secondary-emphasis lead small">
-                            Bem-vindo(a) de volta, <span class="fw-semibold text-dark"><%= user.email.split('@')[0] %></span>
-                        </p>
-                    </div>
-                </div>
-                <div class="mt-3 mt-md-0">
-                    <a href="/produtos/adicionar" class="btn btn-primary btn-lg shadow-sm px-4">
-                        <i class="bi bi-plus-circle me-2"></i> 
-                        <span class="d-none d-sm-inline">Anunciar Novo Produto</span>
-                        <span class="d-sm-none">Anunciar</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Mensagens Flash -->
-            <% if (typeof success !== 'undefined' && success) { %>
-                <div class="alert alert-success alert-dismissible fade show border-0 border-start border-5 border-success shadow-sm" role="alert">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-check-circle-fill fs-4 me-3 text-success"></i>
-                        <div><%= success %></div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <% } %>
-
-            <% if (typeof errors !== 'undefined' && errors) { %>
-                <div class="alert alert-danger alert-dismissible fade show border-0 border-start border-5 border-danger shadow-sm" role="alert">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-exclamation-triangle-fill fs-4 me-3 text-danger"></i>
-                        <div><%= errors %></div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <% } %>
-
-            <!-- Dashboard Cards -->
-            <% if (produtos && produtos.length > 0) { %>
-                <div class="row g-4 mb-5">
-                    <div class="col-md-6">
-                        <div class="card border-0 bg-gradient-primary text-white shadow-lg h-100">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="small text-white-50 text-uppercase tracking-wider">Total no catálogo</span>
-                                        <div class="display-3 fw-bold mt-2"><%= produtos.length %></div>
-                                        <p class="mb-0 mt-2 small text-white-50">
-                                            <i class="bi bi-box-seam me-1"></i> produtos anunciados
-                                        </p>
-                                    </div>
-                                    <div class="bg-white bg-opacity-25 rounded-circle p-4">
-                                        <i class="bi bi-grid-3x3-gap-fill fs-1"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="card border-0 bg-gradient-success text-white shadow-lg h-100">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="small text-white-50 text-uppercase tracking-wider">Valor do estoque</span>
-                                        <div class="display-3 fw-bold mt-2">
-                                            R$ <% 
-                                                let total = 0;
-                                                produtos.forEach(p => { total += Number(p.price); });
-                                            %><%= total.toFixed(2) %>
-                                        </div>
-                                        <p class="mb-0 mt-2 small text-white-50">
-                                            <i class="bi bi-cash-stack me-1"></i> investimento total
-                                        </p>
-                                    </div>
-                                    <div class="bg-white bg-opacity-25 rounded-circle p-4">
-                                        <i class="bi bi-coin fs-1"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Grid de Produtos -->
-                <div class="mb-4">
-                    <div class="d-flex align-items-center mb-4">
-                        <h5 class="fw-semibold text-uppercase tracking-wider text-secondary mb-0">
-                            <i class="bi bi-grid me-2"></i> Seus anúncios
-                        </h5>
-                        <span class="badge bg-light text-dark rounded-pill ms-3 px-3 py-2"><%= produtos.length %> itens</span>
-                    </div>
-                    
-                    <div class="row g-4">
-                        <% produtos.forEach(produto => { %>
-                            <div class="col-md-6 col-lg-4">
-                                <div class="card product-card h-100 border-0 shadow-hover">
-                                    <!-- Avatar do vendedor no canto superior -->
-                                    <div class="position-absolute top-0 start-0 m-3 z-index-1">
-                                        <div class="d-flex align-items-center bg-white bg-opacity-75 rounded-pill px-2 py-1 shadow-sm">
-                                            <% if (user.avatar) { %>
-                                                <img src="/<%= user.avatar %>" alt="Avatar" 
-                                                     class="rounded-circle me-1"
-                                                     style="width: 24px; height: 24px; object-fit: cover;">
-                                            <% } else { %>
-                                                <i class="bi bi-person-circle text-primary me-1"></i>
-                                            <% } %>
-                                            <span class="small fw-semibold">Você</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Badge de categoria -->
-                                    <div class="position-absolute top-0 end-0 m-3 z-index-1">
-                                        <span class="badge bg-light text-dark px-3 py-2 rounded-pill shadow-sm">
-                                            <i class="bi bi-tag me-1"></i> <%= produto.categoria || 'Geral' %>
-                                        </span>
-                                    </div>
-                                    
-                                    <!-- Imagem do produto -->
-                                    <div class="product-image">
-                                        <% if (produto.imagem) { 
-                                            let nomeArquivo = produto.imagem.split('/').pop();
-                                        %>
-                                            <img src="/uploads/produtos/<%= nomeArquivo %>" 
-                                                 alt="<%= produto.name %>" 
-                                                 class="w-100 h-100 object-fit-cover">
-                                        <% } else { %>
-                                            <div class="d-flex align-items-center justify-content-center h-100">
-                                                <i class="bi bi-image text-secondary" style="font-size: 3rem; opacity: 0.5;"></i>
-                                            </div>
-                                        <% } %>
-                                    </div>
-                                    
-                                    <div class="card-body p-4">
-                                        <!-- Título e data -->
-                                        <div class="mb-3">
-                                            <h5 class="card-title fw-bold mb-2 text-truncate"><%= produto.name %></h5>
-                                            <div class="d-flex align-items-center small text-secondary">
-                                                <i class="bi bi-calendar3 me-1"></i>
-                                                <%= new Date(produto.data_criacao).toLocaleDateString('pt-BR', {year: 'numeric', month: 'short', day: 'numeric'}) %>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Descrição -->
-                                        <p class="card-text text-secondary mb-3 small">
-                                            <%= produto.description.length > 80 ? produto.description.substring(0, 80) + '...' : produto.description %>
-                                        </p>
-                                        
-                                        <!-- Preço e ações -->
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <span class="small text-secondary">Preço</span>
-                                                <h4 class="text-primary fw-bold mb-0">R$ <%= Number(produto.price).toFixed(2).replace('.', ',') %></h4>
-                                            </div>
-                                            <div class="btn-group">
-                                                <a href="/produtos/editar/<%= produto.id %>" 
-                                                   class="btn btn-sm btn-outline-primary rounded-circle p-2 me-2" 
-                                                   data-bs-toggle="tooltip" title="Editar produto">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <a href="/produtos/deletar/<%= produto.id %>" 
-                                                   class="btn btn-sm btn-outline-danger rounded-circle p-2" 
-                                                   data-bs-toggle="tooltip" title="Deletar produto">
-                                                    <i class="bi bi-trash"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <% }) %>
-                    </div>
-                </div>
-            <% } else { %>
-                <!-- Estado vazio -->
-                <div class="row justify-content-center mt-5 pt-5">
-                    <div class="col-md-8 col-lg-6 text-center">
-                        <div class="empty-state p-5">
-                            <div class="empty-state-icon mb-4">
-                                <i class="bi bi-box text-primary" style="font-size: 5rem; opacity: 0.3;"></i>
-                            </div>
-                            <h2 class="fw-light mb-3">Sua vitrine está vazia</h2>
-                            <p class="text-secondary mb-4">
-                                Comece a vender agora mesmo! Anuncie seu primeiro produto e 
-                                alcance milhares de clientes em todo o Brasil.
-                            </p>
-                            
-                            <!-- Cards de dicas -->
-                            <div class="row g-3 mb-5">
-                                <div class="col-4">
-                                    <div class="bg-light rounded-3 p-3">
-                                        <i class="bi bi-camera text-primary fs-3"></i>
-                                        <p class="small mt-2 mb-0">Fotos de qualidade</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="bg-light rounded-3 p-3">
-                                        <i class="bi bi-chat-dots text-primary fs-3"></i>
-                                        <p class="small mt-2 mb-0">Descrição detalhada</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="bg-light rounded-3 p-3">
-                                        <i class="bi bi-tags text-primary fs-3"></i>
-                                        <p class="small mt-2 mb-0">Preço competitivo</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <a href="/produtos/adicionar" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow">
-                                <i class="bi bi-plus-circle me-2"></i> Anunciar Produto
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            <% } %>
-        </div>
-    </div>
-</div>
-
-<!-- CSS customizado -->
 <style>
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* ===== VARIÁVEIS ===== */
+    :root {
+        --primary: #667eea;
+        --secondary: #764ba2;
+        --light-bg: #fafaff;
+        --text-dark: #2d3436;
+        --text-light: #636e72;
+        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
+        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
+        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
+        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        --success: #48bb78;
+        --danger: #f56565;
+        --warning: #ecc94b;
     }
-    
-    .bg-gradient-success {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    }
-    
-    .tracking-wider {
-        letter-spacing: 0.05em;
-    }
-    
-    .product-card {
-        border-radius: 16px;
+
+    /* ===== HEADER ===== */
+    .page-header {
+        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
+        padding: 60px 0;
+        position: relative;
         overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 40px;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
+        animation: spinSlow 90s linear infinite;
+    }
+
+    .page-header::after {
+        content: '';
+        position: absolute;
+        bottom: -50%;
+        left: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(102,126,234,0.03) 0%, transparent 60%);
+        animation: spinSlow 120s linear infinite reverse;
+    }
+
+    @keyframes spinSlow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .page-header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+    }
+
+    .page-title span {
+        font-weight: 700;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .page-subtitle {
+        color: var(--text-light);
+        font-weight: 300;
+        font-size: 1.1rem;
+    }
+
+    /* ===== STATS CARDS ===== */
+    .stats-section {
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
         background: white;
+        border-radius: 30px;
+        padding: 25px;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 20px;
     }
-    
-    .product-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15) !important;
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
     }
-    
-    .product-image {
-        height: 180px;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--primary);
+    }
+
+    .stat-info h3 {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .stat-info p {
+        color: var(--text-light);
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    /* ===== BOTÃO ADICIONAR ===== */
+    .btn-adicionar {
+        background: var(--gradient);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 15px 30px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-adicionar:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        color: white;
+    }
+
+    /* ===== CARDS DE PRODUTO ===== */
+    .produtos-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .produto-card {
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(102, 126, 234, 0.05);
+        box-shadow: var(--shadow-sm);
+        height: 100%;
+        position: relative;
+    }
+
+    .produto-card:hover {
+        transform: translateY(-15px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .produto-card.inativo {
+        opacity: 0.8;
+        background: #fafafa;
+    }
+
+    .produto-imagem {
+        height: 200px;
         position: relative;
         overflow: hidden;
     }
-    
-    .product-image img {
-        transition: transform 0.3s ease;
+
+    .produto-imagem img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.8s ease;
     }
-    
-    .product-card:hover .product-image img {
-        transform: scale(1.05);
+
+    .produto-card:hover .produto-imagem img {
+        transform: scale(1.15);
     }
-    
-    .z-index-1 {
-        z-index: 1;
+
+    /* ===== BADGES ===== */
+    .badge-container {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        display: flex;
+        justify-content: space-between;
+        z-index: 2;
     }
-    
-    .text-white-50 {
-        color: rgba(255, 255, 255, 0.7) !important;
+
+    .badge-status {
+        padding: 6px 15px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        box-shadow: var(--shadow-sm);
     }
-    
-    .shadow-hover {
-        transition: box-shadow 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+
+    .badge-status.ativo {
+        background: linear-gradient(135deg, var(--success), #2f855a);
+        color: white;
     }
-    
+
+    .badge-status.inativo {
+        background: linear-gradient(135deg, var(--danger), #c53030);
+        color: white;
+    }
+
+    .badge-categoria {
+        background: white;
+        color: var(--primary);
+        padding: 6px 15px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .badge-estoque {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: rgba(0,0,0,0.6);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        backdrop-filter: blur(5px);
+        z-index: 2;
+    }
+
+    /* ===== CONTEÚDO DO PRODUTO ===== */
+    .produto-conteudo {
+        padding: 20px;
+    }
+
+    .produto-titulo {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .produto-preco {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 15px;
+    }
+
+    .produto-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .produto-info i {
+        color: var(--primary);
+        font-size: 1rem;
+    }
+
+    /* ===== BOTÕES DE AÇÃO ===== */
+    .acoes-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .btn-acao {
+        flex: 1;
+        padding: 10px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .btn-acao.editar {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+    .btn-acao.editar:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-acao.deletar {
+        background: white;
+        color: var(--danger);
+        border: 2px solid rgba(245, 101, 101, 0.2);
+    }
+
+    .btn-acao.deletar:hover {
+        border-color: var(--danger);
+        transform: translateY(-2px);
+    }
+
+    /* ===== ESTADO VAZIO ===== */
     .empty-state {
-        animation: fadeInUp 0.6s ease;
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 50px;
+        box-shadow: var(--shadow-sm);
+        grid-column: 1 / -1;
     }
-    
-    .empty-state-icon {
+
+    .empty-state i {
+        font-size: 5rem;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
         animation: float 3s ease-in-out infinite;
     }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+
+    .empty-state h3 {
+        font-size: 2rem;
+        font-weight: 300;
+        color: var(--text-dark);
+        margin-bottom: 15px;
     }
-    
+
+    .empty-state p {
+        color: var(--text-light);
+        font-weight: 300;
+        margin-bottom: 30px;
+    }
+
     @keyframes float {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-10px);
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 1200px) {
+        .produtos-grid {
+            grid-template-columns: repeat(3, 1fr);
         }
     }
-    
+
+    @media (max-width: 992px) {
+        .produtos-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
     @media (max-width: 768px) {
-        .display-3 {
+        .produtos-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .page-title {
             font-size: 2rem;
         }
         
-        .product-image {
-            height: 140px;
-        }
-        
-        .rounded-circle.p-4 {
-            padding: 1rem !important;
+        .stats-section .row {
+            flex-direction: column;
         }
     }
 </style>
 
-<!-- Inicializar tooltips -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    });
-</script>
+<!-- Header da Página -->
+<section class="page-header">
+    <div class="container page-header-content">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">
+                    Meus <span>Produtos</span>
+                </h1>
+                <p class="page-subtitle">
+                    Gerencie todos os seus produtos em um só lugar
+                </p>
+            </div>
+            <a href="/produtos/adicionar" class="btn-adicionar">
+                <i class="bi bi-plus-circle"></i>
+                Novo Produto
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Conteúdo Principal -->
+<div class="container">
+    <!-- Mensagens Flash -->
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (typeof errors !== 'undefined' && errors) { %>
+        <div class="alert alert-danger"><%= errors %></div>
+    <% } %>
+
+    <!-- Cards de Estatísticas -->
+    <div class="stats-section">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.length %></h3>
+                        <p>Total de produtos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.filter(p => p.status === 'ativo').length %></h3>
+                        <p>Produtos ativos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.filter(p => p.status !== 'ativo').length %></h3>
+                        <p>Produtos inativos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Produtos -->
+    <% if (produtos && produtos.length > 0) { %>
+        <div class="produtos-grid">
+            <% produtos.forEach(produto => { %>
+                <div class="produto-card <%= produto.status !== 'ativo' ? 'inativo' : '' %>">
+                    
+                    <!-- Badges de Status e Categoria -->
+                    <div class="badge-container">
+                        <% if (produto.status === 'ativo') { %>
+                            <span class="badge-status ativo">
+                                <i class="bi bi-check-circle-fill"></i> Ativo
+                            </span>
+                        <% } else { %>
+                            <span class="badge-status inativo">
+                                <i class="bi bi-x-circle-fill"></i> Inativo
+                            </span>
+                        <% } %>
+                        
+                        <span class="badge-categoria">
+                            <i class="bi bi-tag"></i> <%= produto.categoria || 'Geral' %>
+                        </span>
+                    </div>
+                    
+                    <!-- Imagem do Produto -->
+                    <div class="produto-imagem">
+                        <% if (produto.imagemUrl) { %>
+                            <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
+                        <% } else { %>
+                            <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                                <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                            </div>
+                        <% } %>
+                        
+                        <!-- Badge de Estoque -->
+                        <span class="badge-estoque">
+                            <i class="bi bi-box"></i> <%= produto.estoque || 0 %> unid.
+                        </span>
+                    </div>
+                    
+                    <!-- Informações do Produto -->
+                    <div class="produto-conteudo">
+                        <h3 class="produto-titulo"><%= produto.name %></h3>
+                        <div class="produto-preco">R$ <%= Number(produto.price).toFixed(2) %></div>
+                        
+                        <div class="produto-info">
+                            <i class="bi bi-calendar"></i>
+                            <span>Adicionado em <%= new Date(produto.data_criacao).toLocaleDateString('pt-BR') %></span>
+                        </div>
+                        
+                        <!-- Ações -->
+                        <div class="acoes-container">
+                            <a href="/produtos/editar/<%= produto.id %>" class="btn-acao editar">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <a href="/produtos/deletar/<%= produto.id %>" class="btn-acao deletar" 
+                               onclick="return confirm('Tem certeza que deseja deletar este produto?')">
+                                <i class="bi bi-trash"></i> Deletar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <!-- Estado Vazio -->
+        <div class="empty-state">
+            <i class="bi bi-box"></i>
+            <h3>Nenhum produto cadastrado</h3>
+            <p>Comece agora mesmo a vender seus produtos!</p>
+            <a href="/produtos/adicionar" class="btn-adicionar">
+                <i class="bi bi-plus-circle"></i>
+                Adicionar Primeiro Produto
+            </a>
+        </div>
+    <% } %>
+</div>
 
 <%- include('./includes/footer') %>

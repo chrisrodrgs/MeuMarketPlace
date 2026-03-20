@@ -17,20 +17,22 @@ exports.index = async (req, res) => {
             [usuarioId]
         );
 
-        // DEBUG: Verificar o que veio do banco (AGORA DENTRO DA FUNÇÃO)
-        if (produtos && produtos.length > 0) {
-            console.log('Produto encontrado:', produtos[0]);
-            console.log('Caminho da imagem no banco:', produtos[0].imagem);
-        } else {
-            console.log('Nenhum produto encontrado para o usuário', usuarioId);
-        }
+        // Processar produtos para adicionar imagemUrl e outras propriedades
+        const produtosProcessados = produtos.map(produto => ({
+            ...produto,
+            imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
+            precoFormatado: Number(produto.price).toLocaleString('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL' 
+            })
+        }));
 
         // Flash messages para feedback
         const success = req.flash('success');
         const errors = req.flash('errors');
 
         res.render('meus-produtos', { 
-            produtos: produtos || [],
+            produtos: produtosProcessados,
             usuario: req.session.user,
             success: success.length > 0 ? success : null,
             errors: errors.length > 0 ? errors : null
@@ -48,9 +50,9 @@ exports.listarPorUsuarioId = async (req, res) => {
     try {
         const usuarioId = req.params.id;
 
-        // Buscar produtos do banco de dados
+        // Buscar produtos do banco de dados com informações do vendedor
         const produtos = await db.all(
-            `SELECT p.*, u.email as usuario_email 
+            `SELECT p.*, u.email as usuario_email, u.avatar as usuario_avatar
              FROM products p 
              JOIN usuarios u ON p.usuario_id = u.id 
              WHERE p.usuario_id = ? 
@@ -58,8 +60,19 @@ exports.listarPorUsuarioId = async (req, res) => {
             [usuarioId]
         );
 
+        // Processar produtos para adicionar imagemUrl
+        const produtosProcessados = produtos.map(produto => ({
+            ...produto,
+            imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
+            precoFormatado: Number(produto.price).toLocaleString('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL' 
+            }),
+            avatarUrl: produto.usuario_avatar ? `/uploads/avatars/${produto.usuario_avatar.split('/').pop()}` : null
+        }));
+
         res.render('produtos-usuario', { 
-            produtos: produtos || [],
+            produtos: produtosProcessados,
             usuarioId: usuarioId
         });
 
