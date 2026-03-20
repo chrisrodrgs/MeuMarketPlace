@@ -11,12 +11,12 @@ class ChatServer {
         });
         
         this.onlineUsers = new Map(); // { userId: socketId }
+        this.userRooms = new Map(); // { userId: roomId }
         this.setupMiddleware();
         this.setupEvents();
     }
 
     setupMiddleware() {
-        // Middleware de autenticação
         this.io.use(async (socket, next) => {
             const userId = socket.handshake.auth.userId;
             const userEmail = socket.handshake.auth.userEmail;
@@ -42,10 +42,39 @@ class ChatServer {
             // Registrar usuário online
             this.onlineUsers.set(socket.userId, socket.id);
             
-            // Entrar na sala apropriada
             if (socket.isAdmin) {
                 socket.join('admins');
                 console.log(`👑 Admin ${socket.userName} entrou na sala de admins`);
+                
+                // Enviar lista de usuários online para o admin
+                this.enviarListaUsuarios(socket);
+                
+                // Admin pode entrar em salas de usuários específicas
+                socket.on('join_user_room', (data) => {
+                    // Sair da sala anterior se estiver em uma
+                    const roomAnterior = this.userRooms.get(socket.userId);
+                    if (roomAnterior) {
+                        socket.leave(roomAnterior);
+                        console.log(`👑 Admin ${socket.userName} saiu da sala ${roomAnterior}`);
+                    }
+                    
+                    const userRoom = `user-${data.userId}`;
+                    socket.join(userRoom);
+                    this.userRooms.set(socket.userId, userRoom);
+                    console.log(`👑 Admin ${socket.userName} entrou na sala do usuário ${data.userId}`);
+                    
+                    // Carregar histórico da conversa
+                    this.carregarHistoricoConversa(socket, data.userId);
+                });
+                
+                socket.on('leave_user_room', () => {
+                    const room = this.userRooms.get(socket.userId);
+                    if (room) {
+                        socket.leave(room);
+                        this.userRooms.delete(socket.userId);
+                        console.log(`👑 Admin ${socket.userName} saiu da sala`);
+                    }
+                });
             } else {
                 const userRoom = `user-${socket.userId}`;
                 socket.join(userRoom);
@@ -57,10 +86,10 @@ class ChatServer {
                     userName: socket.userName,
                     userEmail: socket.userEmail
                 });
+                
+                // Carregar histórico do usuário
+                this.carregarHistoricoUsuario(socket);
             }
-
-            // Enviar histórico de mensagens
-            this.sendMessageHistory(socket);
 
             // Evento de nova mensagem
             socket.on('send_message', (data) => this.handleNewMessage(socket, data));
@@ -76,10 +105,61 @@ class ChatServer {
         });
     }
 
+    async enviarListaUsuarios(socket) {
+        try {
+            const usuarios = await db.all(`
+                SELECT u.id, u.email, u.avatar,
+                       (SELECT COUNT(*) FROM messages 
+                        WHERE conversation_id = 'user-' || u.id 
+                        AND read = 0 AND sender_id != ?) as unread_count,
+                       (SELECT message FROM messages 
+                        WHERE conversation_id = 'user-' || u.id 
+                        ORDER BY created_at DESC LIMIT 1) as last_message,
+                       (SELECT created_at FROM messages 
+                        WHERE conversation_id = 'user-' || u.id 
+                        ORDER BY created_at DESC LIMIT 1) as last_message_date
+                FROM usuarios u
+                WHERE u.id != ?
+                ORDER BY last_message_date DESC
+            `, [socket.userId, socket.userId]);
+            
+            socket.emit('lista_usuarios', usuarios);
+        } catch (error) {
+            console.error('Erro ao listar usuários:', error);
+        }
+    }
+
+    async carregarHistoricoConversa(socket, usuarioId) {
+        try {
+            const messages = await db.all(`
+                SELECT * FROM messages 
+                WHERE conversation_id = ? OR (sender_id = ? AND is_admin = 1) OR (sender_id = ? AND is_admin = 0)
+                ORDER BY created_at ASC
+            `, [`user-${usuarioId}`, usuarioId, usuarioId]);
+            
+            socket.emit('historico_conversa', { userId: usuarioId, messages });
+        } catch (error) {
+            console.error('Erro ao carregar histórico:', error);
+        }
+    }
+
+    async carregarHistoricoUsuario(socket) {
+        try {
+            const messages = await db.all(`
+                SELECT * FROM messages 
+                WHERE conversation_id = ? OR sender_id = ?
+                ORDER BY created_at ASC
+            `, [`user-${socket.userId}`, socket.userId]);
+            
+            socket.emit('message_history', messages);
+        } catch (error) {
+            console.error('Erro ao carregar histórico:', error);
+        }
+    }
+
     async handleNewMessage(socket, data) {
         try {
             const { message, userId } = data;
-
             if (!message || message.trim() === '') return;
 
             console.log(`📨 Nova mensagem de ${socket.userName}: "${message.substring(0, 30)}..."`);
@@ -88,14 +168,12 @@ class ChatServer {
             let recipientId;
 
             if (socket.isAdmin) {
-                // Admin respondendo para um usuário específico
                 recipientId = parseInt(userId);
                 conversationId = `user-${recipientId}`;
                 console.log(`   ➡️ Admin respondendo para usuário ${recipientId}`);
             } else {
-                // Usuário enviando para admin
                 recipientId = 'admin';
-                conversationId = 'admin';
+                conversationId = `user-${socket.userId}`;
                 console.log(`   ➡️ Usuário enviando para admin`);
             }
 
@@ -114,30 +192,37 @@ class ChatServer {
                 ]
             );
 
-            // Buscar mensagem salva
             const savedMessage = await db.get(
                 'SELECT * FROM messages WHERE id = ?',
                 [result.id]
             );
 
-            // Formatar mensagem para envio
             const messageData = {
                 ...savedMessage,
                 created_at: new Date(savedMessage.created_at).toISOString()
             };
 
-            // Emitir para as salas apropriadas
+            // Enviar para as salas apropriadas - CORRIGIDO PARA NÃO DUPLICAR
             if (socket.isAdmin) {
-                // Admin: enviar para o usuário específico e para todos os admins
+                // Admin: enviar APENAS para o usuário específico e para o próprio admin
                 this.io.to(`user-${recipientId}`).emit('receive_message', messageData);
-                this.io.to('admins').emit('receive_message', messageData);
-                console.log(`   ✅ Mensagem enviada para usuário ${recipientId} e admins`);
-            } else {
-                // Usuário: enviar para todos os admins
-                this.io.to('admins').emit('receive_message', messageData);
-                // Também enviar de volta para o próprio usuário (para aparecer na interface)
+                // Enviar apenas para o admin que enviou a mensagem (não para todos)
                 socket.emit('receive_message', messageData);
-                console.log(`   ✅ Mensagem enviada para admins`);
+                
+                // Atualizar lista de usuários para o admin
+                this.enviarListaUsuarios(socket);
+            } else {
+                // Usuário: enviar para todos os admins e para o próprio usuário
+                this.io.to('admins').emit('receive_message', messageData);
+                // Enviar apenas para o usuário que enviou a mensagem
+                socket.emit('receive_message', messageData);
+                
+                // Notificar admin sobre nova mensagem
+                this.io.to('admins').emit('nova_mensagem_usuario', {
+                    userId: socket.userId,
+                    userName: socket.userName,
+                    message: message
+                });
             }
 
         } catch (error) {
@@ -146,44 +231,10 @@ class ChatServer {
         }
     }
 
-    async sendMessageHistory(socket) {
-        try {
-            let messages = [];
-
-            if (socket.isAdmin) {
-                // Admin vê todas as mensagens (últimas 100)
-                messages = await db.all(`
-                    SELECT * FROM messages 
-                    ORDER BY created_at DESC 
-                    LIMIT 100
-                `);
-                console.log(`📚 Admin carregou ${messages.length} mensagens do histórico`);
-            } else {
-                // Usuário vê mensagens da sua conversa
-                messages = await db.all(`
-                    SELECT * FROM messages 
-                    WHERE conversation_id = ? OR sender_id = ?
-                    ORDER BY created_at DESC 
-                    LIMIT 50
-                `, [`user-${socket.userId}`, socket.userId]);
-                console.log(`👤 Usuário ${socket.userName} carregou ${messages.length} mensagens`);
-            }
-
-            // Inverter para ordem cronológica
-            messages.reverse();
-
-            socket.emit('message_history', messages);
-
-        } catch (error) {
-            console.error('❌ Erro ao carregar histórico:', error);
-        }
-    }
-
     handleTyping(socket, data) {
         const { isTyping, userId } = data;
 
         if (socket.isAdmin) {
-            // Admin digitando - notificar usuário específico
             if (userId) {
                 this.io.to(`user-${userId}`).emit('user_typing', {
                     userId: socket.userId,
@@ -192,7 +243,6 @@ class ChatServer {
                 });
             }
         } else {
-            // Usuário digitando - notificar admins
             this.io.to('admins').emit('user_typing', {
                 userId: socket.userId,
                 userName: socket.userName,
@@ -204,7 +254,6 @@ class ChatServer {
     async handleMarkRead(socket, data) {
         try {
             const { messageIds } = data;
-            
             if (messageIds && messageIds.length > 0) {
                 await db.run(
                     `UPDATE messages SET read = 1 WHERE id IN (${messageIds.join(',')})`
@@ -220,7 +269,6 @@ class ChatServer {
         this.onlineUsers.delete(socket.userId);
         
         if (!socket.isAdmin) {
-            // Notificar admins que usuário ficou offline
             this.io.to('admins').emit('user_offline', {
                 userId: socket.userId,
                 userName: socket.userName

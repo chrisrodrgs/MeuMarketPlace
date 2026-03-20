@@ -5,6 +5,7 @@ const homeController = require('./src/controllers/homeController');
 const loginController = require('./src/controllers/loginController');
 const perfilController = require('./src/controllers/perfilController');
 const adminController = require('./src/controllers/adminController');
+const adminChatController = require('./src/controllers/adminChatController');
 const searchController = require('./src/controllers/searchController');
 const categoriaController = require('./src/controllers/categoriaController');
 const avaliacaoController = require('./src/controllers/avaliacaoController');
@@ -67,6 +68,7 @@ router.get('/admin/produtos', adminController.listarProdutos);
 router.get('/admin/produtos/:id', adminController.verProduto);
 router.get('/admin/produtos/:id/deletar', adminController.deletarProduto);
 router.get('/admin/avaliacao/:id/deletar', adminController.deletarAvaliacao);
+router.get('/admin/chat', adminChatController.index);
 
 // Rotas de Produtos
 // Listar produtos do usuário logado
@@ -79,7 +81,7 @@ router.post('/produtos/adicionar',
     produtoAdcController.addProduto
 );
 
-// Editar produto (CORRIGIDO: agora usa updateProduto em vez de updateProdutoTeste)
+// Editar produto
 router.get('/produtos/editar/:id', produtoController.renderEditForm);
 router.post('/produtos/editar/:id', produtoController.updateProduto);
 
