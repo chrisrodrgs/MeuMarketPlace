@@ -1,163 +1,797 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-primary text-white rounded-top-4 py-3">
-                    <h4 class="mb-0"><i class="bi bi-plus-circle me-2"></i> Anunciar Novo Produto</h4>
+<style>
+    /* ===== VARIÁVEIS ===== */
+    :root {
+        --primary: #667eea;
+        --secondary: #764ba2;
+        --light-bg: #fafaff;
+        --text-dark: #2d3436;
+        --text-light: #636e72;
+        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
+        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
+        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
+        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        --success: #48bb78;
+        --danger: #f56565;
+        --warning: #ecc94b;
+    }
+
+    /* ===== BREADCRUMB ===== */
+    .breadcrumb-section {
+        background: white;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin: 0;
+    }
+
+    .breadcrumb-item a {
+        color: var(--text-light);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        color: var(--primary);
+    }
+
+    .breadcrumb-item.active {
+        color: var(--primary);
+        font-weight: 500;
+    }
+
+    /* ===== HEADER DA PÁGINA ===== */
+    .page-header {
+        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
+        padding: 60px 0;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
+        animation: spinSlow 90s linear infinite;
+    }
+
+    .page-header::after {
+        content: '';
+        position: absolute;
+        bottom: -50%;
+        left: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(102,126,234,0.03) 0%, transparent 60%);
+        animation: spinSlow 120s linear infinite reverse;
+    }
+
+    @keyframes spinSlow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .page-header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+    }
+
+    .page-title span {
+        font-weight: 700;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .page-subtitle {
+        color: var(--text-light);
+        font-weight: 300;
+        font-size: 1.1rem;
+    }
+
+    /* ===== FORM CARD ===== */
+    .form-card {
+        background: white;
+        border-radius: 40px;
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        margin-top: -40px;
+        position: relative;
+        z-index: 3;
+        margin-bottom: 60px;
+    }
+
+    .form-card-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        padding: 30px 40px;
+        color: white;
+    }
+
+    .form-card-header h2 {
+        font-size: 1.8rem;
+        font-weight: 500;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-card-header h2 i {
+        font-size: 2rem;
+    }
+
+    .form-card-header p {
+        opacity: 0.9;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .form-card-body {
+        padding: 40px;
+    }
+
+    /* ===== UPLOAD AREA ===== */
+    .upload-section {
+        margin-bottom: 40px;
+    }
+
+    .section-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+    }
+
+    .section-label i {
+        color: var(--primary);
+        font-size: 1.3rem;
+    }
+
+    .upload-area {
+        border: 2px dashed rgba(102, 126, 234, 0.3);
+        border-radius: 30px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: var(--light-bg);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .upload-area:hover {
+        border-color: var(--primary);
+        background: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .upload-area i {
+        font-size: 4rem;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 15px;
+    }
+
+    .upload-area h4 {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 5px;
+    }
+
+    .upload-area p {
+        color: var(--text-light);
+        margin-bottom: 10px;
+    }
+
+    .upload-area .btn-elegante.small {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
+
+    .preview-container {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .preview-image {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 20px;
+        border: 3px solid var(--primary);
+        padding: 3px;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 15px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ===== FORM ELEMENTS ===== */
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .form-label i {
+        color: var(--primary);
+    }
+
+    .form-control {
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        border-radius: 20px;
+        padding: 12px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        width: 100%;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control-lg {
+        padding: 15px 25px;
+        font-size: 1.1rem;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L0 4h16L8 12z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 20px center;
+        background-size: 16px;
+        padding-right: 50px;
+    }
+
+    /* ===== STATUS TOGGLE ===== */
+    .status-container {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        border-radius: 30px;
+        padding: 25px;
+        margin-bottom: 30px;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .status-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .status-title i {
+        color: var(--primary);
+    }
+
+    .status-option {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: white;
+        border-radius: 20px;
+        margin-bottom: 10px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .status-option:hover {
+        border-color: var(--primary);
+        transform: translateX(5px);
+    }
+
+    .status-option input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        margin-right: 15px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+
+    .status-option-content {
+        flex: 1;
+    }
+
+    .status-option-title {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .status-option-title i {
+        font-size: 1.1rem;
+    }
+
+    .status-option-desc {
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .status-badge.ativo {
+        background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(72, 187, 120, 0.2));
+        color: #2f855a;
+    }
+
+    .status-badge.inativo {
+        background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(245, 101, 101, 0.2));
+        color: #c53030;
+    }
+
+    /* ===== BOTÕES ELEGANTES ===== */
+    .btn-elegante {
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.4s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .btn-elegante::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s ease, height 0.6s ease;
+        z-index: -1;
+    }
+
+    .btn-elegante:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-elegante.primary {
+        background: var(--gradient);
+        color: white;
+    }
+
+    .btn-elegante.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-elegante.secondary {
+        background: white;
+        color: var(--primary);
+        border: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .btn-elegante.secondary:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    /* ===== MENSAGENS FLASH ===== */
+    .alert {
+        border-radius: 20px;
+        border: none;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        animation: slideDown 0.5s ease;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(72, 187, 120, 0.2));
+        color: #2f855a;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(245, 101, 101, 0.2));
+        color: #c53030;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ===== ROW COM DOIS CAMPOS ===== */
+    .row-duo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .form-card-header {
+            padding: 25px;
+        }
+        
+        .form-card-body {
+            padding: 25px;
+        }
+        
+        .row-duo {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .upload-area {
+            padding: 25px;
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+        }
+        
+        .upload-area h4 {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<!-- Breadcrumb -->
+<section class="breadcrumb-section">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/meus-produtos">Meus Produtos</a></li>
+                <li class="breadcrumb-item active">Anunciar Produto</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Header da Página -->
+<section class="page-header">
+    <div class="container page-header-content">
+        <div class="text-center">
+            <h1 class="page-title">
+                Anunciar <span>Novo Produto</span>
+            </h1>
+            <p class="page-subtitle">
+                Compartilhe seu produto com milhares de compradores
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Formulário Principal -->
+<div class="container">
+    <div class="form-card">
+        <div class="form-card-header">
+            <h2>
+                <i class="bi bi-plus-circle me-2"></i>
+                Informações do Produto
+            </h2>
+            <p>Preencha os dados abaixo para criar seu anúncio</p>
+        </div>
+        
+        <div class="form-card-body">
+            <!-- Mensagens Flash -->
+            <% if (typeof errors !== 'undefined' && errors) { %>
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <%= errors %>
                 </div>
-                <div class="card-body p-4">
+            <% } %>
+
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <%= success %>
+                </div>
+            <% } %>
+
+            <form action="/produtos/adicionar" method="POST" enctype="multipart/form-data">
+                <!-- Seção de Upload -->
+                <div class="upload-section">
+                    <div class="section-label">
+                        <i class="bi bi-camera"></i>
+                        <span>Imagem do Produto</span>
+                    </div>
                     
-                    <!-- Mensagens Flash -->
-                    <% if (typeof errors !== 'undefined' && errors) { %>
-                        <div class="alert alert-danger"><%= errors %></div>
-                    <% } %>
-
-                    <% if (typeof success !== 'undefined' && success) { %>
-                        <div class="alert alert-success"><%= success %></div>
-                    <% } %>
-
-                    <!-- IMPORTANTE: enctype="multipart/form-data" -->
-                    <form action="/produtos/adicionar" method="POST" enctype="multipart/form-data">
-                        
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Imagem do Produto</label>
-                            <div class="border rounded-3 p-4 text-center bg-light" id="dropArea">
-                                <i class="bi bi-cloud-upload fs-1 text-primary mb-3"></i>
-                                <p class="mb-2">Arraste uma imagem ou <span class="text-primary">clique para selecionar</span></p>
-                                <p class="text-muted small mb-3">Formatos: JPG, PNG, GIF (max. 5MB)</p>
-                                <input type="file" class="form-control d-none" id="imagem" name="imagem" accept="image/*">
-                                <button type="button" class="btn btn-outline-primary btn-sm" id="selectImageBtn">
-                                    <i class="bi bi-folder2-open me-1"></i> Escolher Arquivo
-                                </button>
-                                <div id="previewContainer" class="mt-3 d-none">
-                                    <img src="#" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="nome" class="form-label fw-semibold">Nome do Produto *</label>
-                            <input type="text" class="form-control form-control-lg" id="nome" name="nome" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="descricao" class="form-label fw-semibold">Descrição *</label>
-                            <textarea class="form-control" id="descricao" name="descricao" rows="4" required></textarea>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="preco" class="form-label fw-semibold">Preço (R$) *</label>
-                                <input type="number" class="form-control form-control-lg" id="preco" name="preco" 
-                                       step="0.01" min="0.01" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="categoria" class="form-label fw-semibold">Categoria *</label>
-                                <select class="form-select form-select-lg" id="categoria" name="categoria" required>
-                                    <option value="">Selecione...</option>
-                                    <% categorias.forEach(categoria => { %>
-                                        <option value="<%= categoria %>"><%= categoria %></option>
-                                    <% }) %>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="d-flex gap-3 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg px-5 flex-grow-1">
-                                <i class="bi bi-check-circle me-2"></i> Publicar Anúncio
-                            </button>
-                            <a href="/meus-produtos" class="btn btn-outline-secondary btn-lg px-4">
-                                Cancelar
-                            </a>
-                        </div>
-                    </form>
+                    <div class="upload-area" id="dropArea">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <h4>Upload de imagem</h4>
+                        <p>Arraste uma imagem ou clique para selecionar</p>
+                        <small class="text-muted d-block mb-3">Formatos: JPG, PNG, GIF (max. 5MB)</small>
+                        <button type="button" class="btn-elegante primary small" id="selectImageBtn">
+                            <i class="bi bi-folder2-open"></i>
+                            Escolher Arquivo
+                        </button>
+                        <input type="file" class="d-none" id="imagem" name="imagem" accept="image/*">
+                    </div>
+                    
+                    <div id="previewContainer" class="preview-container" style="display: none;">
+                        <img src="#" alt="Preview" class="preview-image" id="previewImage">
+                        <button type="button" class="btn-elegante secondary small" onclick="cancelPreview()">
+                            <i class="bi bi-arrow-repeat"></i>
+                            Escolher outra imagem
+                        </button>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Campos do Formulário -->
+                <div class="form-group">
+                    <label for="nome" class="form-label">
+                        <i class="bi bi-tag"></i>
+                        Nome do Produto *
+                    </label>
+                    <input type="text" class="form-control form-control-lg" id="nome" name="nome" 
+                           placeholder="Ex: Brownie de Doce de Leite" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao" class="form-label">
+                        <i class="bi bi-card-text"></i>
+                        Descrição *
+                    </label>
+                    <textarea class="form-control form-control-lg" id="descricao" name="descricao" 
+                              placeholder="Descreva seu produto com detalhes..." rows="5" required></textarea>
+                </div>
+
+                <div class="row-duo">
+                    <div class="form-group">
+                        <label for="preco" class="form-label">
+                            <i class="bi bi-currency-dollar"></i>
+                            Preço (R$) *
+                        </label>
+                        <input type="number" class="form-control form-control-lg" id="preco" name="preco" 
+                               step="0.01" min="0.01" placeholder="0,00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estoque" class="form-label">
+                            <i class="bi bi-box"></i>
+                            Estoque *
+                        </label>
+                        <input type="number" class="form-control form-control-lg" id="estoque" name="estoque" 
+                               min="0" step="1" placeholder="Quantidade em estoque" required>
+                    </div>
+                </div>
+
+                <div class="row-duo">
+                    <div class="form-group">
+                        <label for="categoria" class="form-label">
+                            <i class="bi bi-grid"></i>
+                            Categoria *
+                        </label>
+                        <select class="form-control form-control-lg" id="categoria" name="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <% categorias.forEach(categoria => { %>
+                                <option value="<%= categoria %>"><%= categoria %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <!-- Espaço vazio para manter o grid -->
+                    </div>
+                </div>
+
+                <!-- NOVA SEÇÃO: Status do Produto -->
+                <div class="status-container">
+                    <div class="status-title">
+                        <i class="bi bi-toggle-on"></i>
+                        Status do Produto
+                    </div>
+                    
+                    <div class="status-option">
+                        <input type="radio" name="status" id="statusAtivo" value="ativo" checked>
+                        <div class="status-option-content">
+                            <div class="status-option-title">
+                                <i class="bi bi-check-circle-fill" style="color: #48bb78;"></i>
+                                Ativo (disponível para venda)
+                                <span class="status-badge ativo">Ativo</span>
+                            </div>
+                            <div class="status-option-desc">
+                                Clientes podem ver e comprar este produto (desde que haja estoque)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="status-option">
+                        <input type="radio" name="status" id="statusInativo" value="inativo">
+                        <div class="status-option-content">
+                            <div class="status-option-title">
+                                <i class="bi bi-x-circle-fill" style="color: #f56565;"></i>
+                                Inativo (indisponível para venda)
+                                <span class="status-badge inativo">Inativo</span>
+                            </div>
+                            <div class="status-option-desc">
+                                O produto aparece na loja mas não pode ser comprado (útil para pausar vendas)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 text-muted small">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Você pode alterar esta configuração a qualquer momento na página de edição do produto.
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="d-flex gap-3 mt-5">
+                    <button type="submit" class="btn-elegante primary flex-grow-1">
+                        <i class="bi bi-check-circle"></i>
+                        Publicar Anúncio
+                    </button>
+                    <a href="/meus-produtos" class="btn-elegante secondary">
+                        <i class="bi bi-x-lg"></i>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- JavaScript para preview da imagem -->
 <script>
-    document.getElementById('selectImageBtn').addEventListener('click', function() {
-        document.getElementById('imagem').click();
-    });
-
-    document.getElementById('imagem').addEventListener('change', function(e) {
-        const file = e.target.files[0];
+    // Elementos DOM
+    const dropArea = document.getElementById('dropArea');
+    const imagemInput = document.getElementById('imagem');
+    const selectImageBtn = document.getElementById('selectImageBtn');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    
+    // Função para mostrar preview
+    function showPreview(file) {
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const preview = document.querySelector('#previewContainer img');
-                preview.src = e.target.result;
-                document.getElementById('previewContainer').classList.remove('d-none');
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'flex';
+                dropArea.style.display = 'none';
             }
             reader.readAsDataURL(file);
         }
-    });
-
+    }
+    
+    // Cancelar preview
+    window.cancelPreview = function() {
+        previewContainer.style.display = 'none';
+        dropArea.style.display = 'block';
+        imagemInput.value = '';
+    }
+    
+    // Clique no botão de selecionar
+    if (selectImageBtn) {
+        selectImageBtn.addEventListener('click', function() {
+            imagemInput.click();
+        });
+    }
+    
+    // Clique na área de upload
+    if (dropArea) {
+        dropArea.addEventListener('click', function() {
+            imagemInput.click();
+        });
+    }
+    
+    // Mudança no input file
+    if (imagemInput) {
+        imagemInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            showPreview(file);
+        });
+    }
+    
     // Drag and drop
-    const dropArea = document.getElementById('dropArea');
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false);
-    });
-
-    function highlight(e) {
-        dropArea.classList.add('bg-primary', 'bg-opacity-10');
-    }
-
-    function unhighlight(e) {
-        dropArea.classList.remove('bg-primary', 'bg-opacity-10');
-    }
-
-    dropArea.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        document.getElementById('imagem').files = files;
+    if (dropArea) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
         
-        // Preview
-        const file = files[0];
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.querySelector('#previewContainer img');
-                preview.src = e.target.result;
-                document.getElementById('previewContainer').classList.remove('d-none');
-            }
-            reader.readAsDataURL(file);
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, function() {
+                dropArea.style.borderColor = 'var(--primary)';
+                dropArea.style.background = 'white';
+            }, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, function() {
+                dropArea.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                dropArea.style.background = 'var(--light-bg)';
+            }, false);
+        });
+        
+        dropArea.addEventListener('drop', function(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                imagemInput.files = files;
+                showPreview(files[0]);
+            }
+        }, false);
     }
 </script>
-
-<style>
-    #dropArea {
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-    #dropArea.bg-primary {
-        border-color: var(--bs-primary) !important;
-    }
-    .img-thumbnail {
-        max-width: 200px;
-    }
-</style>
 
 <%- include('./includes/footer') %>

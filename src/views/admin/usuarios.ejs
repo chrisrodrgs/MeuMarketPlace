@@ -1,106 +1,336 @@
 <%- include('../includes/head') %>
 <%- include('../includes/nav1') %>
 
-<div class="container py-5">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>
-                    <i class="bi bi-people text-primary"></i> 
-                    Gerenciar Usuários
-                </h1>
-                <a href="/admin" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Voltar
-                </a>
-            </div>
+<style>
+    /* ===== VARIÁVEIS ===== */
+    :root {
+        --primary: #667eea;
+        --secondary: #764ba2;
+        --light-bg: #fafaff;
+        --text-dark: #2d3436;
+        --text-light: #636e72;
+        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
+        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
+        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
+        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
 
-            <!-- Mensagens Flash -->
-            <% if (typeof errors !== 'undefined' && errors) { %>
-                <div class="alert alert-danger"><%= errors %></div>
-            <% } %>
-            <% if (typeof success !== 'undefined' && success) { %>
-                <div class="alert alert-success"><%= success %></div>
-            <% } %>
+    .header-section {
+        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
+        padding: 40px 0;
+        margin-bottom: 30px;
+    }
 
-            <!-- Lista de Usuários -->
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Todos os Usuários</h5>
-                </div>
-                <div class="card-body">
-                    <% if (usuarios && usuarios.length > 0) { %>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Email</th>
-                                        <th>Tipo</th>
-                                        <th>Produtos</th>
-                                        <th>Data</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% usuarios.forEach(user => { %>
-                                        <tr>
-                                            <td><%= user.id %></td>
-                                            <td>
-                                                <%= user.email %>
-                                                <% if (user.id == session.user.id) { %>
-                                                    <span class="badge bg-info">Você</span>
-                                                <% } %>
-                                            </td>
-                                            <td>
-                                                <% if (user.isAdmin) { %>
-                                                    <span class="badge bg-danger">Admin</span>
-                                                <% } else { %>
-                                                    <span class="badge bg-secondary">Usuário</span>
-                                                <% } %>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-primary"><%= user.total_produtos || 0 %></span>
-                                            </td>
-                                            <td>
-                                                <%= new Date(user.data_criacao).toLocaleDateString('pt-BR') %>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group btn-group-sm">
-                                                    <% if (!user.isAdmin) { %>
-                                                        <a href="/admin/usuarios/<%= user.id %>/tornar-admin" 
-                                                           class="btn btn-warning" 
-                                                           onclick="return confirm('Tornar este usuário administrador?')">
-                                                            <i class="bi bi-shield"></i>
-                                                        </a>
-                                                    <% } else if (user.id != session.user.id) { %>
-                                                        <a href="/admin/usuarios/<%= user.id %>/remover-admin" 
-                                                           class="btn btn-secondary"
-                                                           onclick="return confirm('Remover status de admin?')">
-                                                            <i class="bi bi-shield-slash"></i>
-                                                        </a>
-                                                    <% } %>
-                                                    
-                                                    <% if (user.id != session.user.id) { %>
-                                                        <a href="/admin/usuarios/<%= user.id %>/deletar" 
-                                                           class="btn btn-danger"
-                                                           onclick="return confirm('Tem certeza? Todos os produtos do usuário também serão deletados.')">
-                                                            <i class="bi bi-trash"></i>
-                                                        </a>
-                                                    <% } %>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
-                        </div>
-                    <% } else { %>
-                        <p class="text-center py-4">Nenhum usuário encontrado.</p>
-                    <% } %>
-                </div>
+    .search-box {
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        border-radius: 50px;
+        padding: 10px 20px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .search-box:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: var(--shadow-md);
+    }
+
+    .user-avatar-sm {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .table-section {
+        background: white;
+        border-radius: 30px;
+        padding: 25px;
+        box-shadow: var(--shadow-md);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        padding: 15px 12px;
+        color: var(--text-light);
+        font-weight: 500;
+        font-size: 0.9rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+    }
+
+    td {
+        padding: 15px 12px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        color: var(--text-dark);
+    }
+
+    tr:hover td {
+        background: var(--light-bg);
+    }
+
+    .badge {
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .badge.admin {
+        background: linear-gradient(135deg, #f56565, #c53030);
+        color: white;
+    }
+
+    .badge.user {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .badge.produtos {
+        background: var(--light-bg);
+        color: var(--primary);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .badge.voce {
+        background: var(--primary);
+        color: white;
+        margin-left: 8px;
+    }
+
+    .btn-sm {
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-sm.view {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-sm.edit {
+        background: linear-gradient(135deg, #48bb78, #38a169);
+        color: white;
+    }
+
+    .btn-sm.delete {
+        background: linear-gradient(135deg, #f56565, #c53030);
+        color: white;
+    }
+
+    .btn-sm.promote {
+        background: linear-gradient(135deg, #ecc94b, #d69e2e);
+        color: white;
+    }
+
+    .btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 30px;
+    }
+
+    .page-item {
+        padding: 8px 15px;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        border-radius: 10px;
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .page-item:hover,
+    .page-item.active {
+        background: var(--gradient);
+        border-color: transparent;
+        color: white;
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+        }
+        
+        .btn-sm {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Header -->
+<section class="header-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fw-light">Gerenciar <span class="fw-bold" style="background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Usuários</span></h1>
+                <p class="text-muted">Total de <%= usuarios.length %> usuários cadastrados</p>
             </div>
+            <a href="/admin" class="btn-sm view">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Conteúdo -->
+<div class="container">
+    <!-- Mensagens Flash -->
+    <% if (typeof errors !== 'undefined' && errors) { %>
+        <div class="alert alert-danger"><%= errors %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <!-- Filtros e Busca -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" class="search-box" id="searchInput" placeholder="Buscar usuários por email...">
+        </div>
+    </div>
+
+    <!-- Tabela de Usuários -->
+    <div class="table-section">
+        <div class="table-responsive">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Avatar</th>
+                        <th>Email</th>
+                        <th>Tipo</th>
+                        <th>Produtos</th>
+                        <th>Avaliações</th>
+                        <th>Média</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% usuarios.forEach(user => { %>
+                    <tr class="user-row" data-email="<%= user.email.toLowerCase() %>">
+                        <td><%= user.id %></td>
+                        <td>
+                            <% if (user.avatar) { %>
+                                <img src="/<%= user.avatar %>" class="user-avatar-sm">
+                            <% } else { %>
+                                <div class="user-avatar-sm bg-light d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                            <% } %>
+                        </td>
+                        <td>
+                            <%= user.email %>
+                            <% if (user.id == session.user.id) { %>
+                                <span class="badge voce">Você</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (user.isAdmin) { %>
+                                <span class="badge admin">Admin</span>
+                            <% } else { %>
+                                <span class="badge user">Usuário</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <span class="badge produtos"><%= user.total_produtos || 0 %></span>
+                        </td>
+                        <td><%= user.total_avaliacoes_recebidas || 0 %></td>
+                        <td>
+                            <% if (user.media_avaliacoes) { %>
+                                <%= Number(user.media_avaliacoes).toFixed(1) %> ⭐
+                            <% } else { %>
+                                -
+                            <% } %>
+                        </td>
+                        <td><%= new Date(user.data_criacao).toLocaleDateString('pt-BR') %></td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="/admin/usuarios/<%= user.id %>" class="btn-sm view" title="Ver detalhes">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                
+                                <% if (!user.isAdmin) { %>
+                                    <a href="/admin/usuarios/<%= user.id %>/tornar-admin" 
+                                       class="btn-sm promote"
+                                       title="Tornar administrador"
+                                       onclick="return confirm('Tornar este usuário administrador?')">
+                                        <i class="bi bi-shield"></i>
+                                    </a>
+                                <% } else if (user.id != session.user.id) { %>
+                                    <a href="/admin/usuarios/<%= user.id %>/remover-admin" 
+                                       class="btn-sm edit"
+                                       title="Remover status de admin"
+                                       onclick="return confirm('Remover status de admin?')">
+                                        <i class="bi bi-shield-slash"></i>
+                                    </a>
+                                <% } %>
+                                
+                                <% if (user.id != session.user.id) { %>
+                                    <a href="/admin/usuarios/<%= user.id %>/deletar" 
+                                       class="btn-sm delete"
+                                       title="Deletar usuário"
+                                       onclick="return confirm('Tem certeza? Todos os produtos e avaliações deste usuário também serão deletados.')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                <% } %>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<script>
+    // Filtro de busca
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.user-row');
+        
+        rows.forEach(row => {
+            const email = row.getAttribute('data-email');
+            if (email.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
 
 <%- include('../includes/footer') %>
