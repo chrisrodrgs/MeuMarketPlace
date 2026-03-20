@@ -163,6 +163,22 @@
         box-shadow: var(--shadow-lg);
     }
 
+    /* ===== BOTÃO ANALYTICS - DESTAQUE ===== */
+    .analytics-btn {
+        background: linear-gradient(135deg, #48bb78, #38a169);
+        border-color: transparent;
+        color: white;
+    }
+
+    .analytics-btn i {
+        color: white;
+    }
+
+    .analytics-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+    }
+
     /* ===== TABELAS ===== */
     .table-section {
         background: white;
@@ -348,10 +364,15 @@
             <i class="bi bi-star"></i>
             <h5>Gerenciar Avaliações</h5>
         </a>
-        <!-- BOTÃO DO CHAT - DESTAQUE -->
+        <!-- Botão do Chat - Destaque -->
         <a href="/admin/chat" class="action-btn chat-btn">
             <i class="bi bi-chat-dots"></i>
             <h5>Chat com Clientes</h5>
+        </a>
+        <!-- NOVO: Botão da Central de Análise de Dados -->
+        <a href="/admin/analytics" class="action-btn analytics-btn">
+            <i class="bi bi-graph-up"></i>
+            <h5>Central de Dados</h5>
         </a>
         <a href="/" class="action-btn">
             <i class="bi bi-house"></i>
@@ -366,7 +387,7 @@
             <a href="/admin/usuarios" class="btn-sm view">Ver todos <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="table-responsive">
-            <table>
+             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
