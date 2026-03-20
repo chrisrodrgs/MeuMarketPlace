@@ -23,7 +23,7 @@
                     </h2>
                 </div>
                 <div class="card-body p-4">
-                    <!-- MENSAGENS FLASH CORRIGIDAS -->
+                    <!-- Mensagens Flash -->
                     <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
                         <div class="alert alert-danger">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -122,23 +122,40 @@
                         </div>
                     </div>
 
-                    <!-- Divisor -->
+                    <!-- Divisor e Botões Sociais (apenas em breve) -->
                     <div class="position-relative text-center my-4">
                         <hr class="border-secondary">
                         <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">ou</span>
                     </div>
 
-                    <!-- Botões Sociais -->
-                    <div class="d-grid gap-2">
-                        <a href="/login/google" class="btn-elegante outline">
-                            <i class="bi bi-google"></i> Continuar com Google
-                        </a>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <a href="/em-breve" class="btn-elegante google w-100">
+                                <i class="bi bi-google me-2"></i> Continuar com Google
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .btn-elegante.google {
+        background: white;
+        color: #dc4e41;
+        border: 2px solid rgba(220, 78, 65, 0.2);
+        transition: all 0.3s ease;
+    }
+    .btn-elegante.google:hover {
+        border-color: #dc4e41;
+        background: #dc4e41;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220, 78, 65, 0.25);
+    }
+</style>
 
 <script>
     if (window.location.hash === '#register') {

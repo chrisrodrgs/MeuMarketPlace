@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="bi bi-shop"></i> Seu Marketplace
+        <!-- Logo -->
+        <a class="navbar-brand logo-animated" href="/">
+            <i class="bi bi-shop"></i>
+            <span>Seu Marketplace</span>
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -9,111 +11,91 @@
         </button>
         
         <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Busca no Header -->
-            <form class="d-flex mx-auto position-relative" style="width: 300px;" 
-                  action="/busca" method="GET" id="searchForm">
-                <input class="form-control me-2" type="search" name="q" 
-                       placeholder="Buscar produtos..." aria-label="Search"
-                       id="searchInput" autocomplete="off">
-                <button class="btn btn-outline-light" type="submit">
-                    <i class="bi bi-search"></i>
-                </button>
-                
-                <!-- Resultados da busca rápida -->
-                <div class="quick-search-results position-absolute bg-white shadow-lg rounded-3 w-100 mt-1 d-none"
-                     style="top: 100%; z-index: 1000; max-height: 400px; overflow-y: auto;">
-                </div>
-            </form>
-            
-            <ul class="navbar-nav ms-auto">
+            <!-- Links Principais (esquerda) -->
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
+                    <a class="nav-link nav-link-effect" href="/">Home</a>
                 </li>
                 
                 <% if (user) { %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/meus-produtos">
-                            <i class="bi bi-box"></i> Meus Produtos
+                        <a class="nav-link nav-link-effect" href="/meus-produtos">
+                            <i class="bi bi-box me-1"></i> Meus Produtos
                         </a>
                     </li>
                     
                     <% if (user.isAdmin) { %>
                         <li class="nav-item">
-                            <a class="nav-link text-warning" href="/admin">
-                                <i class="bi bi-shield-lock"></i> Admin
+                            <a class="nav-link nav-link-effect text-warning" href="/admin">
+                                <i class="bi bi-shield-lock me-1"></i> Admin
                             </a>
                         </li>
                     <% } %>
                 <% } %>
             </ul>
             
+            <!-- Busca (centro) -->
+            <form class="d-flex mx-auto position-relative" style="width: 280px;" 
+                  action="/busca" method="GET" id="searchForm">
+                <input class="form-control" type="search" name="q" 
+                       placeholder="Buscar produtos..." aria-label="Search"
+                       id="searchInput" autocomplete="off">
+                <button class="btn btn-outline-light" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+                <div class="quick-search-results position-absolute bg-white shadow-lg rounded-3 w-100 mt-1 d-none"
+                     style="top: 100%; z-index: 1000; max-height: 400px; overflow-y: auto;">
+                </div>
+            </form>
+            
+            <!-- Links Direita (Carrinho + Login/Cadastro/Dropdown) -->
             <ul class="navbar-nav">
-                <!-- Ícone do Carrinho (sempre visível) -->
-                <li class="nav-item position-relative me-2">
-                    <a class="nav-link" href="/carrinho" id="carrinhoLink">
+                <!-- Carrinho -->
+                <li class="nav-item">
+                    <a class="nav-link cart-icon" href="/carrinho" id="carrinhoLink">
                         <i class="bi bi-cart3 fs-5"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-                              id="carrinhoBadge" style="font-size: 0.7rem; display: none;">
-                            0
-                        </span>
+                        <span class="badge rounded-pill bg-danger carrinho-badge" id="carrinhoBadge">0</span>
                     </a>
                 </li>
                 
                 <% if (user) { %>
                     <!-- Dropdown do usuário -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" 
+                        <a class="nav-link dropdown-toggle d-flex align-items-center user-dropdown" href="#" id="navbarDropdown" 
                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <% if (user.avatar) { %>
                                 <img src="/<%= user.avatar %>" alt="Avatar" 
-                                     class="rounded-circle me-2" 
-                                     style="width: 30px; height: 30px; object-fit: cover;">
+                                     class="rounded-circle me-1" 
+                                     style="width: 28px; height: 28px; object-fit: cover;">
                             <% } else { %>
-                                <i class="bi bi-person-circle fs-5 me-2"></i>
+                                <i class="bi bi-person-circle fs-5 me-1"></i>
                             <% } %>
                             <span><%= user.email.split('@')[0] %></span>
                             <% if (user.isAdmin) { %>
-                                <span class="badge bg-danger ms-2">Admin</span>
+                                <span class="badge bg-danger ms-1" style="font-size: 0.7rem;">Admin</span>
                             <% } %>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li>
-                                <a class="dropdown-item" href="/usuario/perfil">
-                                    <i class="bi bi-person me-2"></i> Minha Conta
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/meus-produtos">
-                                    <i class="bi bi-box me-2"></i> Meus Produtos
-                                </a>
-                            </li>
-                            
+                            <li><a class="dropdown-item" href="/usuario/perfil"><i class="bi bi-person me-2"></i> Minha Conta</a></li>
+                            <li><a class="dropdown-item" href="/meus-produtos"><i class="bi bi-box me-2"></i> Meus Produtos</a></li>
                             <% if (user.isAdmin) { %>
                                 <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item text-warning" href="/admin">
-                                        <i class="bi bi-shield-lock me-2"></i> Painel Admin
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item text-warning" href="/admin"><i class="bi bi-shield-lock me-2"></i> Painel Admin</a></li>
                             <% } %>
-                            
                             <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="/login/logout">
-                                    <i class="bi bi-box-arrow-right me-2"></i> Sair
-                                </a>
-                            </li>
+                            <li><a class="dropdown-item text-danger" href="/login/logout"><i class="bi bi-box-arrow-right me-2"></i> Sair</a></li>
                         </ul>
                     </li>
                 <% } else { %>
+                    <!-- Entrar e Cadastrar -->
                     <li class="nav-item">
-                        <a class="nav-link" href="/login/index">
-                            <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        <a class="nav-link nav-link-effect" href="/login/index">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light btn-sm" href="/login/index#register">
-                            <i class="bi bi-person-plus"></i> Cadastrar
+                        <a class="nav-link register-btn" href="/login/index#register">
+                            <i class="bi bi-person-plus me-1"></i> Cadastrar
                         </a>
                     </li>
                 <% } %>
@@ -125,7 +107,206 @@
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-<!-- Script para busca rápida -->
+<style>
+    /* ===== LOGO ANIMADA ===== */
+    .logo-animated {
+        position: relative;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .logo-animated i {
+        font-size: 1.8rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .logo-animated:hover i {
+        transform: rotate(5deg) scale(1.1);
+    }
+    
+    .logo-animated span {
+        background: linear-gradient(135deg, #fff, #a0a0ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .logo-animated:hover span {
+        background: linear-gradient(135deg, #fff, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    /* ===== EFEITO NA BARRA DOS LINKS ===== */
+    .nav-link-effect {
+        position: relative;
+        padding: 8px 0;
+        margin: 0 12px;
+        transition: color 0.3s ease;
+    }
+    
+    .nav-link-effect::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+        border-radius: 2px;
+    }
+    
+    .nav-link-effect:hover::after {
+        width: 80%;
+    }
+    
+    .nav-link-effect:hover {
+        color: #a78bfa !important;
+    }
+    
+    /* ===== ITENS DO MENU ===== */
+    .navbar-nav .nav-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 8px 12px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    /* ===== CARRINHO ===== */
+    .cart-icon {
+        position: relative;
+        transition: transform 0.3s ease;
+        padding: 8px 12px;
+    }
+    
+    .cart-icon:hover {
+        transform: scale(1.05);
+        color: #a78bfa !important;
+    }
+    
+    .carrinho-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(30%, -30%);
+        font-size: 0.65rem;
+        padding: 2px 5px;
+        min-width: 18px;
+        background: #dc3545;
+        display: none;
+    }
+    
+    /* ===== DROPDOWN DO USUÁRIO ===== */
+    .user-dropdown {
+        transition: all 0.3s ease;
+    }
+    
+    .user-dropdown:hover {
+        color: #a78bfa !important;
+    }
+    
+    .user-dropdown img {
+        transition: transform 0.3s ease;
+    }
+    
+    .user-dropdown:hover img {
+        transform: scale(1.05);
+    }
+    
+    /* ===== BOTÃO CADASTRAR ===== */
+    .register-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 30px;
+        padding: 6px 18px !important;
+        margin-left: 8px;
+        transition: all 0.3s ease;
+        color: white !important;
+    }
+    
+    .register-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        color: white !important;
+    }
+    
+    /* ===== BARRA DE PESQUISA ===== */
+    .navbar .form-control {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.2);
+        color: white;
+        transition: all 0.3s ease;
+        border-radius: 30px 0 0 30px;
+        padding: 8px 16px;
+    }
+    
+    .navbar .form-control:focus {
+        background: rgba(255,255,255,0.15);
+        border-color: #667eea;
+        box-shadow: none;
+        outline: none;
+    }
+    
+    .navbar .form-control::placeholder {
+        color: rgba(255,255,255,0.6);
+    }
+    
+    .navbar .btn-outline-light {
+        border-radius: 0 30px 30px 0;
+        border-left: none;
+        transition: all 0.3s ease;
+        padding: 8px 16px;
+    }
+    
+    .navbar .btn-outline-light:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: transparent;
+    }
+    
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 992px) {
+        .navbar-nav .nav-link-effect {
+            margin: 0;
+            padding: 8px 0;
+            text-align: center;
+        }
+        
+        .navbar-nav .nav-link-effect::after {
+            left: 0;
+            transform: translateX(0);
+        }
+        
+        .register-btn {
+            display: inline-block;
+            width: auto;
+            text-align: center;
+            margin-top: 5px;
+        }
+        
+        .navbar .form-control {
+            border-radius: 30px;
+        }
+        
+        .navbar .btn-outline-light {
+            border-radius: 30px;
+            margin-left: 8px;
+            border-left: 1px solid rgba(255,255,255,0.2);
+        }
+    }
+</style>
+
+<!-- Script para busca rápida e carrinho -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
@@ -186,7 +367,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
         
-        // Fechar resultados ao clicar fora
         document.addEventListener('click', function(e) {
             if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
                 resultsDiv.classList.add('d-none');
@@ -194,7 +374,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Atualizar contagem do carrinho
     function atualizarCarrinhoBadge() {
         fetch('/carrinho/contagem')
             .then(res => res.json())
@@ -202,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const badge = document.getElementById('carrinhoBadge');
                 if (data.total > 0) {
                     badge.textContent = data.total;
-                    badge.style.display = 'inline';
+                    badge.style.display = 'inline-block';
                 } else {
                     badge.style.display = 'none';
                 }
@@ -210,7 +389,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(err => console.error('Erro ao carregar carrinho:', err));
     }
     
-    // Atualizar a cada 30 segundos
     atualizarCarrinhoBadge();
     setInterval(atualizarCarrinhoBadge, 30000);
 });

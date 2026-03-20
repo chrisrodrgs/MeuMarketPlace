@@ -11,50 +11,50 @@ const searchController = require('./src/controllers/searchController');
 const categoriaController = require('./src/controllers/categoriaController');
 const avaliacaoController = require('./src/controllers/avaliacaoController');
 const carrinhoController = require('./src/controllers/carrinhoController');
-const googleAuthController = require('./src/controllers/googleAuthController'); // DESCOMENTADO
 const produtoController = require('./src/controllers/produtoController');
 const produtoListController = require('./src/controllers/produtoListController');
 const produtoAdcController = require('./src/controllers/produtoAdcController');
 const produtoDeleteController = require('./src/controllers/produtoDeleteController');
 
-//Rotas Home
+// Rotas Home
 router.get('/', homeController.index);
 
-//Rotas Login Usuário
+// Rotas Login Usuário
 router.get('/login/index', loginController.index);
 router.get('/login/logout', loginController.logout);
 router.post('/login/login', loginController.login);
 router.post('/login/register', loginController.register);
 
-// ===== ROTAS GOOGLE AUTH =====
-router.get('/login/google', googleAuthController.login);
-router.get('/oauth2/redirect/google', googleAuthController.callback);
+// Rota Em Breve
+router.get('/em-breve', (req, res) => {
+    res.render('em-breve');
+});
 
-//Rotas Perfil Usuário
+// Rotas Perfil Usuário
 router.get('/usuario/perfil', perfilController.index);
 
-// NOVAS ROTAS DE AVATAR
+// Rotas Avatar
 router.post('/usuario/perfil/avatar', 
     perfilController.uploadAvatar,
     perfilController.salvarAvatar
 );
 router.post('/usuario/perfil/avatar/remover', perfilController.removerAvatar);
 
-// NOVAS ROTAS DE BUSCA
+// Rotas Busca
 router.get('/busca', searchController.index);
 router.get('/busca/rapida', searchController.quickSearch);
 
-// NOVAS ROTAS DE CATEGORIAS
+// Rotas Categorias
 router.get('/categorias', categoriaController.listarTodos);
 router.get('/categoria/:categoria', categoriaController.index);
 
-// NOVAS ROTAS DE AVALIAÇÕES
+// Rotas Avaliações
 router.get('/produto/:produtoId', avaliacaoController.paginaProduto);
 router.post('/produto/:produtoId/avaliar', avaliacaoController.avaliar);
 router.get('/avaliacao/:avaliacaoId/deletar', avaliacaoController.deletar);
 router.get('/api/produto/:produtoId/avaliacoes', avaliacaoController.getAvaliacoes);
 
-// NOVAS ROTAS DO CARRINHO
+// Rotas Carrinho
 router.get('/carrinho', carrinhoController.verCarrinho);
 router.post('/carrinho/adicionar', carrinhoController.adicionar);
 router.put('/carrinho/item/:itemId', carrinhoController.atualizarQuantidade);
@@ -62,7 +62,7 @@ router.delete('/carrinho/item/:itemId', carrinhoController.remover);
 router.post('/carrinho/limpar', carrinhoController.limpar);
 router.get('/carrinho/contagem', carrinhoController.getContagemItens);
 
-// NOVAS ROTAS DO ADMIN
+// Rotas Admin
 router.get('/admin', adminController.dashboard);
 router.get('/admin/usuarios', adminController.listarUsuarios);
 router.get('/admin/usuarios/:id', adminController.verUsuario);
@@ -78,7 +78,7 @@ router.get('/admin/analytics', adminAnalyticsController.dashboard);
 router.get('/admin/analytics/exportar', adminAnalyticsController.exportarRelatorio);
 router.get('/api/analytics/dados', adminAnalyticsController.apiDados);
 
-// Rotas de Produtos
+// Rotas Produtos
 router.get('/meus-produtos', produtoListController.index);
 router.get('/produtos/adicionar', produtoAdcController.renderAddForm);
 router.post('/produtos/adicionar', 
