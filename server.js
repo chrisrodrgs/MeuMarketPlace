@@ -31,12 +31,13 @@ app.use(session({
         dir: './database'
     }),
     cookie: {
-        maxAge: 100 * 60 * 60 * 24 * 7, // 7 dias em milisegundos
+        maxAge: 100 * 60 * 60 * 24 * 7,
         httpOnly: true
     }
 }));
 
 // Middlewares
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 

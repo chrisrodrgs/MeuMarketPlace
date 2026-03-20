@@ -52,10 +52,12 @@ exports.addProduto = async (req, res) => {
             return res.redirect('/login/index');
         }
 
-        const { nome, descricao, preco, categoria } = req.body;
+        const { nome, descricao, preco, categoria, estoque, status } = req.body;
+
+        console.log('📦 Recebendo dados do produto:', { nome, descricao, preco, categoria, estoque, status });
 
         // Validações
-        if (!nome || !descricao || !preco || !categoria) {
+        if (!nome || !descricao || !preco || !categoria || !estoque) {
             req.flash('errors', 'Todos os campos são obrigatórios');
             return res.redirect('/produtos/adicionar');
         }
@@ -65,15 +67,23 @@ exports.addProduto = async (req, res) => {
             return res.redirect('/produtos/adicionar');
         }
 
+        if (isNaN(estoque) || estoque < 0) {
+            req.flash('errors', 'Estoque deve ser um número válido maior ou igual a zero');
+            return res.redirect('/produtos/adicionar');
+        }
+
         if (!categorias.includes(categoria)) {
             req.flash('errors', 'Categoria inválida');
             return res.redirect('/produtos/adicionar');
         }
 
-        // CORRIGIDO: Caminho da imagem SEM BARRA no início
+        // Validar status
+        const statusFinal = status === 'ativo' ? 'ativo' : 'inativo';
+
+        // Caminho da imagem SEM BARRA no início
         let imagemPath = null;
         if (req.file) {
-            imagemPath = `uploads/produtos/${req.file.filename}`; // SEM a barra inicial
+            imagemPath = `uploads/produtos/${req.file.filename}`;
         }
 
         // Criar produto no banco
@@ -81,7 +91,9 @@ exports.addProduto = async (req, res) => {
             name: nome,
             description: descricao,
             price: preco,
-            categoria: categoria
+            categoria: categoria,
+            estoque: parseInt(estoque),
+            status: statusFinal
         });
 
         await produto.register(req.session.user.id, imagemPath);
@@ -91,7 +103,7 @@ exports.addProduto = async (req, res) => {
             return res.redirect('/produtos/adicionar');
         }
 
-        req.flash('success', 'Produto adicionado com sucesso!');
+        req.flash('success', `Produto adicionado com sucesso! Status: ${statusFinal === 'ativo' ? 'Ativo' : 'Inativo'}`);
         return res.redirect('/meus-produtos');
 
     } catch (error) {
