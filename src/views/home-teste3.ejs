@@ -1,0 +1,231 @@
+<%- include('./includes/head') %>
+<%- include('./includes/nav1') %>
+
+<style>
+    /* Animações Globais */
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes morph {
+        0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+        100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    }
+
+    @keyframes float3 {
+        0% { transform: translateY(0) rotate(0deg); }
+        33% { transform: translateY(-20px) rotate(120deg); }
+        66% { transform: translateY(20px) rotate(240deg); }
+        100% { transform: translateY(0) rotate(360deg); }
+    }
+
+    /* Hero Dinâmico */
+    .hero-dinamico {
+        min-height: 90vh;
+        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    .hero-dinamico::before {
+        content: '';
+        position: absolute;
+        width: 150%;
+        height: 150%;
+        background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 20px, transparent 20px, transparent 40px);
+        animation: slide 20s linear infinite;
+    }
+
+    @keyframes slide {
+        from { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+        to { transform: translateX(-50%) translateY(-50%) rotate(360deg); }
+    }
+
+    .hero-title-dinamico {
+        font-size: 5rem;
+        font-weight: 900;
+        color: white;
+        text-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        animation: glitch 3s infinite;
+    }
+
+    @keyframes glitch {
+        2%, 64% { transform: translate(2px, 0) skew(0deg); }
+        4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+        62% { transform: translate(0, 0) skew(5deg); }
+    }
+
+    .morph-shape {
+        width: 400px;
+        height: 400px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255,255,255,0.2);
+        animation: morph 8s ease-in-out infinite;
+        position: relative;
+    }
+
+    /* Cards 3D */
+    .card-3d {
+        perspective: 1000px;
+    }
+
+    .card-3d-inner {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        text-align: center;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+        cursor: pointer;
+    }
+
+    .card-3d:hover .card-3d-inner {
+        transform: rotateY(180deg);
+    }
+
+    .card-3d-front, .card-3d-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .card-3d-front {
+        background: white;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    .card-3d-back {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        transform: rotateY(180deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    /* Timeline Animada */
+    .timeline-dinamica {
+        position: relative;
+        height: 500px;
+    }
+
+    .timeline-dinamica-item {
+        position: absolute;
+        animation: orbit 20s linear infinite;
+    }
+
+    @keyframes orbit {
+        from { transform: rotate(0deg) translateX(200px) rotate(0deg); }
+        to { transform: rotate(360deg) translateX(200px) rotate(-360deg); }
+    }
+
+    /* Partículas */
+    .particle {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .particle span {
+        position: absolute;
+        display: block;
+        width: 5px;
+        height: 5px;
+        background: rgba(102, 126, 234, 0.2);
+        border-radius: 50%;
+        animation: particleMove 10s linear infinite;
+    }
+
+    @keyframes particleMove {
+        0% { transform: translateY(0) translateX(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+    }
+</style>
+
+<!-- Partículas -->
+<div class="particle">
+    <% for(var i = 0; i < 50; i++) { %>
+    <span style="left: <%= Math.random() * 100 %>%; animation-delay: <%= Math.random() * 10 %>s;"></span>
+    <% } %>
+</div>
+
+<!-- Hero Dinâmico -->
+<section class="hero-dinamico">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="hero-title-dinamico mb-4">
+                    <span>D</span><span>i</span><span>n</span><span>â</span><span>m</span><span>i</span><span>c</span><span>o</span>
+                </h1>
+                <p class="lead text-white mb-5">Uma experiência de compras que se move com você</p>
+                <div class="d-flex gap-3">
+                    <a href="/produtos/adicionar" class="btn btn-light btn-lg px-5 py-3 rounded-0">Começar</a>
+                    <a href="#explorar" class="btn btn-outline-light btn-lg px-5 py-3 rounded-0">Explorar</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="morph-shape mx-auto"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cards 3D -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5 display-5">Produtos em 3D</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card-3d">
+                    <div class="card-3d-inner">
+                        <div class="card-3d-front">
+                            <img src="https://via.placeholder.com/300" alt="Produto" class="w-100 h-100 object-fit-cover">
+                        </div>
+                        <div class="card-3d-back">
+                            <h4>Produto Incrível</h4>
+                            <p class="px-3">Descrição detalhada do produto</p>
+                            <span class="h4">R$ 99,90</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Timeline Dinâmica -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">Nossa Jornada</h2>
+        <div class="timeline-dinamica">
+            <% for(var i = 0; i < 6; i++) { %>
+            <div class="timeline-dinamica-item" style="animation-delay: -<%= i * 3.3 %>s;">
+                <div class="bg-white p-3 rounded-4 shadow">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <span>Marco <%= i+1 %></span>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<%- include('./includes/footer') %>

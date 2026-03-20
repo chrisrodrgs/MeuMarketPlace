@@ -1,0 +1,153 @@
+<%- include('./includes/head') %>
+<%- include('./includes/nav1') %>
+
+<section class="logged-hero-section py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center text-white py-5" data-aos="fade-up">
+                <div class="mb-4">
+                    <% if (user && user.avatar) { %>
+                        <img src="/<%= user.avatar %>" alt="Avatar" 
+                             class="rounded-circle border border-4 border-white shadow"
+                             style="width: 120px; height: 120px; object-fit: cover;">
+                    <% } else { %>
+                        <div class="bg-white bg-opacity-25 rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 120px; height: 120px;">
+                            <i class="bi bi-person-circle text-white" style="font-size: 4rem;"></i>
+                        </div>
+                    <% } %>
+                </div>
+                <h1 class="display-4 fw-bold mb-3">Olá, <%= user ? user.email.split('@')[0] : 'Usuário' %>!</h1>
+                <p class="lead mb-4">Você já está logado em nossa plataforma</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/meus-produtos" class="btn btn-light btn-lg px-4">
+                        <i class="bi bi-box me-2"></i>Meus Produtos
+                    </a>
+                    <a href="/usuario/perfil" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-person me-2"></i>Meu Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="logged-options py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="option-card text-center p-4">
+                    <div class="option-icon mb-3">
+                        <i class="bi bi-plus-circle display-1 text-primary"></i>
+                    </div>
+                    <h3>Adicionar Produto</h3>
+                    <p class="text-muted">Comece a vender anunciando seu primeiro produto</p>
+                    <a href="/produtos/adicionar" class="btn btn-primary mt-3">
+                        <i class="bi bi-plus-circle me-2"></i>Adicionar
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="option-card text-center p-4">
+                    <div class="option-icon mb-3">
+                        <i class="bi bi-grid display-1 text-success"></i>
+                    </div>
+                    <h3>Gerenciar Produtos</h3>
+                    <p class="text-muted">Edite ou remova seus produtos existentes</p>
+                    <a href="/meus-produtos" class="btn btn-success mt-3">
+                        <i class="bi bi-grid me-2"></i>Gerenciar
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="option-card text-center p-4">
+                    <div class="option-icon mb-3">
+                        <i class="bi bi-person-circle display-1 text-warning"></i>
+                    </div>
+                    <h3>Editar Perfil</h3>
+                    <p class="text-muted">Atualize sua foto e informações pessoais</p>
+                    <a href="/usuario/perfil" class="btn btn-warning mt-3">
+                        <i class="bi bi-person-circle me-2"></i>Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-5 text-center">
+                        <h2 class="fw-bold mb-3">Pronto para começar?</h2>
+                        <p class="lead text-muted mb-4">Explore novos produtos ou continue gerenciando seu negócio</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="/" class="btn btn-outline-primary btn-lg px-5">
+                                <i class="bi bi-house me-2"></i>Página Inicial
+                            </a>
+                            <a href="/login/logout" class="btn btn-outline-danger btn-lg px-5">
+                                <i class="bi bi-box-arrow-right me-2"></i>Sair
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Option Cards */
+    .option-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .option-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .option-icon i {
+        transition: all 0.3s ease;
+    }
+    
+    .option-card:hover .option-icon i {
+        transform: scale(1.1);
+    }
+    
+    /* Animações */
+    [data-aos] {
+        opacity: 0;
+        transition: all 0.8s ease;
+    }
+    
+    [data-aos].aos-animate {
+        opacity: 1;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const observerOptions = {
+            threshold: 0.3
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('aos-animate');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('[data-aos]').forEach(el => {
+            observer.observe(el);
+        });
+    });
+</script>
+
+<%- include('./includes/footer') %>

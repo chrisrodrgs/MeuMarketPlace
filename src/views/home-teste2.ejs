@@ -1,0 +1,295 @@
+<%- include('./includes/head') %>
+<%- include('./includes/nav1') %>
+
+<style>
+    /* Estilo Elegante */
+    .hero-elegante {
+        min-height: 80vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .hero-elegante::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #f5f0ff 0%, #e8f0fe 100%);
+        z-index: -2;
+    }
+
+    .hero-elegante::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
+        animation: spin 60s linear infinite;
+        z-index: -1;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 300;
+        line-height: 1.2;
+    }
+
+    .hero-title span {
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        font-weight: 300;
+        letter-spacing: 1px;
+    }
+
+    .btn-elegante {
+        border: 2px solid #667eea;
+        color: #667eea;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.4s ease;
+        background: transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-elegante::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s ease, height 0.6s ease;
+        z-index: -1;
+    }
+
+    .btn-elegante:hover {
+        color: white;
+        border-color: transparent;
+    }
+
+    .btn-elegante:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    /* Cards Elegantes */
+    .card-elegante {
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.02);
+        transition: all 0.5s ease;
+        border: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .card-elegante:hover {
+        box-shadow: 0 40px 60px rgba(102, 126, 234, 0.1);
+        transform: translateY(-10px);
+    }
+
+    .card-elegante-image {
+        height: 250px;
+        position: relative;
+    }
+
+    .card-elegante-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-elegante-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(102,126,234,0.9), rgba(118,75,162,0.9));
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-elegante:hover .card-elegante-overlay {
+        opacity: 1;
+    }
+
+    .card-elegante-content {
+        padding: 30px;
+    }
+
+    .card-elegante-title {
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin-bottom: 10px;
+    }
+
+    .card-elegante-price {
+        font-size: 2rem;
+        font-weight: 300;
+        color: #667eea;
+    }
+
+    /* Seção de Features */
+    .feature-elegante {
+        padding: 60px 0;
+        position: relative;
+    }
+
+    .feature-elegante-item {
+        text-align: center;
+        padding: 30px;
+    }
+
+    .feature-elegante-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #f5f0ff, #e8f0fe);
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        color: #667eea;
+        transition: all 0.4s ease;
+    }
+
+    .feature-elegante-item:hover .feature-elegante-icon {
+        transform: scale(1.1) rotate(5deg);
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    /* Linha do Tempo */
+    .timeline {
+        position: relative;
+        padding: 50px 0;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, transparent, #667eea, #764ba2, transparent);
+        transform: translateX(-50%);
+    }
+
+    .timeline-item {
+        margin-bottom: 50px;
+        position: relative;
+    }
+
+    .timeline-content {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    /* Animações */
+    .fade-up {
+        animation: fadeUp 1s ease;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<!-- Hero Elegante -->
+<section class="hero-elegante">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 fade-up">
+                <p class="hero-subtitle mb-4">✦ BEM-VINDO AO FUTURO</p>
+                <h1 class="hero-title mb-4">
+                    Descubra o<br>
+                    <span>Marketplace</span><br>
+                    mais elegante
+                </h1>
+                <p class="lead text-muted mb-5">Uma experiência única de compras, onde design e funcionalidade se encontram.</p>
+                <a href="/produtos/adicionar" class="btn-elegante me-3">Começar</a>
+                <a href="#explorar" class="btn-elegante">Explorar</a>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/600x400" alt="Hero" class="img-fluid rounded-5 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Elegantes -->
+<section class="feature-elegante bg-light">
+    <div class="container">
+        <h2 class="text-center fw-light mb-5 display-5">Por que nos escolher</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-elegante-item">
+                    <div class="feature-elegante-icon">
+                        <i class="bi bi-gem"></i>
+                    </div>
+                    <h4 class="fw-light">Design Exclusivo</h4>
+                    <p class="text-muted">Uma interface pensada para encantar</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-elegante-item">
+                    <div class="feature-elegante-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4 class="fw-light">Segurança</h4>
+                    <p class="text-muted">Suas informações sempre protegidas</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-elegante-item">
+                    <div class="feature-elegante-icon">
+                        <i class="bi bi-star"></i>
+                    </div>
+                    <h4 class="fw-light">Qualidade</h4>
+                    <p class="text-muted">Os melhores produtos selecionados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('./includes/footer') %>

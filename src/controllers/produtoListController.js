@@ -1,0 +1,70 @@
+const db = require('../database/connection');
+
+// Listar produtos do usuário logado
+exports.index = async (req, res) => {
+    try {
+        // Verificar se usuário está logado
+        if (!req.session.user) {
+            req.flash('errors', 'Você precisa estar logado para acessar seus produtos');
+            return res.redirect('/login/index');
+        }
+
+        const usuarioId = req.session.user.id;
+
+        // Buscar produtos do banco de dados
+        const produtos = await db.all(
+            `SELECT * FROM products WHERE usuario_id = ? ORDER BY id DESC`,
+            [usuarioId]
+        );
+
+        // DEBUG: Verificar o que veio do banco (AGORA DENTRO DA FUNÇÃO)
+        if (produtos && produtos.length > 0) {
+            console.log('Produto encontrado:', produtos[0]);
+            console.log('Caminho da imagem no banco:', produtos[0].imagem);
+        } else {
+            console.log('Nenhum produto encontrado para o usuário', usuarioId);
+        }
+
+        // Flash messages para feedback
+        const success = req.flash('success');
+        const errors = req.flash('errors');
+
+        res.render('meus-produtos', { 
+            produtos: produtos || [],
+            usuario: req.session.user,
+            success: success.length > 0 ? success : null,
+            errors: errors.length > 0 ? errors : null
+        });
+
+    } catch (error) {
+        console.error("Erro ao listar produtos:", error);
+        req.flash('errors', 'Erro ao carregar produtos');
+        return res.redirect('/');
+    }
+};
+
+// Listar produtos de um usuário específico (para perfil público)
+exports.listarPorUsuarioId = async (req, res) => {
+    try {
+        const usuarioId = req.params.id;
+
+        // Buscar produtos do banco de dados
+        const produtos = await db.all(
+            `SELECT p.*, u.email as usuario_email 
+             FROM products p 
+             JOIN usuarios u ON p.usuario_id = u.id 
+             WHERE p.usuario_id = ? 
+             ORDER BY p.id DESC`,
+            [usuarioId]
+        );
+
+        res.render('produtos-usuario', { 
+            produtos: produtos || [],
+            usuarioId: usuarioId
+        });
+
+    } catch (error) {
+        console.error("Erro ao listar produtos do usuário:", error);
+        res.status(500).send("Erro ao carregar produtos");
+    }
+};

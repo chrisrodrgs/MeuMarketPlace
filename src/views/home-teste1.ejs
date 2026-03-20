@@ -1,0 +1,351 @@
+<%- include('./includes/head') %>
+<%- include('./includes/nav1') %>
+
+<style>
+    /* Hero Section */
+    .hero-moderno {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 600px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-moderno::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+        animation: rotate 30s linear infinite;
+    }
+
+    .hero-moderno::after {
+        content: '';
+        position: absolute;
+        bottom: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 50%);
+        animation: rotate 40s linear infinite reverse;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .floating-card {
+        animation: float 6s ease-in-out infinite;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 20px;
+        padding: 30px;
+        display: inline-block;
+    }
+
+    .floating-card i {
+        font-size: 5rem;
+        color: white;
+    }
+
+    .floating-card:nth-child(2) {
+        animation-delay: 1s;
+    }
+
+    .floating-card:nth-child(3) {
+        animation-delay: 2s;
+    }
+
+    /* Cards de Categoria */
+    .categoria-card-moderno {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 20px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        border: 1px solid rgba(0,0,0,0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .categoria-card-moderno::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+        transform: rotate(45deg);
+        transition: all 0.6s ease;
+        opacity: 0;
+    }
+
+    .categoria-card-moderno:hover::before {
+        opacity: 1;
+        transform: rotate(45deg) translate(10%, 10%);
+    }
+
+    .categoria-card-moderno:hover {
+        transform: translateY(-15px) scale(1.05);
+        box-shadow: 0 30px 40px rgba(102, 126, 234, 0.3);
+    }
+
+    .categoria-card-moderno i {
+        font-size: 3rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: all 0.4s ease;
+    }
+
+    .categoria-card-moderno:hover i {
+        transform: scale(1.2) rotate(360deg);
+    }
+
+    /* Cards de Produto */
+    .product-card-moderno {
+        background: white;
+        border-radius: 25px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+    }
+
+    .product-card-moderno:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 30px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .product-image-moderno {
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-image-moderno img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .product-card-moderno:hover .product-image-moderno img {
+        transform: scale(1.15);
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #ff6b6b, #ff4757);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 25px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 2;
+        box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+    }
+
+    /* Seção de Estatísticas */
+    .stats-moderno {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stats-moderno::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><path d="M30 0L60 30L30 60L0 30L30 0Z" fill="rgba(255,255,255,0.03)"/></svg>');
+        opacity: 0.1;
+    }
+
+    .stat-item-moderno {
+        text-align: center;
+        color: white;
+        position: relative;
+        z-index: 2;
+    }
+
+    .stat-item-moderno h3 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Newsletter */
+    .newsletter-moderno {
+        background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        border-radius: 50px;
+        padding: 50px;
+        margin: 50px 0;
+    }
+
+    /* Animações */
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .fade-in {
+        animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<!-- Hero Section Moderno -->
+<section class="hero-moderno d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center hero-content">
+            <div class="col-lg-6 text-white fade-in">
+                <h1 class="display-3 fw-bold mb-4">Descubra o Futuro das Compras</h1>
+                <p class="lead mb-5">Conectamos você aos melhores vendedores com uma experiência única e inovadora.</p>
+                <div class="d-flex gap-3">
+                    <a href="/produtos/adicionar" class="btn btn-light btn-lg px-5 py-3 rounded-pill">
+                        <i class="bi bi-rocket me-2"></i>Começar Agora
+                    </a>
+                    <a href="#categorias" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">
+                        Explorar
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="floating-card">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <div class="floating-card mt-4">
+                    <i class="bi bi-stars"></i>
+                </div>
+                <div class="floating-card mt-4">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categorias Modernas -->
+<section id="categorias" class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5 display-5">Categorias</h2>
+        <div class="row g-4">
+            <div class="col-md-2-4">
+                <div class="categoria-card-moderno">
+                    <i class="bi bi-cup-hot-fill display-3"></i>
+                    <h5 class="mt-3">Café</h5>
+                </div>
+            </div>
+            <div class="col-md-2-4">
+                <div class="categoria-card-moderno">
+                    <i class="bi bi-cake-fill display-3"></i>
+                    <h5 class="mt-3">Doces</h5>
+                </div>
+            </div>
+            <div class="col-md-2-4">
+                <div class="categoria-card-moderno">
+                    <i class="bi bi-egg-fried display-3"></i>
+                    <h5 class="mt-3">Salgados</h5>
+                </div>
+            </div>
+            <div class="col-md-2-4">
+                <div class="categoria-card-moderno">
+                    <i class="bi bi-cup-straw display-3"></i>
+                    <h5 class="mt-3">Bebidas</h5>
+                </div>
+            </div>
+            <div class="col-md-2-4">
+                <div class="categoria-card-moderno">
+                    <i class="bi bi-box-seam display-3"></i>
+                    <h5 class="mt-3">Outros</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Estatísticas -->
+<section class="stats-moderno">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4 stat-item-moderno">
+                <h3 class="counter" data-target="500">0</h3>
+                <p class="lead">Vendedores</p>
+            </div>
+            <div class="col-md-4 stat-item-moderno">
+                <h3 class="counter" data-target="1200">0</h3>
+                <p class="lead">Produtos</p>
+            </div>
+            <div class="col-md-4 stat-item-moderno">
+                <h3 class="counter" data-target="3000">0</h3>
+                <p class="lead">Clientes</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="container">
+    <div class="newsletter-moderno">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-3">Fique por dentro</h3>
+                <p class="text-muted">Receba ofertas exclusivas e novidades</p>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <input type="email" class="form-control form-control-lg" placeholder="Seu email">
+                    <button class="btn btn-primary btn-lg">Inscrever</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Scripts -->
+<script>
+    // Contadores animados
+    document.addEventListener('DOMContentLoaded', function() {
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            let count = 0;
+            const increment = target / 50;
+            
+            const updateCount = () => {
+                if (count < target) {
+                    count += increment;
+                    counter.innerText = Math.ceil(count);
+                    setTimeout(updateCount, 20);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            
+            updateCount();
+        });
+    });
+</script>
+
+<%- include('./includes/footer') %>
