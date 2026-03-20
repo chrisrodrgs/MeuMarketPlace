@@ -16,6 +16,7 @@ exports.index = async (req, res) => {
             SELECT p.*, u.email, u.avatar 
             FROM products p 
             JOIN usuarios u ON p.usuario_id = u.id 
+            WHERE p.status = 'ativo'
             ORDER BY p.data_criacao DESC 
             LIMIT 8
         `);
@@ -27,7 +28,7 @@ exports.index = async (req, res) => {
             precoFormatado: Number(produto.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
         }));
 
-        // Buscar produtos por categoria
+        // Buscar produtos por categoria (apenas ativos)
         const produtosPorCategoria = {};
         
         for (const categoria of categorias) {
@@ -35,12 +36,11 @@ exports.index = async (req, res) => {
                 SELECT p.*, u.email, u.avatar 
                 FROM products p 
                 JOIN usuarios u ON p.usuario_id = u.id 
-                WHERE p.categoria = ? 
+                WHERE p.categoria = ? AND p.status = 'ativo'
                 ORDER BY p.data_criacao DESC 
                 LIMIT 4
             `, [categoria]);
             
-            // Processar imagens dos produtos da categoria
             produtosPorCategoria[categoria] = produtos.map(produto => ({
                 ...produto,
                 imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
@@ -48,16 +48,43 @@ exports.index = async (req, res) => {
             }));
         }
 
+        // ===== ESTATÍSTICAS REAIS =====
+        
+        // Total de vendedores (usuários que têm pelo menos 1 produto ativo)
+        const totalVendedores = await db.get(`
+            SELECT COUNT(DISTINCT usuario_id) as total 
+            FROM products 
+            WHERE status = 'ativo'
+        `);
+        
+        // Total de produtos ativos
+        const totalProdutos = await db.get(`
+            SELECT COUNT(*) as total 
+            FROM products 
+            WHERE status = 'ativo'
+        `);
+        
+        // Total de avaliações com nota >= 4 (clientes satisfeitos)
+        const totalClientesSatisfeitos = await db.get(`
+            SELECT COUNT(*) as total 
+            FROM avaliacoes 
+            WHERE nota >= 4
+        `);
+
         // Estatísticas para o contador animado
-        const totalProdutos = await db.get('SELECT COUNT(*) as total FROM products');
-        const totalUsuarios = await db.get('SELECT COUNT(*) as total FROM usuarios');
+        const stats = {
+            vendedores: totalVendedores.total || 0,
+            produtos: totalProdutos.total || 0,
+            clientesSatisfeitos: totalClientesSatisfeitos.total || 0
+        };
+
+        console.log('📊 Estatísticas da Home:', stats);
 
         res.render('index', {
             produtosDestaque: destaquesProcessados,
             produtosPorCategoria: produtosPorCategoria,
             categorias: categorias,
-            totalProdutos: totalProdutos.total,
-            totalUsuarios: totalUsuarios.total,
+            stats: stats,
             user: req.session.user || null
         });
 
@@ -67,8 +94,7 @@ exports.index = async (req, res) => {
             produtosDestaque: [],
             produtosPorCategoria: {},
             categorias: ['Café da manhã', 'Doces', 'Salgados', 'Bebidas', 'Descartáveis'],
-            totalProdutos: 0,
-            totalUsuarios: 0,
+            stats: { vendedores: 0, produtos: 0, clientesSatisfeitos: 0 },
             user: req.session.user || null
         });
     }
