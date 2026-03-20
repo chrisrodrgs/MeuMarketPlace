@@ -1,5 +1,4 @@
-<!-- Chat Widget Flutuante Elegante -->
-<% if (user) { %>
+<!-- Chat Widget Flutuante - Sempre visível -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
@@ -7,9 +6,12 @@
     :root {
         --chat-primary: rgba(102, 126, 234, 0.9);
         --chat-secondary: rgba(118, 75, 162, 0.9);
-        --chat-bg: rgba(255, 255, 255, 0.95);
-        --chat-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        --chat-bg: rgba(255, 255, 255, 0.98);
+        --chat-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         --chat-border: rgba(255, 255, 255, 0.2);
+        --text-dark: #2d3436;
+        --text-light: #636e72;
+        --gradient: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
     }
 
     /* ===== BOTÃO FLUTUANTE ===== */
@@ -17,39 +19,25 @@
         position: fixed;
         bottom: 30px;
         right: 30px;
-        width: 65px;
-        height: 65px;
-        background: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 28px;
+        font-size: 26px;
         cursor: pointer;
-        box-shadow: var(--chat-shadow);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
         z-index: 9999;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(5px);
-        animation: pulse-glow 2s infinite;
-    }
-
-    @keyframes pulse-glow {
-        0% {
-            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-        }
+        border: 2px solid rgba(255, 255, 255, 0.2);
     }
 
     .chat-toggle-button:hover {
-        transform: scale(1.15) rotate(5deg);
-        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.5);
+        transform: scale(1.1);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
     }
 
     .chat-toggle-button .badge {
@@ -59,196 +47,222 @@
         background: #ff4757;
         color: white;
         border-radius: 50%;
-        padding: 4px 8px;
-        font-size: 12px;
+        padding: 4px 7px;
+        font-size: 11px;
         font-weight: bold;
-        min-width: 22px;
+        min-width: 20px;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(255, 71, 87, 0.5);
-        animation: bounce 1s ease infinite;
         border: 2px solid white;
-    }
-
-    @keyframes bounce {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.2); }
     }
 
     /* ===== WIDGET PRINCIPAL ===== */
     .chat-widget {
         position: fixed;
-        bottom: 110px;
+        bottom: 100px;
         right: 30px;
-        width: 380px;
-        height: 550px;
-        background: var(--chat-bg);
-        backdrop-filter: blur(10px);
-        border-radius: 25px;
+        width: 320px;
+        background: white;
+        border-radius: 20px;
         box-shadow: var(--chat-shadow);
         display: flex;
         flex-direction: column;
         overflow: hidden;
         z-index: 9998;
-        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        border: 1px solid var(--chat-border);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(102, 126, 234, 0.1);
         opacity: 0;
-        transform: translateY(20px) scale(0.95);
+        transform: translateY(20px);
         pointer-events: none;
     }
 
     .chat-widget.open {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
         pointer-events: all;
     }
 
     .chat-widget.minimized {
-        height: 70px;
-        width: 300px;
-        bottom: 30px;
-        transform: translateY(0) scale(1);
+        width: 280px;
+        transform: translateY(0);
     }
 
-    /* ===== HEADER DO CHAT ===== */
+    /* ===== HEADER ===== */
     .chat-header {
-        background: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
+        background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
-        padding: 18px 22px;
+        padding: 15px 18px;
         cursor: pointer;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        user-select: none;
-        backdrop-filter: blur(5px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .chat-header h6 {
         margin: 0;
-        font-weight: 600;
-        font-size: 16px;
+        font-size: 15px;
+        font-weight: 500;
         display: flex;
         align-items: center;
-        gap: 10px;
-        letter-spacing: 0.5px;
+        gap: 8px;
     }
 
     .chat-header h6 i {
-        font-size: 20px;
-        filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+        font-size: 18px;
     }
 
     .chat-header .badge {
         background: #ff4757;
         color: white;
         border-radius: 12px;
-        padding: 3px 8px;
+        padding: 2px 8px;
         font-size: 11px;
-        font-weight: bold;
         margin-left: 8px;
-        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
-        border: 1px solid rgba(255,255,255,0.3);
     }
 
     .chat-header-actions {
         display: flex;
-        gap: 15px;
+        gap: 12px;
     }
 
     .chat-header-actions i {
         cursor: pointer;
-        transition: all 0.3s ease;
         font-size: 16px;
         opacity: 0.8;
+        transition: opacity 0.2s;
     }
 
     .chat-header-actions i:hover {
         opacity: 1;
-        transform: scale(1.1);
     }
 
     /* ===== CORPO DO CHAT ===== */
     .chat-body {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        background: rgba(248, 249, 250, 0.7);
-        backdrop-filter: blur(5px);
-    }
-
-    .chat-messages-container {
-        flex: 1;
+        max-height: 400px;
         overflow-y: auto;
-        padding: 20px;
-        scroll-behavior: smooth;
+        background: #fafafa;
     }
 
-    .chat-messages-container::-webkit-scrollbar {
-        width: 6px;
+    /* ===== LOGIN PROMPT - VERSÃO ELEGANTE E COMPACTA ===== */
+    .login-prompt {
+        padding: 30px 20px;
+        text-align: center;
+        background: white;
     }
 
-    .chat-messages-container::-webkit-scrollbar-track {
-        background: rgba(0,0,0,0.05);
+    .login-prompt-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
     }
 
-    .chat-messages-container::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
-        border-radius: 10px;
+    .login-prompt-icon i {
+        font-size: 32px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
-    /* ===== MENSAGENS ===== */
+    .login-prompt h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 6px;
+    }
+
+    .login-prompt p {
+        font-size: 13px;
+        color: #636e72;
+        margin-bottom: 20px;
+        line-height: 1.5;
+        padding: 0 10px;
+    }
+
+    .login-prompt-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .login-btn {
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .login-btn.primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+    }
+
+    .login-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .login-btn.secondary {
+        background: white;
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .login-btn.secondary:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+    }
+
+    /* ===== CHAT INTERFACE PARA LOGADOS ===== */
+    .chat-messages-container {
+        padding: 15px;
+        min-height: 300px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
     .message-wrapper {
-        margin-bottom: 15px;
-        animation: slideInMessage 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    @keyframes slideInMessage {
-        from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.8);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
+        margin-bottom: 12px;
     }
 
     .message {
-        max-width: 80%;
-        padding: 12px 16px;
-        border-radius: 20px;
-        position: relative;
+        max-width: 85%;
+        padding: 10px 12px;
+        border-radius: 15px;
+        font-size: 13px;
+        line-height: 1.4;
         word-wrap: break-word;
-        font-size: 14px;
-        line-height: 1.5;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        backdrop-filter: blur(5px);
     }
 
     .message.sent {
-        background: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
+        background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         margin-left: auto;
-        border-bottom-right-radius: 5px;
-        border: 1px solid rgba(255,255,255,0.2);
+        border-bottom-right-radius: 4px;
     }
 
     .message.received {
-        background: rgba(255, 255, 255, 0.9);
+        background: white;
         color: #2d3436;
         margin-right: auto;
-        border-bottom-left-radius: 5px;
-        border: 1px solid rgba(0,0,0,0.05);
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.03);
     }
 
     .message .sender-name {
-        font-size: 11px;
-        opacity: 0.8;
-        margin-bottom: 4px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        font-size: 10px;
+        opacity: 0.7;
+        margin-bottom: 3px;
     }
 
     .message .time {
@@ -256,88 +270,65 @@
         opacity: 0.6;
         margin-top: 4px;
         text-align: right;
-        font-weight: 500;
-    }
-
-    .message.sent .time {
-        color: rgba(255,255,255,0.8);
     }
 
     /* ===== INPUT AREA ===== */
     .chat-input-container {
-        padding: 15px 20px;
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(10px);
+        padding: 12px 15px;
+        background: white;
         border-top: 1px solid rgba(0,0,0,0.05);
     }
 
     .chat-input-wrapper {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
     }
 
     .chat-input-wrapper input {
         flex: 1;
-        background: rgba(255, 255, 255, 0.9);
-        border: 2px solid rgba(102, 126, 234, 0.2);
+        border: 1px solid #e9ecef;
         border-radius: 25px;
-        padding: 12px 18px;
+        padding: 10px 15px;
+        font-size: 13px;
         outline: none;
-        transition: all 0.3s ease;
-        font-size: 14px;
-        backdrop-filter: blur(5px);
+        transition: all 0.2s;
     }
 
     .chat-input-wrapper input:focus {
-        border-color: var(--chat-primary);
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        background: white;
-    }
-
-    .chat-input-wrapper input::placeholder {
-        color: #a0a0a0;
-        font-style: italic;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
     .chat-input-wrapper button {
-        background: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
         border: none;
         color: white;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transition: all 0.2s;
+    }
+
+    .chat-input-wrapper button:hover {
+        transform: scale(1.05);
         box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        border: 1px solid rgba(255,255,255,0.3);
-    }
-
-    .chat-input-wrapper button:hover:not(:disabled) {
-        transform: rotate(360deg) scale(1.1);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-    }
-
-    .chat-input-wrapper button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        filter: grayscale(1);
     }
 
     /* ===== TYPING INDICATOR ===== */
     .typing-indicator {
-        padding: 8px 20px;
+        padding: 8px 15px;
+        font-size: 11px;
         color: #636e72;
-        font-size: 12px;
         font-style: italic;
         display: flex;
         align-items: center;
         gap: 5px;
-        background: rgba(255,255,255,0.5);
-        backdrop-filter: blur(5px);
+        background: #f8f9fa;
     }
 
     .typing-indicator .dots {
@@ -346,103 +337,88 @@
     }
 
     .typing-indicator .dots span {
-        width: 6px;
-        height: 6px;
+        width: 5px;
+        height: 5px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
-        animation: typingDot 1.4s infinite ease-in-out;
-    }
-
-    .typing-indicator .dots span:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-
-    .typing-indicator .dots span:nth-child(3) {
-        animation-delay: 0.4s;
+        background: #667eea;
+        animation: typingDot 1.4s infinite;
     }
 
     @keyframes typingDot {
         0%, 60%, 100% { transform: translateY(0); }
-        30% { transform: translateY(-8px); }
+        30% { transform: translateY(-5px); }
     }
 
     /* ===== EMPTY STATE ===== */
     .empty-chat {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: #b2bec3;
-        padding: 30px;
         text-align: center;
-        animation: float 3s ease-in-out infinite;
+        padding: 40px 15px;
+        color: #adb5bd;
     }
 
     .empty-chat i {
-        font-size: 4rem;
-        margin-bottom: 15px;
-        background: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 5px 15px rgba(102, 126, 234, 0.3));
+        font-size: 40px;
+        margin-bottom: 10px;
+        opacity: 0.5;
     }
 
     .empty-chat h5 {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 8px;
-        color: #2d3436;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: #495057;
     }
 
     .empty-chat p {
-        font-size: 13px;
+        font-size: 12px;
         margin: 0;
-        opacity: 0.7;
     }
 
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+    /* ===== LOADING ===== */
+    .chat-loading {
+        padding: 60px 0;
+        text-align: center;
+    }
+
+    .spinner {
+        width: 30px;
+        height: 30px;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        border-top-color: #667eea;
+        border-radius: 50%;
+        margin: 0 auto;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
 
     /* ===== RESPONSIVIDADE ===== */
     @media (max-width: 768px) {
         .chat-widget {
             width: 100%;
-            height: 100%;
             bottom: 0;
             right: 0;
-            border-radius: 0;
+            border-radius: 20px 20px 0 0;
         }
 
         .chat-widget.minimized {
             width: 100%;
-            height: 70px;
-            bottom: 0;
         }
 
         .chat-toggle-button {
-            bottom: 20px;
-            right: 20px;
-        }
-    }
-
-    /* ===== ANIMAÇÃO DE ENTRADA ===== */
-    @keyframes widgetAppear {
-        0% {
-            opacity: 0;
-            transform: translateY(30px) scale(0.9);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0) scale(1);
+            bottom: 15px;
+            right: 15px;
+            width: 55px;
+            height: 55px;
+            font-size: 24px;
         }
     }
 </style>
 
 <!-- Botão Flutuante -->
-<button class="chat-toggle-button" id="chatToggleButton" style="display: none;">
+<button class="chat-toggle-button" id="chatToggleButton">
     <i class="bi bi-chat-dots"></i>
     <span class="badge" id="unreadBadge" style="display: none;">0</span>
 </button>
@@ -452,7 +428,7 @@
     <div class="chat-header" id="chatHeader">
         <h6>
             <i class="bi bi-headset"></i>
-            <span id="chatHeaderTitle">Atendimento</span>
+            <span>Atendimento</span>
             <span class="badge" id="headerUnreadBadge" style="display: none;">0</span>
         </h6>
         <div class="chat-header-actions">
@@ -461,55 +437,17 @@
         </div>
     </div>
     
-    <div class="chat-body">
-        <div class="chat-messages-container" id="chatMessages">
-            <div class="empty-chat">
-                <i class="bi bi-chat"></i>
-                <h5>Nenhuma mensagem ainda</h5>
-                <p>Comece a conversa enviando uma mensagem!</p>
-            </div>
-        </div>
-        
-        <div class="typing-indicator d-none" id="typingIndicator">
-            <span id="typingText">Alguém está digitando</span>
-            <div class="dots">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-        
-        <div class="chat-input-container">
-            <div class="chat-input-wrapper">
-                <input type="text" id="chatMessageInput" 
-                       placeholder="Digite sua mensagem...">
-                <button id="chatSendButton">
-                    <i class="bi bi-send"></i>
-                </button>
-            </div>
-        </div>
-    </div>
+    <div class="chat-body" id="chatBody"></div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 (function() {
-    // Verificar se usuário está logado
-    <% if (user) { %>
-    
     // Configuração
-    var userId = '<%= user.id %>';
-    var userEmail = '<%= user.email %>';
-    var isAdmin = <%= user.isAdmin ? 1 : 0 %>;
-    
-    // Estado do chat
-    var chatState = {
-        isOpen: false,
-        isMinimized: false,
-        unreadCount: 0,
-        currentUserId: null,
-        typingTimeout: null
-    };
+    var isUserLoggedIn = <%= user ? 'true' : 'false' %>;
+    var userId = '<%= user ? user.id : '' %>';
+    var userEmail = '<%= user ? user.email : '' %>';
+    var isAdmin = <%= user && user.isAdmin ? 1 : 0 %>;
     
     // Elementos DOM
     var chatWidget = document.getElementById('chatWidget');
@@ -517,106 +455,30 @@
     var chatHeader = document.getElementById('chatHeader');
     var minimizeBtn = document.getElementById('minimizeChat');
     var closeBtn = document.getElementById('closeChat');
-    var chatMessages = document.getElementById('chatMessages');
-    var messageInput = document.getElementById('chatMessageInput');
-    var sendButton = document.getElementById('chatSendButton');
-    var typingIndicator = document.getElementById('typingIndicator');
-    var typingText = document.getElementById('typingText');
-    var chatHeaderTitle = document.getElementById('chatHeaderTitle');
+    var chatBody = document.getElementById('chatBody');
     var unreadBadge = document.getElementById('unreadBadge');
     var headerUnreadBadge = document.getElementById('headerUnreadBadge');
     
-    // Socket.IO
-    var socket = null;
+    // Estado
+    var chatState = {
+        isOpen: false,
+        isMinimized: false,
+        unreadCount: 0,
+        currentUserId: null,
+        typingTimeout: null,
+        socket: null
+    };
     
-    // Função para formatar hora LOCAL do usuário
+    // Utilitários
     function formatarHoraLocal(dataISO) {
         var data = new Date(dataISO);
-        
-        // Usar o formato local do navegador do usuário
         return data.toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false  // Formato 24h
+            hour12: false
         });
     }
     
-    // Inicializar socket
-    function initSocket() {
-        socket = io({
-            auth: {
-                userId: userId,
-                userEmail: userEmail,
-                isAdmin: isAdmin ? 'true' : 'false'
-            }
-        });
-        
-        socket.on('message_history', function(messages) {
-            if (messages.length > 0) {
-                chatMessages.innerHTML = '';
-                for (var i = 0; i < messages.length; i++) {
-                    displayMessage(messages[i]);
-                }
-                scrollToBottom();
-            }
-        });
-        
-        socket.on('receive_message', function(message) {
-            displayMessage(message);
-            scrollToBottom();
-            
-            // Incrementar contador se chat não estiver aberto
-            if (!chatState.isOpen || chatState.isMinimized) {
-                chatState.unreadCount++;
-                updateUnreadBadge();
-            }
-        });
-        
-        socket.on('user_typing', function(data) {
-            if (data.isTyping) {
-                typingText.textContent = data.userName;
-                typingIndicator.classList.remove('d-none');
-            } else {
-                typingIndicator.classList.add('d-none');
-            }
-        });
-    }
-    
-    // Mostrar mensagem
-    function displayMessage(message) {
-        // Remover empty state
-        var emptyChat = chatMessages.querySelector('.empty-chat');
-        if (emptyChat) {
-            emptyChat.remove();
-        }
-        
-        var isSent = (message.sender_id == userId);
-        var div = document.createElement('div');
-        div.className = 'message-wrapper';
-        
-        var html = '<div class="message ' + (isSent ? 'sent' : 'received') + '">';
-        
-        if (!isSent) {
-            html += '<div class="sender-name">' + message.sender_name + '</div>';
-        }
-        
-        html += '<div>' + message.message + '</div>';
-        
-        // Usar a função de hora LOCAL
-        var horaLocal = formatarHoraLocal(message.created_at);
-        html += '<div class="time">' + horaLocal + '</div>';
-        
-        html += '</div>';
-        
-        div.innerHTML = html;
-        chatMessages.appendChild(div);
-    }
-    
-    function scrollToBottom() {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    
-    // Atualizar badge de mensagens não lidas
     function updateUnreadBadge() {
         if (chatState.unreadCount > 0) {
             unreadBadge.style.display = 'inline';
@@ -629,20 +491,164 @@
         }
     }
     
-    // Enviar mensagem
-    function sendMessage() {
-        var message = messageInput.value.trim();
-        if (message === '') return;
-        
-        socket.emit('send_message', {
-            message: message,
-            userId: isAdmin ? chatState.currentUserId : null
-        });
-        
-        messageInput.value = '';
+    function scrollToBottom(container) {
+        if (container) container.scrollTop = container.scrollHeight;
     }
     
-    // Abrir chat
+    // Tela de login elegante
+    function renderLoginPrompt() {
+        chatBody.innerHTML = `
+            <div class="login-prompt">
+                <div class="login-prompt-icon">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+                <h4>Fale conosco</h4>
+                <p>Faça login para conversar com nossa equipe</p>
+                <div class="login-prompt-buttons">
+                    <a href="/login/index" class="login-btn primary">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Entrar
+                    </a>
+                    <a href="/login/index#register" class="login-btn secondary">
+                        <i class="bi bi-person-plus"></i>
+                        Cadastrar
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Interface do chat para logados
+    function renderChatInterface() {
+        chatBody.innerHTML = `
+            <div class="chat-messages-container" id="chatMessages"></div>
+            <div class="typing-indicator d-none" id="typingIndicator">
+                <span id="typingText"></span>
+                <div class="dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="chatMessageInput" placeholder="Digite sua mensagem...">
+                    <button id="chatSendButton">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        var chatMessages = document.getElementById('chatMessages');
+        var messageInput = document.getElementById('chatMessageInput');
+        var sendButton = document.getElementById('chatSendButton');
+        var typingIndicator = document.getElementById('typingIndicator');
+        var typingText = document.getElementById('typingText');
+        
+        function displayMessage(message) {
+            var emptyChat = chatMessages.querySelector('.empty-chat');
+            if (emptyChat) emptyChat.remove();
+            
+            var isSent = (message.sender_id == userId);
+            var div = document.createElement('div');
+            div.className = 'message-wrapper';
+            
+            var html = '<div class="message ' + (isSent ? 'sent' : 'received') + '">';
+            if (!isSent) html += '<div class="sender-name">' + message.sender_name + '</div>';
+            html += '<div>' + message.message + '</div>';
+            html += '<div class="time">' + formatarHoraLocal(message.created_at) + '</div>';
+            html += '</div>';
+            
+            div.innerHTML = html;
+            chatMessages.appendChild(div);
+            scrollToBottom(chatMessages);
+        }
+        
+        sendButton.addEventListener('click', function() {
+            var message = messageInput.value.trim();
+            if (message === '') return;
+            
+            if (isAdmin && !chatState.currentUserId) {
+                alert('Selecione um usuário para responder');
+                return;
+            }
+            
+            chatState.socket.emit('send_message', {
+                message: message,
+                userId: isAdmin ? chatState.currentUserId : null
+            });
+            
+            messageInput.value = '';
+        });
+        
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendButton.click();
+            
+            chatState.socket.emit('typing', {
+                isTyping: true,
+                userId: isAdmin ? chatState.currentUserId : null
+            });
+            
+            clearTimeout(chatState.typingTimeout);
+            chatState.typingTimeout = setTimeout(function() {
+                chatState.socket.emit('typing', {
+                    isTyping: false,
+                    userId: isAdmin ? chatState.currentUserId : null
+                });
+            }, 1000);
+        });
+        
+        chatState.socket.on('message_history', function(messages) {
+            chatMessages.innerHTML = '';
+            if (messages.length === 0) {
+                chatMessages.innerHTML = '<div class="empty-chat"><i class="bi bi-chat"></i><h5>Nenhuma mensagem</h5><p>Envie uma mensagem para começar</p></div>';
+            } else {
+                messages.forEach(function(msg) { displayMessage(msg); });
+            }
+        });
+        
+        chatState.socket.on('receive_message', function(message) {
+            displayMessage(message);
+            if (!chatState.isOpen || chatState.isMinimized) {
+                chatState.unreadCount++;
+                updateUnreadBadge();
+            }
+        });
+        
+        chatState.socket.on('user_typing', function(data) {
+            if (data.isTyping) {
+                typingText.textContent = data.userName;
+                typingIndicator.classList.remove('d-none');
+            } else {
+                typingIndicator.classList.add('d-none');
+            }
+        });
+    }
+    
+    // Inicialização
+    function initChat() {
+        if (isUserLoggedIn) {
+            chatBody.innerHTML = '<div class="chat-loading"><div class="spinner"></div></div>';
+            
+            chatState.socket = io({
+                auth: {
+                    userId: userId,
+                    userEmail: userEmail,
+                    isAdmin: isAdmin ? 'true' : 'false'
+                }
+            });
+            
+            chatState.socket.on('connect', renderChatInterface);
+            chatState.socket.on('connect_error', function() {
+                chatBody.innerHTML = '<div class="login-prompt"><p>Erro de conexão</p></div>';
+            });
+        } else {
+            renderLoginPrompt();
+        }
+    }
+    
+    // Controles do widget
     function openChat() {
         chatWidget.classList.add('open');
         chatToggleButton.style.display = 'none';
@@ -652,20 +658,17 @@
         updateUnreadBadge();
     }
     
-    // Fechar chat
     function closeChat() {
         chatWidget.classList.remove('open');
         chatToggleButton.style.display = 'flex';
         chatState.isOpen = false;
     }
     
-    // Minimizar chat
     function minimizeChat() {
         chatWidget.classList.add('minimized');
         chatState.isMinimized = true;
     }
     
-    // Maximizar chat
     function maximizeChat() {
         chatWidget.classList.remove('minimized');
         chatState.isMinimized = false;
@@ -678,12 +681,7 @@
     
     chatHeader.addEventListener('click', function(e) {
         if (e.target.closest('.chat-header-actions')) return;
-        
-        if (chatState.isMinimized) {
-            maximizeChat();
-        } else {
-            minimizeChat();
-        }
+        chatState.isMinimized ? maximizeChat() : minimizeChat();
     });
     
     minimizeBtn.addEventListener('click', function(e) {
@@ -696,46 +694,8 @@
         closeChat();
     });
     
-    sendButton.addEventListener('click', sendMessage);
-    
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-        
-        if (socket) {
-            socket.emit('typing', {
-                isTyping: true,
-                userId: isAdmin ? chatState.currentUserId : null
-            });
-            
-            clearTimeout(chatState.typingTimeout);
-            chatState.typingTimeout = setTimeout(function() {
-                socket.emit('typing', {
-                    isTyping: false,
-                    userId: isAdmin ? chatState.currentUserId : null
-                });
-            }, 1000);
-        }
-    });
-    
-    // Mostrar botão após carregar
+    // Iniciar
+    initChat();
     chatToggleButton.style.display = 'flex';
-    
-    // Iniciar socket
-    initSocket();
-    
-    <% } else { %>
-    
-    // Usuário não logado
-    var chatToggleButton = document.getElementById('chatToggleButton');
-    chatToggleButton.style.display = 'flex';
-    
-    chatToggleButton.addEventListener('click', function() {
-        window.location.href = '/login/index';
-    });
-    
-    <% } %>
 })();
 </script>
-<% } %>

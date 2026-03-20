@@ -85,6 +85,8 @@
         transition: all 0.4s ease;
         overflow: hidden;
         z-index: 1;
+        text-decoration: none;
+        display: inline-block;
     }
 
     .btn-elegante::before {
@@ -223,6 +225,9 @@
         box-shadow: var(--shadow-sm);
         position: relative;
         overflow: hidden;
+        text-decoration: none;
+        display: block;
+        color: inherit;
     }
 
     .category-card-elegante::before {
@@ -280,6 +285,9 @@
         border: 1px solid rgba(102, 126, 234, 0.05);
         box-shadow: var(--shadow-sm);
         height: 100%;
+        text-decoration: none;
+        display: block;
+        color: inherit;
     }
 
     .product-card-elegante:hover {
@@ -352,26 +360,6 @@
         color: var(--primary);
     }
 
-    .btn-product-elegante {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid rgba(102, 126, 234, 0.2);
-        background: transparent;
-        color: var(--primary);
-        border-radius: 50px;
-        transition: all 0.4s ease;
-        font-weight: 400;
-        margin-top: 15px;
-    }
-
-    .btn-product-elegante:hover {
-        background: var(--gradient);
-        border-color: transparent;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-
     /* ===== NEWSLETTER ELEGANTE ===== */
     .newsletter-section {
         padding: 80px 0;
@@ -406,6 +394,7 @@
         border-radius: 50px;
         padding: 15px 25px;
         transition: all 0.4s ease;
+        width: 100%;
     }
 
     .newsletter-input:focus {
@@ -422,6 +411,7 @@
         padding: 15px 40px;
         font-weight: 500;
         transition: all 0.4s ease;
+        white-space: nowrap;
     }
 
     .newsletter-btn:hover {
@@ -472,6 +462,14 @@
             flex: 0 0 50%;
             max-width: 50%;
         }
+        
+        .newsletter-card .d-flex {
+            flex-direction: column;
+        }
+        
+        .newsletter-btn {
+            width: 100%;
+        }
     }
 
     @media (max-width: 576px) {
@@ -501,7 +499,7 @@
                     Descubra produtos incríveis de vendedores talentosos. 
                     Uma experiência única de compras, onde design e funcionalidade se encontram.
                 </p>
-                <div class="d-flex gap-3">
+                <div class="d-flex gap-3 flex-wrap">
                     <a href="/produtos/adicionar" class="btn-elegante primary">
                         <i class="bi bi-plus-circle me-2"></i>Começar a vender
                     </a>
@@ -548,7 +546,7 @@
     </div>
 </section>
 
-<!-- Categorias Elegantes -->
+<!-- Categorias Elegantes com Links -->
 <section id="categorias" class="categories-section">
     <div class="container">
         <div class="section-title">
@@ -557,36 +555,52 @@
         </div>
         
         <div class="row g-4">
+            <!-- Categoria: Café da manhã -->
             <div class="col-md-2-4">
-                <div class="category-card-elegante">
+                <a href="/categoria/Café%20da%20manhã" class="category-card-elegante">
                     <i class="bi bi-cup-hot-fill"></i>
                     <h5>Café da manhã</h5>
-                </div>
+                </a>
             </div>
+            
+            <!-- Categoria: Doces -->
             <div class="col-md-2-4">
-                <div class="category-card-elegante">
+                <a href="/categoria/Doces" class="category-card-elegante">
                     <i class="bi bi-cake-fill"></i>
                     <h5>Doces</h5>
-                </div>
+                </a>
             </div>
+            
+            <!-- Categoria: Salgados -->
             <div class="col-md-2-4">
-                <div class="category-card-elegante">
+                <a href="/categoria/Salgados" class="category-card-elegante">
                     <i class="bi bi-egg-fried"></i>
                     <h5>Salgados</h5>
-                </div>
+                </a>
             </div>
+            
+            <!-- Categoria: Bebidas -->
             <div class="col-md-2-4">
-                <div class="category-card-elegante">
+                <a href="/categoria/Bebidas" class="category-card-elegante">
                     <i class="bi bi-cup-straw"></i>
                     <h5>Bebidas</h5>
-                </div>
+                </a>
             </div>
+            
+            <!-- Categoria: Descartáveis -->
             <div class="col-md-2-4">
-                <div class="category-card-elegante">
+                <a href="/categoria/Descart%C3%A1veis" class="category-card-elegante">
                     <i class="bi bi-box-seam"></i>
                     <h5>Descartáveis</h5>
-                </div>
+                </a>
             </div>
+        </div>
+        
+        <!-- Link para todas as categorias -->
+        <div class="text-center mt-5">
+            <a href="/categorias" class="btn-elegante outline">
+                Ver todas as categorias <i class="bi bi-arrow-right ms-2"></i>
+            </a>
         </div>
     </div>
 </section>
@@ -603,7 +617,7 @@
             <% if (produtosDestaque && produtosDestaque.length > 0) { %>
                 <% produtosDestaque.slice(0, 4).forEach((produto, index) => { %>
                 <div class="col-md-6 col-lg-3">
-                    <div class="product-card-elegante">
+                    <a href="/usuario/<%= produto.usuario_id %>/produtos" class="product-card-elegante">
                         <div class="product-image-elegante">
                             <% if (produto.imagemUrl) { %>
                                 <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
@@ -621,11 +635,8 @@
                                 <i class="bi bi-person-circle"></i>
                                 <span><%= produto.email.split('@')[0] %></span>
                             </div>
-                            <a href="/usuario/<%= produto.usuario_id %>/produtos" class="btn-product-elegante">
-                                Ver detalhes
-                            </a>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <% }) %>
             <% } else { %>
@@ -642,14 +653,14 @@
     <div class="container">
         <div class="newsletter-card">
             <div class="row align-items-center">
-                <div class="col-lg-6">
+                <div class="col-lg-6 mb-3 mb-lg-0">
                     <h3>Fique por dentro</h3>
                     <p class="mb-0">Receba ofertas exclusivas e novidades diretamente no seu email</p>
                 </div>
                 <div class="col-lg-6">
-                    <div class="d-flex gap-2">
-                        <input type="email" class="form-control newsletter-input" placeholder="Seu melhor email">
-                        <button class="btn newsletter-btn">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <input type="email" class="newsletter-input" placeholder="Seu melhor email">
+                        <button class="newsletter-btn">
                             <i class="bi bi-send me-2"></i>Inscrever
                         </button>
                     </div>
