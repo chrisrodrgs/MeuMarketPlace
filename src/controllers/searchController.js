@@ -4,13 +4,16 @@ class SearchController {
     // Página de busca
     async index(req, res) {
         try {
-            const { q, categoria, ordem, precoMin, precoMax } = req.query;
+            const { q, categoria, ordem, precoMin, precoMax, avaliacao } = req.query;
             
-            // Construir query base
+            // Construir query base com LEFT JOIN para avaliações
             let query = `
-                SELECT p.*, u.email, u.avatar 
+                SELECT p.*, u.email, u.avatar,
+                       COALESCE(AVG(a.nota), 0) as media_avaliacoes,
+                       COUNT(a.id) as total_avaliacoes
                 FROM products p 
                 JOIN usuarios u ON p.usuario_id = u.id 
+                LEFT JOIN avaliacoes a ON p.id = a.produto_id
                 WHERE 1=1
             `;
             let params = [];
@@ -39,6 +42,14 @@ class SearchController {
                 params.push(parseFloat(precoMax));
             }
 
+            query += ` GROUP BY p.id`;
+
+            // Filtro por avaliação mínima
+            if (avaliacao && avaliacao !== '0') {
+                query += ` HAVING COALESCE(AVG(a.nota), 0) >= ?`;
+                params.push(parseFloat(avaliacao));
+            }
+
             // Ordenação
             switch(ordem) {
                 case 'preco_asc':
@@ -46,6 +57,12 @@ class SearchController {
                     break;
                 case 'preco_desc':
                     query += ` ORDER BY p.price DESC`;
+                    break;
+                case 'melhores_avaliacoes':
+                    query += ` ORDER BY media_avaliacoes DESC, total_avaliacoes DESC`;
+                    break;
+                case 'mais_avaliados':
+                    query += ` ORDER BY total_avaliacoes DESC, media_avaliacoes DESC`;
                     break;
                 case 'recentes':
                 default:
@@ -60,7 +77,9 @@ class SearchController {
             const produtosProcessados = produtos.map(produto => ({
                 ...produto,
                 imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
-                precoFormatado: Number(produto.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                precoFormatado: Number(produto.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                mediaAvaliacoes: produto.media_avaliacoes ? Number(produto.media_avaliacoes).toFixed(1) : 0,
+                totalAvaliacoes: produto.total_avaliacoes || 0
             }));
 
             // Buscar categorias para o filtro
@@ -84,7 +103,7 @@ class SearchController {
                 produtos: produtosProcessados,
                 categorias,
                 stats,
-                filtros: { q, categoria, ordem, precoMin, precoMax },
+                filtros: { q, categoria, ordem, precoMin, precoMax, avaliacao },
                 user: req.session.user || null
             });
 
@@ -111,10 +130,13 @@ class SearchController {
 
             const produtos = await db.all(`
                 SELECT p.id, p.name, p.price, p.categoria, p.imagem,
-                       u.email as vendedor
+                       u.email as vendedor,
+                       COALESCE(AVG(a.nota), 0) as media_avaliacoes
                 FROM products p 
                 JOIN usuarios u ON p.usuario_id = u.id 
+                LEFT JOIN avaliacoes a ON p.id = a.produto_id
                 WHERE p.name LIKE ? OR p.description LIKE ?
+                GROUP BY p.id
                 ORDER BY p.data_criacao DESC 
                 LIMIT 5
             `, [`%${q}%`, `%${q}%`]);
@@ -125,7 +147,8 @@ class SearchController {
                 price: Number(produto.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
                 categoria: produto.categoria,
                 vendedor: produto.vendedor.split('@')[0],
-                imagem: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null
+                imagem: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
+                mediaAvaliacoes: produto.media_avaliacoes ? Number(produto.media_avaliacoes).toFixed(1) : 0
             }));
 
             res.json({ produtos: resultados });
@@ -133,55 +156,6 @@ class SearchController {
         } catch (error) {
             console.error('Erro na busca rápida:', error);
             res.status(500).json({ produtos: [] });
-        }
-    }
-
-    // Página de categoria específica
-    async categoria(req, res) {
-        try {
-            const { nome } = req.params;
-            
-            const produtos = await db.all(`
-                SELECT p.*, u.email, u.avatar 
-                FROM products p 
-                JOIN usuarios u ON p.usuario_id = u.id 
-                WHERE p.categoria = ?
-                ORDER BY p.data_criacao DESC
-            `, [nome]);
-
-            const produtosProcessados = produtos.map(produto => ({
-                ...produto,
-                imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
-                precoFormatado: Number(produto.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-            }));
-
-            // Produtos relacionados (outras categorias)
-            const relacionados = await db.all(`
-                SELECT p.*, u.email 
-                FROM products p 
-                JOIN usuarios u ON p.usuario_id = u.id 
-                WHERE p.categoria != ?
-                ORDER BY RANDOM()
-                LIMIT 4
-            `, [nome]);
-
-            const relacionadosProcessados = relacionados.map(produto => ({
-                ...produto,
-                imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
-                precoFormatado: Number(produto.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-            }));
-
-            res.render('search/categoria', {
-                categoria: nome,
-                produtos: produtosProcessados,
-                relacionados: relacionadosProcessados,
-                total: produtos.length,
-                user: req.session.user || null
-            });
-
-        } catch (error) {
-            console.error('Erro na página de categoria:', error);
-            res.status(500).send('Erro ao carregar categoria');
         }
     }
 }
