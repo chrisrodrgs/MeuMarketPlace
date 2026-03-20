@@ -1,0 +1,37 @@
+<%- include('./includes/head') %>
+<%- include('./includes/nav1') %>
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Produtos do Usuário</h1>
+
+            <% if (produtos && produtos.length > 0) { %>
+                <div class="row">
+                    <% produtos.forEach(produto => { %>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= produto.nome %></h5>
+                                    <p class="card-text text-muted"><%= produto.descricao %></p>
+                                    <p class="card-text">
+                                        <strong>Preço:</strong> R$ <%= produto.preco.toFixed(2) %>
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="#" class="btn btn-outline-primary w-100">Ver Detalhes</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info">
+                    Este usuário ainda não possui produtos cadastrados.
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<%- include('./includes/footer') %>

@@ -1,0 +1,6 @@
+Nesta pasta ficará o banco de dados sqlite
+
+A extensão dele deve ser db ou sqlite
+Ex: 
+    contatos.db
+    contatos.sqlite

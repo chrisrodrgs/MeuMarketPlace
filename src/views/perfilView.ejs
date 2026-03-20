@@ -1,0 +1,147 @@
+<%- include('./includes/head') %>
+<%- include('./includes/nav1') %>
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar do Perfil -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-body text-center p-4">
+                    <!-- Avatar -->
+                    <div class="mb-4">
+                        <% if (usuario && usuario.avatar) { %>
+                            <img src="/<%= usuario.avatar %>" alt="Avatar" 
+                                 class="rounded-circle img-fluid border border-3 border-primary"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        <% } else { %>
+                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center border border-3 border-primary"
+                                 style="width: 150px; height: 150px;">
+                                <i class="bi bi-person-circle text-secondary" style="font-size: 5rem;"></i>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <h4 class="fw-bold"><%= usuario ? usuario.email.split('@')[0] : 'Usuário' %></h4>
+                    <p class="text-muted small"><%= usuario ? usuario.email : '' %></p>
+                    
+                    <!-- Mensagens Flash -->
+                    <% if (typeof errors !== 'undefined' && errors) { %>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <%= errors %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+
+                    <% if (typeof success !== 'undefined' && success) { %>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <%= success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Upload de Avatar -->
+                    <form action="/usuario/perfil/avatar" method="POST" enctype="multipart/form-data" class="mb-3">
+                        <div class="mb-3">
+                            <label for="avatar" class="form-label fw-semibold">Alterar foto</label>
+                            <input type="file" class="form-control form-control-sm" id="avatar" name="avatar" accept="image/*" required>
+                            <div class="form-text">Máx: 2MB. Formatos: JPG, PNG, GIF</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-cloud-upload"></i> Enviar nova foto
+                        </button>
+                    </form>
+                    
+                    <% if (usuario && usuario.avatar) { %>
+                        <!-- Remover Avatar -->
+                        <form action="/usuario/perfil/avatar/remover" method="POST">
+                            <button type="submit" class="btn btn-outline-danger w-100" 
+                                    onclick="return confirm('Tem certeza que deseja remover sua foto de perfil?')">
+                                <i class="bi bi-trash"></i> Remover foto
+                            </button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conteúdo do Perfil -->
+        <div class="col-lg-8">
+            <!-- Informações da Conta -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Informações da Conta</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th style="width: 150px;">ID:</th>
+                            <td><%= usuario ? usuario.id : '' %></td>
+                        </tr>
+                        <tr>
+                            <th>E-mail:</th>
+                            <td><%= usuario ? usuario.email : '' %></td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Últimos Produtos -->
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-box me-2"></i>Meus Últimos Produtos</h5>
+                </div>
+                <div class="card-body">
+                    <% if (produtos && produtos.length > 0) { %>
+                        <div class="row g-3">
+                            <% produtos.forEach(produto => { %>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="product-image" style="height: 100px; overflow: hidden;">
+                                            <% if (produto.imagem) { 
+                                                let nomeArquivo = produto.imagem.split('/').pop();
+                                            %>
+                                                <img src="/uploads/produtos/<%= nomeArquivo %>" alt="<%= produto.name %>" 
+                                                     style="width: 100%; height: 100%; object-fit: cover;">
+                                            <% } else { %>
+                                                <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                                    <i class="bi bi-image text-secondary" style="font-size: 2rem;"></i>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            <h6 class="card-title text-truncate"><%= produto.name %></h6>
+                                            <p class="text-success fw-bold mb-0">R$ <%= Number(produto.price).toFixed(2) %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="/meus-produtos" class="btn btn-outline-primary btn-sm">Ver todos</a>
+                        </div>
+                    <% } else { %>
+                        <p class="text-muted text-center py-3">Você ainda não tem produtos cadastrados.</p>
+                        <div class="text-center">
+                            <a href="/produtos/adicionar" class="btn btn-primary">Adicionar Produto</a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-image {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        border-radius: 8px 8px 0 0;
+    }
+</style>
+
+<%- include('./includes/footer') %>

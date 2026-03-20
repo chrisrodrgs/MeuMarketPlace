@@ -1,0 +1,362 @@
+<%- include('../includes/head') %>
+<%- include('../includes/nav1') %>
+
+<!-- Header da Busca -->
+<section class="search-header py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 text-white">
+                <h1 class="display-5 fw-bold mb-3">
+                    <i class="bi bi-search me-3"></i>
+                    Resultados da Busca
+                </h1>
+                <p class="lead mb-0">
+                    <%= stats.total %> produto(s) encontrado(s) para 
+                    <span class="badge bg-light text-dark fs-6 px-3 py-2">
+                        <%= stats.termo %>
+                    </span>
+                </p>
+            </div>
+            <div class="col-lg-4 mt-3 mt-lg-0">
+                <form action="/busca" method="GET" class="d-flex">
+                    <input type="text" name="q" class="form-control form-control-lg" 
+                           placeholder="Buscar produtos..." value="<%= filtros.q || '' %>">
+                    <button type="submit" class="btn btn-light ms-2 px-4">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filtros e Resultados -->
+<section class="search-results py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar de Filtros -->
+            <div class="col-lg-3 mb-4 mb-lg-0">
+                <div class="filters-card card shadow-sm border-0 sticky-top" style="top: 20px;">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-funnel me-2"></i>
+                            Filtros
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/busca" method="GET" id="filterForm">
+                            <input type="hidden" name="q" value="<%= filtros.q || '' %>">
+                            
+                            <!-- Filtro por Categoria -->
+                            <div class="mb-4">
+                                <label class="fw-semibold mb-2">Categoria</label>
+                                <select name="categoria" class="form-select">
+                                    <option value="todas">Todas as categorias</option>
+                                    <% categorias.forEach(cat => { %>
+                                        <option value="<%= cat.categoria %>" 
+                                            <%= filtros.categoria === cat.categoria ? 'selected' : '' %>>
+                                            <%= cat.categoria %> (<%= cat.total %>)
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            
+                            <!-- Filtro por Preço -->
+                            <div class="mb-4">
+                                <label class="fw-semibold mb-2">Faixa de Preço</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="number" name="precoMin" class="form-control" 
+                                               placeholder="Mín" value="<%= filtros.precoMin || '' %>"
+                                               min="0" step="0.01">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" name="precoMax" class="form-control" 
+                                               placeholder="Máx" value="<%= filtros.precoMax || '' %>"
+                                               min="0" step="0.01">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Ordenação -->
+                            <div class="mb-4">
+                                <label class="fw-semibold mb-2">Ordenar por</label>
+                                <select name="ordem" class="form-select">
+                                    <option value="recentes" <%= !filtros.ordem || filtros.ordem === 'recentes' ? 'selected' : '' %>>
+                                        Mais recentes
+                                    </option>
+                                    <option value="preco_asc" <%= filtros.ordem === 'preco_asc' ? 'selected' : '' %>>
+                                        Menor preço
+                                    </option>
+                                    <option value="preco_desc" <%= filtros.ordem === 'preco_desc' ? 'selected' : '' %>>
+                                        Maior preço
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <!-- Botões -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-funnel me-2"></i>
+                                    Aplicar Filtros
+                                </button>
+                                <a href="/busca" class="btn btn-outline-secondary">
+                                    <i class="bi bi-eraser me-2"></i>
+                                    Limpar Filtros
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lista de Produtos -->
+            <div class="col-lg-9">
+                <% if (produtos.length > 0) { %>
+                    <!-- Info e Visualização -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <p class="text-muted mb-0">
+                            Mostrando <strong><%= produtos.length %></strong> produtos
+                        </p>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary active" id="gridView">
+                                <i class="bi bi-grid-3x3-gap-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="listView">
+                                <i class="bi bi-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Grid de Produtos -->
+                    <div class="row g-4" id="productGrid">
+                        <% produtos.forEach((produto, index) => { %>
+                            <div class="col-md-6 col-xl-4" data-aos="fade-up" data-aos-delay="<%= index * 50 %>">
+                                <div class="card product-card h-100 border-0 shadow-hover">
+                                    <div class="position-relative">
+                                        <% if (produto.imagemUrl) { %>
+                                            <img src="<%= produto.imagemUrl %>" class="card-img-top" alt="<%= produto.name %>">
+                                        <% } else { %>
+                                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                                            </div>
+                                        <% } %>
+                                        <span class="position-absolute top-0 end-0 badge bg-primary m-2">
+                                            <%= produto.categoria %>
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold text-truncate"><%= produto.name %></h5>
+                                        <p class="card-text text-muted small">
+                                            <%= produto.description.substring(0, 80) %>...
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <div>
+                                                <span class="h5 text-success fw-bold mb-0"><%= produto.precoFormatado %></span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <% if (produto.avatar) { %>
+                                                    <img src="/<%= produto.avatar %>" class="rounded-circle me-2" 
+                                                         style="width: 24px; height: 24px; object-fit: cover;">
+                                                <% } else { %>
+                                                    <i class="bi bi-person-circle text-secondary me-2"></i>
+                                                <% } %>
+                                                <small class="text-muted"><%= produto.email.split('@')[0] %></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0 pb-3">
+                                        <a href="/usuario/<%= produto.usuario_id %>/produtos" class="btn btn-outline-primary w-100">
+                                            Ver detalhes
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    
+                    <!-- List View (alternativa) -->
+                    <div class="row g-4 d-none" id="productList">
+                        <% produtos.forEach((produto, index) => { %>
+                            <div class="col-12" data-aos="fade-up" data-aos-delay="<%= index * 50 %>">
+                                <div class="card product-card-list border-0 shadow-hover">
+                                    <div class="row g-0">
+                                        <div class="col-md-3">
+                                            <% if (produto.imagemUrl) { %>
+                                                <img src="<%= produto.imagemUrl %>" class="img-fluid rounded-start" 
+                                                     alt="<%= produto.name %>" style="height: 100%; object-fit: cover;">
+                                            <% } else { %>
+                                                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 100%; min-height: 150px;">
+                                                    <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h5 class="card-title fw-bold"><%= produto.name %></h5>
+                                                        <span class="badge bg-primary mb-2"><%= produto.categoria %></span>
+                                                    </div>
+                                                    <span class="h4 text-success fw-bold"><%= produto.precoFormatado %></span>
+                                                </div>
+                                                <p class="card-text"><%= produto.description %></p>
+                                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <% if (produto.avatar) { %>
+                                                            <img src="/<%= produto.avatar %>" class="rounded-circle me-2" 
+                                                                 style="width: 30px; height: 30px; object-fit: cover;">
+                                                        <% } else { %>
+                                                            <i class="bi bi-person-circle text-secondary fs-4 me-2"></i>
+                                                        <% } %>
+                                                        <span><%= produto.email %></span>
+                                                    </div>
+                                                    <a href="/usuario/<%= produto.usuario_id %>/produtos" class="btn btn-primary">
+                                                        Ver detalhes
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    
+                <% } else { %>
+                    <!-- Nenhum resultado encontrado -->
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="bi bi-search display-1 text-muted"></i>
+                        </div>
+                        <h3 class="fw-light mb-3">Nenhum produto encontrado</h3>
+                        <p class="text-muted mb-4">
+                            Tente buscar por outros termos ou remover alguns filtros.
+                        </p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="/busca" class="btn btn-primary">
+                                <i class="bi bi-eraser me-2"></i>
+                                Limpar busca
+                            </a>
+                            <a href="/" class="btn btn-outline-secondary">
+                                <i class="bi bi-house me-2"></i>
+                                Voltar para home
+                            </a>
+                        </div>
+                        
+                        <!-- Sugestões -->
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <h5 class="mb-4">Você pode gostar de:</h5>
+                                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                    <a href="/busca?q=doces" class="btn btn-outline-primary">Doces</a>
+                                    <a href="/busca?q=salgados" class="btn btn-outline-primary">Salgados</a>
+                                    <a href="/busca?q=bebidas" class="btn btn-outline-primary">Bebidas</a>
+                                    <a href="/busca?q=café" class="btn btn-outline-primary">Café</a>
+                                    <a href="/busca?q=brownie" class="btn btn-outline-primary">Brownie</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Product Cards */
+    .product-card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.15) !important;
+    }
+    
+    .product-card .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .product-card:hover .card-img-top {
+        transform: scale(1.1);
+    }
+    
+    /* List View Cards */
+    .product-card-list {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .product-card-list:hover {
+        transform: translateX(5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+    
+    /* Filters Card */
+    .filters-card {
+        border-radius: 15px;
+    }
+    
+    /* Animations */
+    [data-aos] {
+        opacity: 0;
+        transition: all 0.8s ease;
+    }
+    
+    [data-aos].aos-animate {
+        opacity: 1;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .search-header {
+            text-align: center;
+        }
+        
+        .filters-card {
+            position: relative !important;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Alternar entre grid e lista
+        const gridView = document.getElementById('gridView');
+        const listView = document.getElementById('listView');
+        const productGrid = document.getElementById('productGrid');
+        const productList = document.getElementById('productList');
+        
+        if (gridView && listView) {
+            gridView.addEventListener('click', () => {
+                gridView.classList.add('active');
+                listView.classList.remove('active');
+                productGrid.classList.remove('d-none');
+                productList.classList.add('d-none');
+            });
+            
+            listView.addEventListener('click', () => {
+                listView.classList.add('active');
+                gridView.classList.remove('active');
+                productList.classList.remove('d-none');
+                productGrid.classList.add('d-none');
+            });
+        }
+        
+        // Inicializar AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+    });
+</script>
+
+<%- include('../includes/footer') %>

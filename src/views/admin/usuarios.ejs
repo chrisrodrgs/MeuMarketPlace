@@ -1,0 +1,106 @@
+<%- include('../includes/head') %>
+<%- include('../includes/nav1') %>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="bi bi-people text-primary"></i> 
+                    Gerenciar Usuários
+                </h1>
+                <a href="/admin" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+
+            <!-- Mensagens Flash -->
+            <% if (typeof errors !== 'undefined' && errors) { %>
+                <div class="alert alert-danger"><%= errors %></div>
+            <% } %>
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="alert alert-success"><%= success %></div>
+            <% } %>
+
+            <!-- Lista de Usuários -->
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Todos os Usuários</h5>
+                </div>
+                <div class="card-body">
+                    <% if (usuarios && usuarios.length > 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Email</th>
+                                        <th>Tipo</th>
+                                        <th>Produtos</th>
+                                        <th>Data</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% usuarios.forEach(user => { %>
+                                        <tr>
+                                            <td><%= user.id %></td>
+                                            <td>
+                                                <%= user.email %>
+                                                <% if (user.id == session.user.id) { %>
+                                                    <span class="badge bg-info">Você</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (user.isAdmin) { %>
+                                                    <span class="badge bg-danger">Admin</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-secondary">Usuário</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary"><%= user.total_produtos || 0 %></span>
+                                            </td>
+                                            <td>
+                                                <%= new Date(user.data_criacao).toLocaleDateString('pt-BR') %>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <% if (!user.isAdmin) { %>
+                                                        <a href="/admin/usuarios/<%= user.id %>/tornar-admin" 
+                                                           class="btn btn-warning" 
+                                                           onclick="return confirm('Tornar este usuário administrador?')">
+                                                            <i class="bi bi-shield"></i>
+                                                        </a>
+                                                    <% } else if (user.id != session.user.id) { %>
+                                                        <a href="/admin/usuarios/<%= user.id %>/remover-admin" 
+                                                           class="btn btn-secondary"
+                                                           onclick="return confirm('Remover status de admin?')">
+                                                            <i class="bi bi-shield-slash"></i>
+                                                        </a>
+                                                    <% } %>
+                                                    
+                                                    <% if (user.id != session.user.id) { %>
+                                                        <a href="/admin/usuarios/<%= user.id %>/deletar" 
+                                                           class="btn btn-danger"
+                                                           onclick="return confirm('Tem certeza? Todos os produtos do usuário também serão deletados.')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <p class="text-center py-4">Nenhum usuário encontrado.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../includes/footer') %>
