@@ -6,6 +6,7 @@ const loginController = require('./src/controllers/loginController');
 const perfilController = require('./src/controllers/perfilController');
 const adminController = require('./src/controllers/adminController');
 const adminChatController = require('./src/controllers/adminChatController');
+const adminAnalyticsController = require('./src/controllers/adminAnalyticsController');
 const searchController = require('./src/controllers/searchController');
 const categoriaController = require('./src/controllers/categoriaController');
 const avaliacaoController = require('./src/controllers/avaliacaoController');
@@ -69,6 +70,9 @@ router.get('/admin/produtos/:id', adminController.verProduto);
 router.get('/admin/produtos/:id/deletar', adminController.deletarProduto);
 router.get('/admin/avaliacao/:id/deletar', adminController.deletarAvaliacao);
 router.get('/admin/chat', adminChatController.index);
+router.get('/admin/analytics', adminAnalyticsController.dashboard);
+router.get('/admin/analytics/exportar', adminAnalyticsController.exportarRelatorio);
+router.get('/api/analytics/dados', adminAnalyticsController.apiDados);
 
 // Rotas de Produtos
 // Listar produtos do usuário logado
