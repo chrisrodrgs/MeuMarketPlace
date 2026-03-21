@@ -1,0 +1,150 @@
+<%- include('../includes/head') %>
+<%- include('../includes/nav1') %>
+
+<style>
+    .product-promo-card {
+        background: white;
+        border-radius: 20px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .product-promo-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+    .product-promo-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+    .product-promo-info {
+        flex: 1;
+    }
+    .promo-badge-admin {
+        background: #f56565;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+</style>
+
+<!-- Header -->
+<section class="hero-section" style="min-height: 30vh; padding: 40px 0;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="hero-title">
+                    Promoções em <span>Produtos</span>
+                </h1>
+                <p class="hero-subtitle">Aplique descontos especiais em produtos</p>
+            </div>
+            <a href="/admin" class="btn-elegante outline">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</section>
+
+<div class="container py-4">
+    <!-- Mensagens Flash -->
+    <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+        <div class="alert alert-danger"><%= errors %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <!-- Lista de Produtos -->
+    <h4 class="mb-3"><i class="bi bi-fire text-primary me-2"></i>Produtos</h4>
+    
+    <% if (produtos && produtos.length > 0) { %>
+        <% produtos.forEach(produto => { %>
+        <div class="product-promo-card">
+            <div>
+                <% if (produto.imagem) { %>
+                    <img src="/uploads/produtos/<%= produto.imagem.split('/').pop() %>" class="product-promo-image">
+                <% } else { %>
+                    <div class="product-promo-image bg-light d-flex align-items-center justify-content-center">
+                        <i class="bi bi-image text-secondary"></i>
+                    </div>
+                <% } %>
+            </div>
+            <div class="product-promo-info">
+                <h6 class="mb-0"><%= produto.name %></h6>
+                <div class="small text-muted">
+                    Vendedor: <%= produto.vendedor_email.split('@')[0] %>
+                </div>
+                <div>
+                    <span class="text-primary fw-bold">R$ <%= Number(produto.price).toFixed(2) %></span>
+                    <% if (produto.promocao) { %>
+                        <span class="ms-2 promo-badge-admin">
+                            <i class="bi bi-tag me-1"></i>-<%= Math.round((1 - produto.preco_promocional / produto.price) * 100) %>% OFF
+                        </span>
+                    <% } %>
+                </div>
+            </div>
+            <div>
+                <% if (produto.promocao) { %>
+                    <a href="/admin/produtos/<%= produto.id %>/remover-promocao" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Remover promoção deste produto?')">
+                        <i class="bi bi-x-circle"></i> Remover
+                    </a>
+                <% } else { %>
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#promoModal<%= produto.id %>">
+                        <i class="bi bi-tag"></i> Aplicar Promoção
+                    </button>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Modal Aplicar Promoção -->
+        <div class="modal fade" id="promoModal<%= produto.id %>" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Aplicar Promoção</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="/admin/produtos/<%= produto.id %>/promocao" method="POST">
+                        <div class="modal-body">
+                            <p><strong>Produto:</strong> <%= produto.name %></p>
+                            <p><strong>Preço original:</strong> R$ <%= Number(produto.price).toFixed(2) %></p>
+                            <div class="mb-3">
+                                <label class="form-label">Preço promocional *</label>
+                                <input type="number" name="preco_promocional" class="form-control" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Data de término (opcional)</label>
+                                <input type="datetime-local" name="data_fim_promocao" class="form-control">
+                            </div>
+                            <input type="hidden" name="promocao" value="1">
+                            <div class="text-muted small">
+                                <i class="bi bi-info-circle"></i> O desconto será calculado automaticamente e mostrado como badge no produto.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-elegante secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn-elegante primary">Aplicar Promoção</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% }) %>
+    <% } else { %>
+        <div class="text-center py-5">
+            <i class="bi bi-box display-1 text-muted"></i>
+            <h4 class="fw-light mt-3">Nenhum produto encontrado</h4>
+            <p class="text-muted">Adicione produtos para aplicar promoções</p>
+        </div>
+    <% } %>
+</div>
+
+<%- include('../includes/footer') %>

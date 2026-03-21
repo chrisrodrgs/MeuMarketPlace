@@ -8,15 +8,15 @@ const dbPath = process.env.DB_PATH || path.resolve(__dirname, '..', '..', 'datab
 console.log('📁 Caminho do banco de dados:', dbPath);
 
 let db;
+let isCreatingAdmin = false;
 
 function connect() {
     if (db) return db;
 
     db = new sqlite3.Database(dbPath);
 
-    // ===== CRIAÇÃO DAS TABELAS (PRIMEIRO) =====
+    // ===== CRIAÇÃO DAS TABELAS =====
     
-    // Tabela USUÁRIOS
     db.run(`
         CREATE TABLE IF NOT EXISTS usuarios(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +28,6 @@ function connect() {
         )
     `);
 
-    // Tabela PRODUTOS
     db.run(`
         CREATE TABLE IF NOT EXISTS products(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,18 +39,20 @@ function connect() {
             usuario_id INTEGER,
             estoque INTEGER DEFAULT 0,
             status TEXT DEFAULT 'ativo',
+            promocao INTEGER DEFAULT 0,
+            preco_promocional REAL,
+            data_fim_promocao DATETIME,
             data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
         )
     `);
 
-    // Tabela AVALIAÇÕES
     db.run(`
         CREATE TABLE IF NOT EXISTS avaliacoes(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             produto_id INTEGER NOT NULL,
             usuario_id INTEGER NOT NULL,
-            nota INTEGER NOT NULL CHECK (nota >= 1 AND nota <= 5),
+            nota INTEGER CHECK (nota >= 1 AND nota <= 5),
             comentario TEXT,
             data_avaliacao DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (produto_id) REFERENCES products(id) ON DELETE CASCADE,
@@ -60,7 +61,6 @@ function connect() {
         )
     `);
 
-    // Tabela CARRINHOS
     db.run(`
         CREATE TABLE IF NOT EXISTS carrinhos(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,7 +72,6 @@ function connect() {
         )
     `);
 
-    // Tabela ITENS DO CARRINHO
     db.run(`
         CREATE TABLE IF NOT EXISTS carrinho_itens(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -87,7 +86,6 @@ function connect() {
         )
     `);
 
-    // Tabela MENSAGENS DO CHAT
     db.run(`
         CREATE TABLE IF NOT EXISTS messages(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -104,7 +102,6 @@ function connect() {
         )
     `);
 
-    // Tabela PEDIDOS
     db.run(`
         CREATE TABLE IF NOT EXISTS pedidos(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -118,7 +115,6 @@ function connect() {
         )
     `);
 
-    // Tabela ITENS DO PEDIDO
     db.run(`
         CREATE TABLE IF NOT EXISTS pedido_itens(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -132,35 +128,44 @@ function connect() {
         )
     `);
 
-    // ===== DEPOIS DE CRIAR AS TABELAS, CRIAR O ADMIN =====
-    // Usar setTimeout para garantir que as tabelas foram criadas
-    setTimeout(() => {
-        db.get("SELECT * FROM usuarios WHERE email = 'admin@admin.com'", (err, row) => {
-            if (err) {
-                console.error('Erro ao verificar admin:', err);
-                return;
-            }
-            
-            if (!row) {
-                const salt = bcrypt.genSaltSync(12);
-                const hash = bcrypt.hashSync('admin123', salt);
-                
-                db.run(
-                    "INSERT INTO usuarios (email, password, isAdmin) VALUES (?, ?, ?)",
-                    ['admin@admin.com', hash, 1],
-                    function(err) {
-                        if (err) {
-                            console.error('Erro ao criar admin:', err);
-                        } else {
-                            console.log('✅ Usuário admin criado: admin@admin.com / admin123');
-                        }
-                    }
-                );
-            } else {
-                console.log('✅ Usuário admin já existe');
-            }
-        });
-    }, 500);
+    db.run(`
+        CREATE TABLE IF NOT EXISTS cupons(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            codigo TEXT UNIQUE NOT NULL,
+            tipo TEXT NOT NULL CHECK(tipo IN ('percentual', 'fixo')),
+            valor REAL NOT NULL,
+            validade DATETIME,
+            uso_maximo INTEGER DEFAULT 1,
+            usos INTEGER DEFAULT 0,
+            ativo INTEGER DEFAULT 1,
+            data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS cupon_uso(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cupon_id INTEGER NOT NULL,
+            usuario_id INTEGER NOT NULL,
+            pedido_id INTEGER,
+            data_uso DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (cupon_id) REFERENCES cupons(id) ON DELETE CASCADE,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS banners(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            titulo TEXT NOT NULL,
+            descricao TEXT,
+            imagem TEXT NOT NULL,
+            link TEXT,
+            ordem INTEGER DEFAULT 0,
+            ativo INTEGER DEFAULT 1,
+            data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
 
     return db;
 }
@@ -194,5 +199,39 @@ function all(sql, params = []) {
         });
     });
 }
+
+// Criar admin após a conexão ser estabelecida (sem setTimeout)
+function criarAdminSeNecessario() {
+    const database = connect();
+    if (isCreatingAdmin) return;
+    isCreatingAdmin = true;
+    
+    database.get("SELECT * FROM usuarios WHERE email = 'admin@admin.com'", (err, row) => {
+        if (err) {
+            console.error('Erro ao verificar admin:', err);
+            return;
+        }
+        
+        if (!row) {
+            const salt = bcrypt.genSaltSync(12);
+            const hash = bcrypt.hashSync('admin123', salt);
+            
+            database.run(
+                "INSERT INTO usuarios (email, password, isAdmin) VALUES (?, ?, ?)",
+                ['admin@admin.com', hash, 1],
+                function(err) {
+                    if (err) {
+                        console.error('Erro ao criar admin:', err);
+                    } else {
+                        console.log('✅ Usuário admin criado: admin@admin.com / admin123');
+                    }
+                }
+            );
+        }
+    });
+}
+
+// Executar criação do admin após um pequeno delay para garantir que as tabelas foram criadas
+setTimeout(criarAdminSeNecessario, 500);
 
 module.exports = { connect, run, get, all };

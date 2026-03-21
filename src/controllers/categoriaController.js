@@ -1,5 +1,17 @@
 const db = require('../database/connection');
 
+// Função auxiliar para processar imagens (URL externa ou local)
+function processarImagem(imagem) {
+    if (!imagem) return null;
+    if (imagem.startsWith('http://') || imagem.startsWith('https://')) {
+        return imagem;
+    }
+    if (imagem.includes('uploads/')) {
+        return `/${imagem}`;
+    }
+    return `/uploads/produtos/${imagem.split('/').pop()}`;
+}
+
 class CategoriaController {
     // Página de categoria específica
     async index(req, res) {
@@ -73,7 +85,7 @@ class CategoriaController {
             } else if (ordenar === 'mais_avaliados') {
                 query += ` ORDER BY total_avaliacoes DESC, media_avaliacoes DESC`;
             } else {
-                query += ` ORDER BY p.data_criacao DESC`; // padrão: mais recentes
+                query += ` ORDER BY p.data_criacao DESC`;
             }
             
             // Aplicar paginação
@@ -90,7 +102,7 @@ class CategoriaController {
             // Processar imagens e formatar preços
             const produtosProcessados = produtos.map(produto => ({
                 ...produto,
-                imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
+                imagemUrl: processarImagem(produto.imagem),
                 precoFormatado: Number(produto.price).toLocaleString('pt-BR', { 
                     style: 'currency', 
                     currency: 'BRL' 
@@ -168,7 +180,7 @@ class CategoriaController {
                     
                     const produtosProcessados = produtos.map(produto => ({
                         ...produto,
-                        imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
+                        imagemUrl: processarImagem(produto.imagem),
                         precoFormatado: Number(produto.price).toLocaleString('pt-BR', { 
                             style: 'currency', 
                             currency: 'BRL' 

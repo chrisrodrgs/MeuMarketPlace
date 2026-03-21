@@ -1,0 +1,193 @@
+<%- include('../includes/head') %>
+<%- include('../includes/nav1') %>
+
+<style>
+    .banner-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+    }
+    .banner-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-3px);
+    }
+    .banner-image {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+    }
+    .banner-info {
+        padding: 15px;
+    }
+    .banner-preview {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+    .form-card {
+        background: white;
+        border-radius: 24px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow-md);
+    }
+</style>
+
+<!-- Header -->
+<section class="hero-section" style="min-height: 30vh; padding: 40px 0;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="hero-title">
+                    Gerenciar <span>Banners</span>
+                </h1>
+                <p class="hero-subtitle">Gerencie os banners do carrossel da página inicial</p>
+            </div>
+            <a href="/admin" class="btn-elegante outline">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</section>
+
+<div class="container py-4">
+    <!-- Mensagens Flash -->
+    <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+        <div class="alert alert-danger"><%= errors %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <!-- Formulário de Criar Banner -->
+    <div class="form-card">
+        <h4 class="mb-3"><i class="bi bi-plus-circle text-primary me-2"></i>Adicionar Novo Banner</h4>
+        <form action="/admin/banners/criar" method="POST" enctype="multipart/form-data">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Título *</label>
+                    <input type="text" name="titulo" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" name="descricao" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Link</label>
+                    <input type="text" name="link" class="form-control" placeholder="/busca">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Ordem</label>
+                    <input type="number" name="ordem" class="form-control" value="0">
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Imagem *</label>
+                    <input type="file" name="imagem" class="form-control" accept="image/*" required>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn-elegante primary w-100">Adicionar Banner</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lista de Banners -->
+    <h4 class="mb-3"><i class="bi bi-images text-primary me-2"></i>Banners Ativos</h4>
+    
+    <% if (banners && banners.length > 0) { %>
+        <div class="row g-4">
+            <% banners.forEach(banner => { %>
+            <div class="col-md-6 col-lg-4">
+                <div class="banner-card">
+                    <img src="<%= banner.imagem %>" class="banner-image" alt="<%= banner.titulo %>">
+                    <div class="banner-info">
+                        <h5 class="mb-1"><%= banner.titulo %></h5>
+                        <p class="text-muted small mb-2"><%= banner.descricao || 'Sem descrição' %></p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge <%= banner.ativo ? 'bg-success' : 'bg-secondary' %>">
+                                    <%= banner.ativo ? 'Ativo' : 'Inativo' %>
+                                </span>
+                                <small class="text-muted ms-2">Ordem: <%= banner.ordem %></small>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editModal<%= banner.id %>">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <a href="/admin/banners/<%= banner.id %>/deletar" class="btn btn-sm btn-outline-danger" 
+                                   onclick="return confirm('Deletar este banner?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Editar -->
+            <div class="modal fade" id="editModal<%= banner.id %>" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar Banner</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form action="/admin/banners/<%= banner.id %>/editar" method="POST" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Imagem atual</label>
+                                    <img src="<%= banner.imagem %>" class="img-fluid rounded" style="max-height: 100px;">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Nova imagem</label>
+                                    <input type="file" name="imagem" class="form-control" accept="image/*">
+                                    <small class="text-muted">Deixe em branco para manter a imagem atual</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Título</label>
+                                    <input type="text" name="titulo" class="form-control" value="<%= banner.titulo %>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Descrição</label>
+                                    <input type="text" name="descricao" class="form-control" value="<%= banner.descricao %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Link</label>
+                                    <input type="text" name="link" class="form-control" value="<%= banner.link %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ordem</label>
+                                    <input type="number" name="ordem" class="form-control" value="<%= banner.ordem %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select name="ativo" class="form-select">
+                                        <option value="1" <%= banner.ativo ? 'selected' : '' %>>Ativo</option>
+                                        <option value="0" <%= !banner.ativo ? 'selected' : '' %>>Inativo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-elegante secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn-elegante primary">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <div class="text-center py-5">
+            <i class="bi bi-images display-1 text-muted"></i>
+            <h4 class="fw-light mt-3">Nenhum banner criado</h4>
+            <p class="text-muted">Adicione seu primeiro banner acima!</p>
+        </div>
+    <% } %>
+</div>
+
+<%- include('../includes/footer') %>

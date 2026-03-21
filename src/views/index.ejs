@@ -1,6 +1,114 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
+<style>
+    /* Carrossel de Banners */
+    .carousel-container {
+        position: relative;
+        margin-bottom: 40px;
+    }
+    .carousel-item {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        height: 400px;
+    }
+    .carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .carousel-caption {
+        position: absolute;
+        bottom: 20%;
+        left: 10%;
+        right: auto;
+        text-align: left;
+        background: linear-gradient(90deg, rgba(0,0,0,0.7), transparent);
+        padding: 30px;
+        border-radius: 20px;
+        max-width: 500px;
+    }
+    .carousel-caption h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: white;
+    }
+    .carousel-caption p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        color: rgba(255,255,255,0.9);
+    }
+    .carousel-caption .btn {
+        background: white;
+        color: #667eea;
+        border-radius: 50px;
+        padding: 10px 25px;
+        font-weight: 500;
+        text-decoration: none;
+    }
+    .carousel-control-prev, .carousel-control-next {
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.8;
+    }
+    .carousel-control-prev:hover, .carousel-control-next:hover {
+        opacity: 1;
+    }
+    .carousel-control-prev-icon, .carousel-control-next-icon {
+        filter: invert(1);
+    }
+    .carousel-indicators button {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin: 0 5px;
+        background: white;
+    }
+    .carousel-indicators button.active {
+        background: #667eea;
+    }
+</style>
+
+<!-- Carrossel de Banners -->
+<% if (banners && banners.length > 0) { %>
+<div class="container mt-4">
+    <div id="mainCarousel" class="carousel slide carousel-container" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <% banners.forEach((banner, index) => { %>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="<%= index %>" 
+                    class="<%= index === 0 ? 'active' : '' %>"></button>
+            <% }) %>
+        </div>
+        <div class="carousel-inner">
+            <% banners.forEach((banner, index) => { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                <img src="<%= banner.imagem %>" alt="<%= banner.titulo %>">
+                <div class="carousel-caption">
+                    <h3><%= banner.titulo %></h3>
+                    <p><%= banner.descricao %></p>
+                    <a href="<%= banner.link || '#' %>" class="btn">Saiba mais</a>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Próximo</span>
+        </button>
+    </div>
+</div>
+<% } %>
+
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
@@ -15,7 +123,7 @@
                     Descubra produtos incríveis de vendedores talentosos. 
                     Uma experiência única de compras, onde design e funcionalidade se encontram.
                 </p>
-                <div class="d-flex gap-3 flex-wrap">
+                <div class="d-flex gap-3 flex-wrap mb-4">
                     <a href="/produtos/adicionar" class="btn-elegante primary">
                         <i class="bi bi-plus-circle me-2"></i>Começar a vender
                     </a>
@@ -23,6 +131,7 @@
                         Explorar <i class="bi bi-arrow-down ms-2"></i>
                     </a>
                 </div>
+                <div class="mb-5"></div>
             </div>
             <div class="col-lg-6 text-center d-none d-lg-block">
                 <div class="float">
@@ -32,6 +141,9 @@
         </div>
     </div>
 </section>
+
+<!-- INCLUDE DOS CARROSSÉIS DE PROMOÇÃO -->
+<%- include('./includes/promo-carousels') %>
 
 <!-- Estatísticas -->
 <section class="stats-section">
@@ -121,28 +233,47 @@
 
         <div class="row g-4">
             <% if (produtosDestaque && produtosDestaque.length > 0) { %>
-                <% produtosDestaque.slice(0, 4).forEach((produto, index) => { %>
+                <% produtosDestaque.slice(0, 4).forEach((produto, index) => { 
+                    let badgeClass = '';
+                    if (produto.desconto >= 50) badgeClass = 'alto';
+                    else if (produto.desconto >= 10) badgeClass = 'medio';
+                    else if (produto.desconto > 0) badgeClass = 'baixo';
+                %>
                 <div class="col-md-6 col-lg-3">
-                    <a href="/produto/<%= produto.id %>" class="product-card-elegante">
-                        <div class="product-image-elegante">
-                            <% if (produto.imagemUrl) { %>
-                                <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
-                            <% } else { %>
-                                <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
-                                </div>
-                            <% } %>
-                            <span class="product-badge-elegante"><%= produto.categoria %></span>
-                        </div>
-                        <div class="product-content-elegante">
-                            <h5><%= produto.name %></h5>
-                            <div class="price"><%= produto.precoFormatado %></div>
-                            <div class="seller">
-                                <i class="bi bi-person-circle"></i>
-                                <span><%= produto.email.split('@')[0] %></span>
+                    <div class="product-card-elegante position-relative">
+                        <% if (produto.desconto > 0) { %>
+                            <div class="promo-badge <%= badgeClass %>">
+                                -<%= produto.desconto %>% OFF
                             </div>
-                        </div>
-                    </a>
+                        <% } %>
+                        <a href="/produto/<%= produto.id %>" class="text-decoration-none">
+                            <div class="product-image-elegante">
+                                <% if (produto.imagemUrl) { %>
+                                    <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
+                                <% } else { %>
+                                    <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                                    </div>
+                                <% } %>
+                                <span class="product-badge-elegante"><%= produto.categoria %></span>
+                            </div>
+                            <div class="product-content-elegante">
+                                <h5><%= produto.name %></h5>
+                                <div class="price">
+                                    <% if (produto.precoOriginalFormatado) { %>
+                                        <span class="preco-antigo"><%= produto.precoOriginalFormatado %></span>
+                                        <span class="preco-promocional"><%= produto.precoFormatado %></span>
+                                    <% } else { %>
+                                        <span><%= produto.precoFormatado %></span>
+                                    <% } %>
+                                </div>
+                                <div class="seller">
+                                    <i class="bi bi-person-circle"></i>
+                                    <span><%= produto.email.split('@')[0] %></span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
                 <% }) %>
             <% } else { %>
@@ -176,8 +307,48 @@
     </div>
 </section>
 
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
+        // Inicializar carrossel de maiores descontos
+        if ($('#maioresDescontosCarousel').length) {
+            $('#maioresDescontosCarousel').slick({
+                slidesToShow: 2,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 5000,
+                dots: true,
+                arrows: true,
+                infinite: true,
+                speed: 500,
+                adaptiveHeight: false,
+                responsive: [
+                    { breakpoint: 768, settings: { slidesToShow: 1 } }
+                ]
+            });
+        }
+        
+        // Inicializar carrossel de promoções recentes
+        if ($('#promocoesRecentesCarousel').length) {
+            $('#promocoesRecentesCarousel').slick({
+                slidesToShow: 2,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 5000,
+                dots: true,
+                arrows: true,
+                infinite: true,
+                speed: 500,
+                adaptiveHeight: false,
+                responsive: [
+                    { breakpoint: 768, settings: { slidesToShow: 1 } }
+                ]
+            });
+        }
+        
         // Contadores animados
         const counters = document.querySelectorAll('.counter');
         const speed = 100;

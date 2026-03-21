@@ -1,256 +1,17 @@
 <%- include('../includes/head') %>
 <%- include('../includes/nav1') %>
 
-<style>
-    /* ===== VARIÁVEIS ===== */
-    :root {
-        --primary: #667eea;
-        --secondary: #764ba2;
-        --light-bg: #fafaff;
-        --text-dark: #2d3436;
-        --text-light: #636e72;
-        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
-        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
-        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
-        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
-        --success: #48bb78;
-        --danger: #f56565;
-        --warning: #ecc94b;
-    }
-
-    /* ===== HEADER ===== */
-    .analytics-header {
-        background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
-        padding: 60px 0;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 40px;
-    }
-
-    .analytics-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%);
-        animation: spinSlow 90s linear infinite;
-    }
-
-    @keyframes spinSlow {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .analytics-header h1 {
-        font-size: 2.5rem;
-        font-weight: 300;
-        color: var(--text-dark);
-        position: relative;
-        z-index: 2;
-    }
-
-    .analytics-header h1 span {
-        font-weight: 700;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* ===== STATS CARDS ===== */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-
-    .stat-card {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: var(--shadow-md);
-        transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .stat-card h3 {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--primary);
-        margin-bottom: 5px;
-    }
-
-    .stat-card p {
-        color: var(--text-light);
-        margin: 0;
-        font-size: 0.9rem;
-    }
-
-    .stat-card small {
-        color: var(--success);
-        font-size: 0.8rem;
-    }
-
-    /* ===== GRÁFICOS ===== */
-    .chart-card {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: var(--shadow-md);
-        margin-bottom: 30px;
-    }
-
-    .chart-card h4 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .chart-card h4 i {
-        color: var(--primary);
-    }
-
-    .chart-container {
-        position: relative;
-        height: 300px;
-    }
-
-    /* ===== TABELAS ===== */
-    .table-card {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: var(--shadow-md);
-        margin-bottom: 30px;
-    }
-
-    .table-card h4 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .table-card h4 i {
-        color: var(--primary);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th {
-        text-align: left;
-        padding: 12px;
-        color: var(--text-light);
-        font-weight: 500;
-        font-size: 0.85rem;
-        border-bottom: 2px solid rgba(102, 126, 234, 0.1);
-    }
-
-    td {
-        padding: 12px;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        color: var(--text-dark);
-    }
-
-    tr:hover td {
-        background: var(--light-bg);
-    }
-
-    .user-avatar-sm {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .badge {
-        padding: 4px 10px;
-        border-radius: 50px;
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-
-    .badge.categoria {
-        background: var(--light-bg);
-        color: var(--primary);
-    }
-
-    /* ===== BOTÕES ===== */
-    .btn-elegante {
-        padding: 10px 20px;
-        border-radius: 25px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-elegante.primary {
-        background: var(--gradient);
-        color: white;
-    }
-
-    .btn-elegante.secondary {
-        background: white;
-        color: var(--primary);
-        border: 2px solid rgba(102, 126, 234, 0.2);
-    }
-
-    .btn-elegante:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .export-buttons {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        margin-bottom: 20px;
-    }
-
-    /* ===== RESPONSIVIDADE ===== */
-    @media (max-width: 768px) {
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .chart-container {
-            height: 250px;
-        }
-    }
-</style>
-
 <!-- Header -->
-<section class="analytics-header">
-    <div class="container text-center">
+<section class="hero-section" style="min-height: 40vh; padding: 60px 0;">
+    <div class="container">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h1>
+                <h1 class="hero-title">
                     Central de <span>Análise de Dados</span>
                 </h1>
-                <p class="text-muted">Métricas e indicadores do seu marketplace</p>
+                <p class="hero-subtitle">Métricas e indicadores do seu marketplace</p>
             </div>
-            <a href="/admin" class="btn-elegante secondary">
+            <a href="/admin" class="btn-elegante outline">
                 <i class="bi bi-arrow-left"></i> Voltar
             </a>
         </div>
@@ -258,200 +19,226 @@
 </section>
 
 <!-- Conteúdo Principal -->
-<div class="container">
-    <!-- Mensagens Flash -->
-    <% if (typeof errors !== 'undefined' && errors) { %>
-        <div class="alert alert-danger"><%= errors %></div>
+<div class="container py-4">
+    <!-- MENSAGENS FLASH CORRIGIDAS -->
+    <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <%= errors %>
+        </div>
     <% } %>
-    <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-success"><%= success %></div>
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <%= success %>
+        </div>
     <% } %>
 
     <!-- Botões de Exportação -->
-    <div class="export-buttons">
-        <a href="/admin/analytics/exportar?formato=csv" class="btn-elegante secondary">
+    <div class="d-flex justify-content-end gap-2 mb-4">
+        <a href="/admin/analytics/exportar?formato=csv" class="btn-elegante secondary small">
             <i class="bi bi-filetype-csv"></i> Exportar CSV
         </a>
-        <a href="/admin/analytics/exportar?formato=json" class="btn-elegante secondary">
+        <a href="/admin/analytics/exportar?formato=json" class="btn-elegante secondary small">
             <i class="bi bi-filetype-json"></i> Exportar JSON
         </a>
     </div>
 
     <!-- Cards de Estatísticas -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h3><%= stats.totalUsuarios %></h3>
-            <p>Usuários totais</p>
-            <small>+12% vs mês anterior</small>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="stat-card-elegante">
+                <i class="bi bi-people"></i>
+                <h3><%= stats.totalUsuarios %></h3>
+                <p>Usuários totais</p>
+                <small class="text-success"><%= ((stats.totalVendedores / stats.totalUsuarios) * 100).toFixed(1) %>% vendedores</small>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3><%= stats.totalVendedores %></h3>
-            <p>Vendedores ativos</p>
-            <small><%= ((stats.totalVendedores / stats.totalUsuarios) * 100).toFixed(1) %>% do total</small>
+        <div class="col-md-4">
+            <div class="stat-card-elegante">
+                <i class="bi bi-box"></i>
+                <h3><%= stats.totalProdutos %></h3>
+                <p>Produtos ativos</p>
+                <small class="text-muted">Média de <%= (stats.totalProdutos / stats.totalVendedores).toFixed(1) %> por vendedor</small>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3><%= stats.totalProdutos %></h3>
-            <p>Produtos ativos</p>
-            <small>Média de <%= (stats.totalProdutos / stats.totalVendedores).toFixed(1) %> por vendedor</small>
+        <div class="col-md-4">
+            <div class="stat-card-elegante">
+                <i class="bi bi-star"></i>
+                <h3><%= stats.totalAvaliacoes %></h3>
+                <p>Avaliações recebidas</p>
+                <small class="text-warning">Média: <%= stats.mediaAvaliacoes %> ⭐</small>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3><%= stats.totalPedidos %></h3>
-            <p>Pedidos realizados</p>
-            <small><%= stats.taxaConversao %>% dos usuários compraram</small>
+        <div class="col-md-4">
+            <div class="stat-card-elegante">
+                <i class="bi bi-cart"></i>
+                <h3><%= stats.totalPedidos %></h3>
+                <p>Pedidos realizados</p>
+                <small class="text-success"><%= stats.taxaConversao %>% dos usuários compraram</small>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3>R$ <%= Number(stats.valorTotalVendido).toLocaleString('pt-BR') %></h3>
-            <p>Valor total vendido</p>
-            <small>Ticket médio: R$ <%= Number(stats.ticketMedio).toLocaleString('pt-BR') %></small>
+        <div class="col-md-4">
+            <div class="stat-card-elegante">
+                <i class="bi bi-currency-dollar"></i>
+                <h3>R$ <%= Number(stats.valorTotalVendido).toLocaleString('pt-BR') %></h3>
+                <p>Valor total vendido</p>
+                <small class="text-info">Ticket médio: R$ <%= Number(stats.ticketMedio).toLocaleString('pt-BR') %></small>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3><%= stats.totalAvaliacoes %></h3>
-            <p>Avaliações recebidas</p>
-            <small>Média: <%= stats.mediaAvaliacoes %> ⭐</small>
-        </div>
-    </div>
-
-    <!-- Gráfico de Crescimento de Usuários -->
-    <div class="chart-card">
-        <h4><i class="bi bi-person-plus"></i> Crescimento de Usuários (últimos 6 meses)</h4>
-        <div class="chart-container">
-            <canvas id="usuariosChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Gráfico de Crescimento de Produtos -->
-    <div class="chart-card">
-        <h4><i class="bi bi-box"></i> Crescimento de Produtos (últimos 6 meses)</h4>
-        <div class="chart-container">
-            <canvas id="produtosChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Gráfico de Vendas Mensais -->
-    <div class="chart-card">
-        <h4><i class="bi bi-graph-up"></i> Vendas Mensais (últimos 12 meses)</h4>
-        <div class="chart-container">
-            <canvas id="vendasChart"></canvas>
+        <div class="col-md-4">
+            <div class="stat-card-elegante">
+                <i class="bi bi-graph-up"></i>
+                <h3><%= stats.totalVendedores %></h3>
+                <p>Vendedores ativos</p>
+                <small class="text-muted"><%= ((stats.totalVendedores / stats.totalUsuarios) * 100).toFixed(1) %>% do total</small>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Top Vendedores -->
+    <!-- Gráficos -->
+    <div class="row g-4 mb-5">
         <div class="col-md-6">
-            <div class="table-card">
-                <h4><i class="bi bi-trophy"></i> Top 10 Vendedores</h4>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Vendedor</th>
-                                <th>Vendas</th>
-                                <th>Itens</th>
-                                <th>Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% topVendedores.forEach(function(v) { %>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <% if (v.avatar) { %>
-                                            <img src="/<%= v.avatar %>" class="user-avatar-sm">
-                                        <% } else { %>
-                                            <i class="bi bi-person-circle"></i>
-                                        <% } %>
-                                        <span><%= v.email.split('@')[0] %></span>
-                                    </div>
-                                </td>
-                                <td><%= v.total_vendas %></td>
-                                <td><%= v.itens_vendidos %></td>
-                                <td>R$ <%= Number(v.valor_total).toFixed(2) %></td>
-                            </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
+            <div class="card-elegante p-4">
+                <h4 class="mb-3"><i class="bi bi-person-plus text-primary me-2"></i>Crescimento de Usuários</h4>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="usuariosChart"></canvas>
                 </div>
             </div>
         </div>
-
-        <!-- Produtos Mais Vendidos -->
         <div class="col-md-6">
-            <div class="table-card">
-                <h4><i class="bi bi-fire"></i> Produtos Mais Vendidos</h4>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Produto</th>
-                                <th>Vendas</th>
-                                <th>Qtd</th>
-                                <th>Valor</th>
-                                <th>⭐</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% produtosMaisVendidos.forEach(function(p) { %>
-                            <tr>
-                                <td><%= p.name %></td>
-                                <td><%= p.total_vendas %></td>
-                                <td><%= p.quantidade_vendida %></td>
-                                <td>R$ <%= Number(p.valor_total).toFixed(2) %></td>
-                                <td><%= p.media_avaliacoes ? p.media_avaliacoes.toFixed(1) : '-' %></td>
-                            </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
+            <div class="card-elegante p-4">
+                <h4 class="mb-3"><i class="bi bi-box text-primary me-2"></i>Crescimento de Produtos</h4>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="produtosChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Produtos Melhor Avaliados -->
+    <div class="row g-4 mb-5">
         <div class="col-md-6">
-            <div class="table-card">
-                <h4><i class="bi bi-star"></i> Produtos Melhor Avaliados</h4>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Produto</th>
-                                <th>Categoria</th>
-                                <th>⭐</th>
-                                <th>Avaliações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% produtosMelhorAvaliados.forEach(function(p) { %>
-                            <tr>
-                                <td><%= p.name %></td>
-                                <td><span class="badge categoria"><%= p.categoria %></span></td>
-                                <td><%= p.media_avaliacoes.toFixed(1) %></td>
-                                <td><%= p.total_avaliacoes %></td>
-                            </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
+            <div class="card-elegante p-4">
+                <h4 class="mb-3"><i class="bi bi-graph-up text-primary me-2"></i>Vendas Mensais</h4>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="vendasChart"></canvas>
                 </div>
             </div>
         </div>
-
-        <!-- Vendas por Categoria -->
         <div class="col-md-6">
-            <div class="chart-card">
-                <h4><i class="bi bi-pie-chart"></i> Vendas por Categoria</h4>
-                <div class="chart-container">
+            <div class="card-elegante p-4">
+                <h4 class="mb-3"><i class="bi bi-pie-chart text-primary me-2"></i>Vendas por Categoria</h4>
+                <div class="chart-container" style="height: 300px;">
                     <canvas id="categoriasChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Distribuição de Avaliações -->
-    <div class="chart-card">
-        <h4><i class="bi bi-bar-chart"></i> Distribuição de Avaliações</h4>
-        <div class="chart-container">
-            <canvas id="avaliacoesChart"></canvas>
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card-elegante p-4">
+                <h4 class="mb-3"><i class="bi bi-star text-primary me-2"></i>Distribuição de Avaliações</h4>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="avaliacoesChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-elegante p-4">
+                <h4 class="mb-3"><i class="bi bi-trophy text-primary me-2"></i>Top 10 Vendedores</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Vendedor</th>
+                                <th>Vendas</th>
+                                <th>Valor</th>
+                            </thead>
+                        <tbody>
+                            <% if (topVendedores && topVendedores.length > 0) { %>
+                                <% topVendedores.forEach(v => { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-person-circle"></i>
+                                            <%= v.email.split('@')[0] %>
+                                        </div>
+                                    </td>
+                                    <td><%= v.total_vendas %></td>
+                                    <td>R$ <%= Number(v.valor_total).toFixed(2) %></td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="3" class="text-center">Nenhum dado disponível</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card-elegante p-4">
+                <h4 class="mb-3"><i class="bi bi-fire text-primary me-2"></i>Produtos Mais Vendidos</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Vendas</th>
+                                <th>Valor</th>
+                                <th>⭐</th>
+                            </thead>
+                        <tbody>
+                            <% if (produtosMaisVendidos && produtosMaisVendidos.length > 0) { %>
+                                <% produtosMaisVendidos.forEach(p => { %>
+                                <tr>
+                                    <td><%= p.name %></td>
+                                    <td><%= p.quantidade_vendida %></td>
+                                    <td>R$ <%= Number(p.valor_total).toFixed(2) %></td>
+                                    <td><%= p.media_avaliacoes ? p.media_avaliacoes.toFixed(1) : '-' %></td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="4" class="text-center">Nenhum dado disponível</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-elegante p-4">
+                <h4 class="mb-3"><i class="bi bi-star-fill text-primary me-2"></i>Produtos Melhor Avaliados</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Categoria</th>
+                                <th>⭐</th>
+                                <th>Avaliações</th>
+                            </thead>
+                        <tbody>
+                            <% if (produtosMelhorAvaliados && produtosMelhorAvaliados.length > 0) { %>
+                                <% produtosMelhorAvaliados.forEach(p => { %>
+                                <tr>
+                                    <td><%= p.name %></td>
+                                    <td><span class="badge bg-light text-dark"><%= p.categoria %></span></td>
+                                    <td class="text-warning"><%= p.media_avaliacoes.toFixed(1) %></td>
+                                    <td><%= p.total_avaliacoes %></td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="4" class="text-center">Nenhum dado disponível</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -462,98 +249,113 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Dados dos gráficos
-        const usuariosData = {
-            labels: <%= JSON.stringify(crescimentoUsuarios.map(u => u.mes)) %>,
-            datasets: [{
-                label: 'Novos usuários',
-                data: <%= JSON.stringify(crescimentoUsuarios.map(u => u.total)) %>,
-                borderColor: '#667eea',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        };
+        const usuariosLabels = <%= JSON.stringify(crescimentoUsuarios.map(u => u.mes)) %>;
+        const usuariosData = <%= JSON.stringify(crescimentoUsuarios.map(u => u.total)) %>;
         
-        const produtosData = {
-            labels: <%= JSON.stringify(crescimentoProdutos.map(p => p.mes)) %>,
-            datasets: [{
-                label: 'Novos produtos',
-                data: <%= JSON.stringify(crescimentoProdutos.map(p => p.total)) %>,
-                borderColor: '#48bb78',
-                backgroundColor: 'rgba(72, 187, 120, 0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        };
+        const produtosLabels = <%= JSON.stringify(crescimentoProdutos.map(p => p.mes)) %>;
+        const produtosData = <%= JSON.stringify(crescimentoProdutos.map(p => p.total)) %>;
         
-        const vendasData = {
-            labels: <%= JSON.stringify(vendasMensais.map(v => v.mes)) %>,
-            datasets: [{
-                label: 'Valor vendido (R$)',
-                data: <%= JSON.stringify(vendasMensais.map(v => v.valor_total)) %>,
-                borderColor: '#ecc94b',
-                backgroundColor: 'rgba(236, 201, 75, 0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        };
+        const vendasLabels = <%= JSON.stringify(vendasMensais.map(v => v.mes)) %>;
+        const vendasData = <%= JSON.stringify(vendasMensais.map(v => v.valor_total)) %>;
         
-        const categoriasData = {
-            labels: <%= JSON.stringify(vendasPorCategoria.map(c => c.categoria)) %>,
-            datasets: [{
-                data: <%= JSON.stringify(vendasPorCategoria.map(c => c.valor_total)) %>,
-                backgroundColor: ['#667eea', '#764ba2', '#48bb78', '#ecc94b', '#f56565', '#4299e1']
-            }]
-        };
+        const categoriasLabels = <%= JSON.stringify(vendasPorCategoria.map(c => c.categoria)) %>;
+        const categoriasData = <%= JSON.stringify(vendasPorCategoria.map(c => c.valor_total)) %>;
         
-        const avaliacoesData = {
-            labels: <%= JSON.stringify(distribuicaoAvaliacoes.map(a => a.nota + ' estrelas')) %>,
-            datasets: [{
-                label: 'Quantidade',
-                data: <%= JSON.stringify(distribuicaoAvaliacoes.map(a => a.total)) %>,
-                backgroundColor: '#ffd700',
-                borderRadius: 8
-            }]
-        };
+        const avaliacoesLabels = <%= JSON.stringify(distribuicaoAvaliacoes.map(a => a.nota + ' estrelas')) %>;
+        const avaliacoesData = <%= JSON.stringify(distribuicaoAvaliacoes.map(a => a.total)) %>;
         
         // Criar gráficos
         new Chart(document.getElementById('usuariosChart'), {
             type: 'line',
-            data: usuariosData,
+            data: {
+                labels: usuariosLabels,
+                datasets: [{
+                    label: 'Novos usuários',
+                    data: usuariosData,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
             options: { responsive: true, maintainAspectRatio: false }
         });
         
         new Chart(document.getElementById('produtosChart'), {
             type: 'line',
-            data: produtosData,
+            data: {
+                labels: produtosLabels,
+                datasets: [{
+                    label: 'Novos produtos',
+                    data: produtosData,
+                    borderColor: '#48bb78',
+                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
             options: { responsive: true, maintainAspectRatio: false }
         });
         
         new Chart(document.getElementById('vendasChart'), {
             type: 'line',
-            data: vendasData,
+            data: {
+                labels: vendasLabels,
+                datasets: [{
+                    label: 'Valor vendido (R$)',
+                    data: vendasData,
+                    borderColor: '#ecc94b',
+                    backgroundColor: 'rgba(236, 201, 75, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
             options: { responsive: true, maintainAspectRatio: false }
         });
         
         new Chart(document.getElementById('categoriasChart'), {
             type: 'pie',
-            data: categoriasData,
+            data: {
+                labels: categoriasLabels,
+                datasets: [{
+                    data: categoriasData,
+                    backgroundColor: ['#667eea', '#764ba2', '#48bb78', '#ecc94b', '#f56565', '#4299e1']
+                }]
+            },
             options: { responsive: true, maintainAspectRatio: false }
         });
         
         new Chart(document.getElementById('avaliacoesChart'), {
             type: 'bar',
-            data: avaliacoesData,
-            options: { 
-                responsive: true, 
+            data: {
+                labels: avaliacoesLabels,
+                datasets: [{
+                    label: 'Quantidade',
+                    data: avaliacoesData,
+                    backgroundColor: '#ffd700',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, grid: { color: '#e2e8f0' } },
-                    x: { grid: { display: false } }
-                }
+                scales: { y: { beginAtZero: true } }
             }
         });
     });
 </script>
+
+<style>
+    .chart-container {
+        position: relative;
+    }
+    .badge.bg-light {
+        background: #f1f5f9 !important;
+        color: #334155 !important;
+    }
+    .table-sm td, .table-sm th {
+        padding: 0.5rem;
+    }
+</style>
 
 <%- include('../includes/footer') %>

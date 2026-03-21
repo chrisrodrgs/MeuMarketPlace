@@ -11,6 +11,7 @@ const searchController = require('./src/controllers/searchController');
 const categoriaController = require('./src/controllers/categoriaController');
 const avaliacaoController = require('./src/controllers/avaliacaoController');
 const carrinhoController = require('./src/controllers/carrinhoController');
+const promocaoController = require('./src/controllers/promocaoController');
 const produtoController = require('./src/controllers/produtoController');
 const produtoListController = require('./src/controllers/produtoListController');
 const produtoAdcController = require('./src/controllers/produtoAdcController');
@@ -62,7 +63,7 @@ router.delete('/carrinho/item/:itemId', carrinhoController.remover);
 router.post('/carrinho/limpar', carrinhoController.limpar);
 router.get('/carrinho/contagem', carrinhoController.getContagemItens);
 
-// Rotas Admin
+// ========== ROTAS ADMIN ==========
 router.get('/admin', adminController.dashboard);
 router.get('/admin/usuarios', adminController.listarUsuarios);
 router.get('/admin/usuarios/:id', adminController.verUsuario);
@@ -78,17 +79,45 @@ router.get('/admin/analytics', adminAnalyticsController.dashboard);
 router.get('/admin/analytics/exportar', adminAnalyticsController.exportarRelatorio);
 router.get('/api/analytics/dados', adminAnalyticsController.apiDados);
 
-// Rotas Produtos
+// ========== ROTAS DE PROMOÇÕES E CUPONS ==========
+router.get('/admin/cupons', promocaoController.listarCupons);
+router.post('/admin/cupons/criar', promocaoController.criarCupom);
+router.post('/admin/cupons/:id/editar', promocaoController.editarCupom);
+router.get('/admin/cupons/:id/deletar', promocaoController.deletarCupom);
+router.get('/admin/banners', promocaoController.listarBanners);
+router.post('/admin/banners/criar', require('multer')(require('./src/config/multerBannerConfig')).single('imagem'), promocaoController.criarBanner);
+router.post('/admin/banners/:id/editar', require('multer')(require('./src/config/multerBannerConfig')).single('imagem'), promocaoController.editarBanner);
+router.get('/admin/banners/:id/deletar', promocaoController.deletarBanner);
+router.get('/admin/promocoes-produtos', promocaoController.listarPromocoesProdutos);
+router.post('/admin/produtos/:id/promocao', promocaoController.aplicarPromocao);
+router.get('/admin/produtos/:id/remover-promocao', promocaoController.removerPromocao);
+
+// API para validar cupom
+router.post('/api/validar-cupom', promocaoController.validarCupom);
+
+// ========== ROTAS DE PRODUTOS ==========
+// Listar produtos do usuário logado
 router.get('/meus-produtos', produtoListController.index);
+
+// Adicionar produto
 router.get('/produtos/adicionar', produtoAdcController.renderAddForm);
 router.post('/produtos/adicionar', 
     produtoAdcController.uploadImagem,
     produtoAdcController.addProduto
 );
+
+// Editar produto (com upload de imagem)
 router.get('/produtos/editar/:id', produtoController.renderEditForm);
-router.post('/produtos/editar/:id', produtoController.updateProduto);
+router.post('/produtos/editar/:id', 
+    produtoController.uploadImagem,
+    produtoController.updateProduto
+);
+
+// Deletar produto
 router.get('/produtos/deletar/:id', produtoDeleteController.confirmDelete);
 router.post('/produtos/deletar/:id', produtoDeleteController.deleteProduto);
+
+// Rota para listar produtos de um usuário específico (para perfil público)
 router.get('/usuario/:id/produtos', produtoListController.listarPorUsuarioId);
 
 module.exports = router;
