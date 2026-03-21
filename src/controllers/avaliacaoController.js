@@ -1,5 +1,17 @@
 const db = require('../database/connection');
 
+// Função auxiliar para processar imagens (URL externa ou local)
+function processarImagem(imagem) {
+    if (!imagem) return null;
+    if (imagem.startsWith('http://') || imagem.startsWith('https://')) {
+        return imagem;
+    }
+    if (imagem.includes('uploads/')) {
+        return `/${imagem}`;
+    }
+    return `/uploads/produtos/${imagem.split('/').pop()}`;
+}
+
 class AvaliacaoController {
     
     // Avaliar um produto
@@ -9,27 +21,23 @@ class AvaliacaoController {
             const { nota, comentario } = req.body;
             const usuarioId = req.session.user.id;
 
-            // Validações
             if (!nota || nota < 1 || nota > 5) {
                 req.flash('errors', 'A nota deve ser entre 1 e 5');
                 return res.redirect(`/produto/${produtoId}`);
             }
 
-            // Verificar se o produto existe
             const produto = await db.get('SELECT * FROM products WHERE id = ?', [produtoId]);
             if (!produto) {
                 req.flash('errors', 'Produto não encontrado');
                 return res.redirect('/');
             }
 
-            // Verificar se usuário já avaliou este produto
             const avaliacaoExistente = await db.get(
                 'SELECT * FROM avaliacoes WHERE produto_id = ? AND usuario_id = ?',
                 [produtoId, usuarioId]
             );
 
             if (avaliacaoExistente) {
-                // Atualizar avaliação existente
                 await db.run(
                     `UPDATE avaliacoes 
                      SET nota = ?, comentario = ?, data_avaliacao = CURRENT_TIMESTAMP 
@@ -38,7 +46,6 @@ class AvaliacaoController {
                 );
                 req.flash('success', 'Avaliação atualizada com sucesso!');
             } else {
-                // Criar nova avaliação
                 await db.run(
                     `INSERT INTO avaliacoes (produto_id, usuario_id, nota, comentario) 
                      VALUES (?, ?, ?, ?)`,
@@ -56,7 +63,7 @@ class AvaliacaoController {
         }
     }
 
-    // Buscar avaliações de um produto
+    // Buscar avaliações de um produto (API)
     async getAvaliacoes(req, res) {
         try {
             const { produtoId } = req.params;
@@ -69,12 +76,10 @@ class AvaliacaoController {
                 ORDER BY a.data_avaliacao DESC
             `, [produtoId]);
 
-            // Calcular média
             const media = avaliacoes.length > 0
                 ? (avaliacoes.reduce((acc, curr) => acc + curr.nota, 0) / avaliacoes.length).toFixed(1)
                 : 0;
 
-            // Distribuição das notas
             const distribuicao = {
                 1: avaliacoes.filter(a => a.nota === 1).length,
                 2: avaliacoes.filter(a => a.nota === 2).length,
@@ -83,7 +88,6 @@ class AvaliacaoController {
                 5: avaliacoes.filter(a => a.nota === 5).length
             };
 
-            // Verificar se usuário logado já avaliou
             let avaliacaoUsuario = null;
             if (req.session.user) {
                 avaliacaoUsuario = await db.get(
@@ -106,7 +110,7 @@ class AvaliacaoController {
         }
     }
 
-    // Deletar avaliação (própria avaliação)
+    // Deletar avaliação
     async deletar(req, res) {
         try {
             const { avaliacaoId } = req.params;
@@ -154,10 +158,8 @@ class AvaliacaoController {
 
             console.log('✅ Produto encontrado:', produto.name);
 
-            // Processar imagem
-            produto.imagemUrl = produto.imagem 
-                ? `/uploads/produtos/${produto.imagem.split('/').pop()}` 
-                : null;
+            // Processar imagem (suporta URL externa)
+            produto.imagemUrl = processarImagem(produto.imagem);
             produto.precoFormatado = Number(produto.price).toLocaleString('pt-BR', { 
                 style: 'currency', 
                 currency: 'BRL' 
@@ -178,12 +180,12 @@ class AvaliacaoController {
             // Processar avaliações
             const avaliacoesProcessadas = avaliacoes.map(av => ({
                 ...av,
-                avatarUrl: av.avatar ? `/uploads/avatars/${av.avatar.split('/').pop()}` : null,
+                avatarUrl: av.avatar ? (av.avatar.startsWith('http') ? av.avatar : `/uploads/avatars/${av.avatar.split('/').pop()}`) : null,
                 dataFormatada: new Date(av.data_avaliacao).toLocaleDateString('pt-BR'),
                 estrelas: Array(5).fill(false).map((_, i) => i < av.nota)
             }));
 
-            // Calcular estatísticas - CORRIGIDO para tratar valores nulos
+            // Calcular estatísticas
             const totalResult = await db.get('SELECT COUNT(*) as count FROM avaliacoes WHERE produto_id = ?', [produtoId]);
             const total = totalResult ? totalResult.count : 0;
             
@@ -232,7 +234,7 @@ class AvaliacaoController {
 
             const relacionadosProcessados = relacionados.map(p => ({
                 ...p,
-                imagemUrl: p.imagem ? `/uploads/produtos/${p.imagem.split('/').pop()}` : null,
+                imagemUrl: processarImagem(p.imagem),
                 precoFormatado: Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
             }));
 

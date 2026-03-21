@@ -1,29 +1,47 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
-<!-- Hero Section -->
-<section class="hero-section" style="min-height: 40vh;">
+<style>
+    /* Estilos adicionais para o botão Google */
+    .btn-elegante.google {
+        background: white;
+        color: #dc4e41;
+        border: 2px solid rgba(220, 78, 65, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-elegante.google:hover {
+        border-color: #dc4e41;
+        background: #dc4e41;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220, 78, 65, 0.25);
+    }
+</style>
+
+<!-- Hero Section - Centralizada e com espaço -->
+<section class="hero-section" style="min-height: 50vh; padding: 80px 0 60px 0;">
     <div class="container text-center">
         <h1 class="hero-title">
             Bem-vindo ao <span>Marketplace</span>
         </h1>
-        <p class="hero-subtitle mx-auto">Entre ou crie sua conta para começar</p>
+        <p class="hero-subtitle mx-auto mt-3">Entre ou crie sua conta para começar</p>
     </div>
 </section>
 
 <!-- Card de Login -->
-<div class="container py-5">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="card-elegante">
                 <div class="card-header bg-gradient-primary text-white py-4">
-                    <h2 class="h4 mb-0">
+                    <h2 class="h4 mb-0 text-center">
                         <i class="bi bi-person-circle me-2"></i>
                         Acesse sua conta
                     </h2>
                 </div>
                 <div class="card-body p-4">
-                    <!-- Mensagens Flash -->
+                    <!-- MENSAGENS FLASH CORRIGIDAS -->
                     <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
                         <div class="alert alert-danger">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -122,12 +140,13 @@
                         </div>
                     </div>
 
-                    <!-- Divisor e Botões Sociais (apenas em breve) -->
+                    <!-- Divisor -->
                     <div class="position-relative text-center my-4">
                         <hr class="border-secondary">
                         <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">ou</span>
                     </div>
 
+                    <!-- Botões Sociais -->
                     <div class="row g-3">
                         <div class="col-md-12">
                             <a href="/em-breve" class="btn-elegante google w-100">
@@ -141,23 +160,8 @@
     </div>
 </div>
 
-<style>
-    .btn-elegante.google {
-        background: white;
-        color: #dc4e41;
-        border: 2px solid rgba(220, 78, 65, 0.2);
-        transition: all 0.3s ease;
-    }
-    .btn-elegante.google:hover {
-        border-color: #dc4e41;
-        background: #dc4e41;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(220, 78, 65, 0.25);
-    }
-</style>
-
 <script>
+    // Ativar aba baseado no hash da URL
     if (window.location.hash === '#register') {
         const registerTab = new bootstrap.Tab(document.getElementById('register-tab'));
         registerTab.show();

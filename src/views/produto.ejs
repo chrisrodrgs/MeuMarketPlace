@@ -1,6 +1,436 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
+<style>
+    /* ===== VARIÁVEIS ===== */
+    :root {
+        --primary: #667eea;
+        --secondary: #764ba2;
+        --light-bg: #fafaff;
+        --text-dark: #2d3436;
+        --text-light: #636e72;
+        --shadow-sm: 0 5px 20px rgba(0,0,0,0.02);
+        --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.05);
+        --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.08);
+        --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        --star-color: #ffd700;
+        --star-empty: #e0e0e0;
+    }
+
+    /* ===== BREADCRUMB ===== */
+    .breadcrumb-section {
+        background: white;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin: 0;
+    }
+
+    .breadcrumb-item a {
+        color: var(--text-light);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        color: var(--primary);
+    }
+
+    /* ===== PRODUTO PRINCIPAL ===== */
+    .produto-section {
+        padding: 60px 0;
+        background: white;
+    }
+
+    .produto-imagem-principal {
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        background: #f8f9fa;
+        height: 400px;
+    }
+
+    .produto-imagem-principal img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .produto-titulo {
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: var(--text-dark);
+        margin-bottom: 15px;
+    }
+
+    .produto-categoria {
+        display: inline-block;
+        padding: 8px 20px;
+        background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+        color: var(--primary);
+        border-radius: 50px;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+
+    .produto-preco {
+        font-size: 3rem;
+        font-weight: 300;
+        color: var(--primary);
+        margin-bottom: 20px;
+    }
+
+    /* ===== AVALIAÇÕES ===== */
+    .avaliacoes-resumo {
+        background: var(--light-bg);
+        border-radius: 20px;
+        padding: 30px;
+        margin: 30px 0;
+    }
+
+    .media-geral {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .media-numero {
+        font-size: 4rem;
+        font-weight: 300;
+        color: var(--primary);
+        line-height: 1;
+    }
+
+    .media-estrelas {
+        color: var(--star-color);
+        font-size: 1.5rem;
+        margin: 10px 0;
+    }
+
+    .media-estrelas i {
+        margin: 0 2px;
+    }
+
+    .media-estrelas i.bi-star {
+        color: var(--star-empty);
+    }
+
+    .distribuicao {
+        padding: 20px;
+    }
+
+    .distribuicao-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .distribuicao-label {
+        min-width: 60px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .distribuicao-label i {
+        color: var(--star-color);
+        font-size: 0.9rem;
+    }
+
+    .progresso {
+        flex: 1;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progresso-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        border-radius: 4px;
+    }
+
+    .distribuicao-count {
+        min-width: 30px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+
+    /* ===== FORMULÁRIO DE AVALIAÇÃO ===== */
+    .avaliar-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--shadow-md);
+        margin: 30px 0;
+    }
+
+    .avaliar-titulo {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+    }
+
+    .estrelas-input {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 5px;
+        margin-bottom: 20px;
+    }
+
+    .estrelas-input input {
+        display: none;
+    }
+
+    .estrelas-input label {
+        font-size: 2rem;
+        color: var(--star-empty);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .estrelas-input label:hover,
+    .estrelas-input label:hover ~ label,
+    .estrelas-input input:checked ~ label {
+        color: var(--star-color);
+    }
+
+    /* ===== BOTÕES ELEGANTES ===== */
+    .btn-elegante {
+        position: relative;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.4s ease;
+        overflow: hidden;
+        z-index: 1;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-elegante::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s ease, height 0.6s ease;
+        z-index: -1;
+    }
+
+    .btn-elegante:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-elegante.primary {
+        background: var(--gradient);
+        color: white;
+    }
+
+    .btn-elegante.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-elegante.outline {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .btn-elegante.outline:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    /* ===== CARD DE AVALIAÇÃO ===== */
+    .avaliacao-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .avaliacao-card:hover {
+        transform: translateX(5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .avaliacao-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .avaliacao-usuario {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avaliacao-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .avaliacao-info h5 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .avaliacao-info small {
+        color: var(--text-light);
+    }
+
+    .avaliacao-estrelas {
+        color: var(--star-color);
+        font-size: 0.9rem;
+    }
+
+    .avaliacao-estrelas i.bi-star {
+        color: var(--star-empty);
+    }
+
+    .avaliacao-data {
+        color: var(--text-light);
+        font-size: 0.85rem;
+    }
+
+    .avaliacao-comentario {
+        color: var(--text-dark);
+        line-height: 1.6;
+        margin: 15px 0 0;
+    }
+
+    /* ===== PRODUTOS RELACIONADOS ===== */
+    .relacionados-section {
+        background: var(--light-bg);
+        padding: 60px 0;
+    }
+
+    .relacionado-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .relacionado-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .relacionado-imagem {
+        height: 150px;
+        overflow: hidden;
+    }
+
+    .relacionado-imagem img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .relacionado-card:hover .relacionado-imagem img {
+        transform: scale(1.1);
+    }
+
+    .relacionado-info {
+        padding: 15px;
+    }
+
+    .relacionado-nome {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .relacionado-preco {
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    /* ===== MENSAGENS FLASH ===== */
+    .alert {
+        border-radius: 15px;
+        border: none;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        animation: slideDown 0.5s ease;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(72, 187, 120, 0.2));
+        color: #2f855a;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(245, 101, 101, 0.2));
+        color: #c53030;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 768px) {
+        .produto-titulo {
+            font-size: 2rem;
+        }
+
+        .produto-preco {
+            font-size: 2.5rem;
+        }
+
+        .produto-imagem-principal {
+            height: 300px;
+        }
+
+        .avaliacoes-resumo .row {
+            flex-direction: column;
+        }
+    }
+</style>
+
 <!-- Breadcrumb -->
 <section class="breadcrumb-section">
     <div class="container">
@@ -14,47 +444,53 @@
     </div>
 </section>
 
-<!-- Produto -->
-<section class="py-5">
+<!-- Produto Principal -->
+<section class="produto-section">
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
-                <div class="product-image-elegante" style="height: 400px;">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="produto-imagem-principal">
                     <% if (produto.imagemUrl) { %>
-                        <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>" class="w-100 h-100 object-fit-cover rounded-4">
+                        <img src="<%= produto.imagemUrl %>" alt="<%= produto.name %>">
                     <% } else { %>
-                        <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center rounded-4">
-                            <i class="bi bi-image text-secondary" style="font-size: 4rem;"></i>
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-image text-secondary" style="font-size: 5rem;"></i>
                         </div>
                     <% } %>
                 </div>
             </div>
-            <div class="col-md-6">
-                <span class="badge bg-primary mb-3"><%= produto.categoria %></span>
-                <h1 class="fw-bold mb-3"><%= produto.name %></h1>
+            <div class="col-lg-6">
+                <span class="produto-categoria"><%= produto.categoria %></span>
+                <h1 class="produto-titulo"><%= produto.name %></h1>
                 
-                <!-- Avaliações -->
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <div class="d-flex">
+                <!-- Resumo das avaliações -->
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="d-flex align-items-center">
                         <% for (let i = 1; i <= 5; i++) { %>
-                            <i class="bi <%= i <= Math.round(stats.media) ? 'bi-star-fill' : 'bi-star' %> text-warning"></i>
+                            <i class="bi <%= i <= Math.round(stats.media) ? 'bi-star-fill' : 'bi-star' %>" 
+                               style="color: <%= i <= Math.round(stats.media) ? '#ffd700' : '#e0e0e0' %>; font-size: 1.2rem;"></i>
                         <% } %>
                     </div>
-                    <span class="text-muted"><%= stats.media %> (<%= stats.total %> avaliações)</span>
-                </div>
-                
-                <h2 class="text-primary fw-bold mb-3"><%= produto.precoFormatado %></h2>
-                <p class="text-muted mb-4"><%= produto.description %></p>
-                
-                <div class="mb-4">
-                    <span class="badge bg-<%= produto.estoque > 0 ? 'success' : 'danger' %>">
-                        <i class="bi bi-box"></i> <%= produto.estoque > 0 ? `${produto.estoque} unidades em estoque` : 'Esgotado' %>
+                    <span class="text-muted">
+                        <%= stats.media %> (<%= stats.total %> avaliações)
                     </span>
                 </div>
                 
+                <div class="produto-preco"><%= produto.precoFormatado %></div>
+                
+                <p class="text-muted mb-4"><%= produto.description %></p>
+                
+                <div class="d-flex align-items-center mb-4">
+                    <div class="d-flex align-items-center me-4">
+                        <i class="bi bi-person-circle text-primary fs-4 me-2"></i>
+                        <span>Vendido por <strong><%= produto.email.split('@')[0] %></strong></span>
+                    </div>
+                </div>
+                
+                <!-- Ações -->
                 <div class="d-flex gap-3">
-                    <button class="btn-elegante primary flex-grow-1" onclick="adicionarAoCarrinho(<%= produto.id %>)" <%= produto.estoque <= 0 ? 'disabled' : '' %>>
-                        <i class="bi bi-cart-plus"></i> Adicionar ao Carrinho
+                    <button class="btn-elegante primary flex-grow-1" onclick="adicionarAoCarrinho(<%= produto.id %>)">
+                        <i class="bi bi-cart-plus me-2"></i>Adicionar ao Carrinho
                     </button>
                     <button class="btn-elegante outline">
                         <i class="bi bi-heart"></i>
@@ -66,132 +502,157 @@
 </section>
 
 <!-- Avaliações -->
-<section class="bg-light py-5">
+<section class="py-5 bg-light">
     <div class="container">
         <h2 class="fw-light mb-4">Avaliações <span class="fw-bold">do Produto</span></h2>
         
-        <!-- Resumo -->
-        <div class="row g-4 mb-5">
-            <div class="col-md-4">
-                <div class="text-center p-4 bg-white rounded-4 shadow-sm">
-                    <div class="display-1 fw-bold text-primary"><%= stats.media %></div>
-                    <div class="text-warning fs-4">
-                        <% for (let i = 1; i <= 5; i++) { %>
-                            <i class="bi <%= i <= Math.round(stats.media) ? 'bi-star-fill' : 'bi-star' %>"></i>
+        <!-- Resumo das avaliações -->
+        <div class="avaliacoes-resumo">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="media-geral">
+                        <div class="media-numero"><%= stats.media %></div>
+                        <div class="media-estrelas">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                                <i class="bi <%= i <= Math.round(stats.media) ? 'bi-star-fill' : 'bi-star' %>"></i>
+                            <% } %>
+                        </div>
+                        <div class="text-muted"><%= stats.total %> avaliações</div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="distribuicao">
+                        <% for (let i = 5; i >= 1; i--) { %>
+                        <div class="distribuicao-item">
+                            <span class="distribuicao-label">
+                                <%= i %> <i class="bi bi-star-fill"></i>
+                            </span>
+                            <div class="progresso">
+                                <div class="progresso-bar" style="width: <%= stats.total > 0 ? (stats.distribuicao[i] / stats.total * 100) : 0 %>%"></div>
+                            </div>
+                            <span class="distribuicao-count"><%= stats.distribuicao[i] %></span>
+                        </div>
                         <% } %>
                     </div>
-                    <div class="text-muted"><%= stats.total %> avaliações</div>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="bg-white p-4 rounded-4 shadow-sm">
-                    <% for (let i = 5; i >= 1; i--) { %>
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="text-warning"><%= i %> <i class="bi bi-star-fill"></i></span>
-                            <div class="progress flex-grow-1" style="height: 8px;">
-                                <div class="progress-bar" style="width: <%= stats.total > 0 ? (stats.distribuicao[i] / stats.total * 100) : 0 %"></div>
-                            </div>
-                            <span class="text-muted"><%= stats.distribuicao[i] %></span>
-                        </div>
-                    <% } %>
                 </div>
             </div>
         </div>
         
-        <!-- Formulário de Avaliação -->
+        <!-- Formulário de avaliação (se usuário logado) -->
         <% if (user) { %>
-        <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
-            <h4 class="mb-3"><%= avaliacaoUsuario ? 'Editar avaliação' : 'Avaliar este produto' %></h4>
+        <div class="avaliar-card">
+            <h4 class="avaliar-titulo">
+                <%= avaliacaoUsuario ? 'Editar sua avaliação' : 'Avaliar este produto' %>
+            </h4>
+            
             <form action="/produto/<%= produto.id %>/avaliar" method="POST">
-                <div class="d-flex flex-row-reverse justify-content-end gap-1 mb-3">
+                <div class="estrelas-input">
                     <input type="radio" name="nota" value="5" id="star5" <%= avaliacaoUsuario && avaliacaoUsuario.nota == 5 ? 'checked' : '' %> required>
-                    <label for="star5" class="fs-2 text-secondary"><i class="bi bi-star-fill"></i></label>
+                    <label for="star5"><i class="bi bi-star-fill"></i></label>
+                    
                     <input type="radio" name="nota" value="4" id="star4" <%= avaliacaoUsuario && avaliacaoUsuario.nota == 4 ? 'checked' : '' %>>
-                    <label for="star4" class="fs-2 text-secondary"><i class="bi bi-star-fill"></i></label>
+                    <label for="star4"><i class="bi bi-star-fill"></i></label>
+                    
                     <input type="radio" name="nota" value="3" id="star3" <%= avaliacaoUsuario && avaliacaoUsuario.nota == 3 ? 'checked' : '' %>>
-                    <label for="star3" class="fs-2 text-secondary"><i class="bi bi-star-fill"></i></label>
+                    <label for="star3"><i class="bi bi-star-fill"></i></label>
+                    
                     <input type="radio" name="nota" value="2" id="star2" <%= avaliacaoUsuario && avaliacaoUsuario.nota == 2 ? 'checked' : '' %>>
-                    <label for="star2" class="fs-2 text-secondary"><i class="bi bi-star-fill"></i></label>
+                    <label for="star2"><i class="bi bi-star-fill"></i></label>
+                    
                     <input type="radio" name="nota" value="1" id="star1" <%= avaliacaoUsuario && avaliacaoUsuario.nota == 1 ? 'checked' : '' %>>
-                    <label for="star1" class="fs-2 text-secondary"><i class="bi bi-star-fill"></i></label>
+                    <label for="star1"><i class="bi bi-star-fill"></i></label>
                 </div>
-                <textarea name="comentario" class="form-control mb-3" rows="3" placeholder="Conte sua experiência..."><%= avaliacaoUsuario ? avaliacaoUsuario.comentario : '' %></textarea>
+                
+                <div class="mb-3">
+                    <textarea name="comentario" class="form-control" rows="3" 
+                              placeholder="Conte sua experiência com este produto (opcional)"><%= avaliacaoUsuario ? avaliacaoUsuario.comentario : '' %></textarea>
+                </div>
+                
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn-elegante primary"><%= avaliacaoUsuario ? 'Atualizar' : 'Enviar' %></button>
+                    <button type="submit" class="btn-elegante primary">
+                        <i class="bi bi-check2 me-2"></i>
+                        <%= avaliacaoUsuario ? 'Atualizar avaliação' : 'Enviar avaliação' %>
+                    </button>
+                    
                     <% if (avaliacaoUsuario) { %>
-                        <a href="/avaliacao/<%= avaliacaoUsuario.id %>/deletar" class="btn-elegante danger" onclick="return confirm('Remover avaliação?')">Remover</a>
+                    <a href="/avaliacao/<%= avaliacaoUsuario.id %>/deletar" class="btn-elegante outline" 
+                       onclick="return confirm('Remover sua avaliação?')">
+                        <i class="bi bi-trash me-2"></i>Remover
+                    </a>
                     <% } %>
                 </div>
             </form>
         </div>
         <% } else { %>
-        <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i><a href="/login/index" class="alert-link">Faça login</a> para avaliar este produto.</div>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <a href="/login/index" class="alert-link">Faça login</a> para avaliar este produto.
+        </div>
         <% } %>
         
-        <!-- Lista de Avaliações -->
-        <% if (avaliacoes && avaliacoes.length > 0) { %>
-            <div class="mt-4">
+        <!-- Lista de avaliações -->
+        <div class="mt-4">
+            <% if (avaliacoes && avaliacoes.length > 0) { %>
                 <% avaliacoes.forEach(av => { %>
-                <div class="bg-white p-4 rounded-4 shadow-sm mb-3">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="d-flex align-items-center gap-3">
+                <div class="avaliacao-card">
+                    <div class="avaliacao-header">
+                        <div class="avaliacao-usuario">
                             <% if (av.avatarUrl) { %>
-                                <img src="<%= av.avatarUrl %>" class="rounded-circle" style="width: 40px; height: 40px;">
+                                <img src="<%= av.avatarUrl %>" class="avaliacao-avatar">
                             <% } else { %>
-                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                    <i class="bi bi-person-circle"></i>
+                                <div class="avaliacao-avatar bg-light d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-person-circle text-secondary"></i>
                                 </div>
                             <% } %>
-                            <div>
-                                <strong><%= av.email.split('@')[0] %></strong>
-                                <div class="text-warning">
-                                    <% for (let i = 1; i <= 5; i++) { %>
-                                        <i class="bi <%= i <= av.nota ? 'bi-star-fill' : 'bi-star' %>"></i>
-                                    <% } %>
-                                </div>
-                                <small class="text-muted"><%= av.dataFormatada %></small>
+                            <div class="avaliacao-info">
+                                <h5><%= av.email.split('@')[0] %></h5>
+                                <small><%= av.dataFormatada %></small>
                             </div>
+                        </div>
+                        <div class="avaliacao-estrelas">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                                <i class="bi <%= i <= av.nota ? 'bi-star-fill' : 'bi-star' %>"></i>
+                            <% } %>
                         </div>
                     </div>
                     <% if (av.comentario) { %>
-                        <p class="mt-3 mb-0"><%= av.comentario %></p>
+                    <p class="avaliacao-comentario"><%= av.comentario %></p>
                     <% } %>
                 </div>
                 <% }) %>
-            </div>
-        <% } else { %>
-            <div class="text-center py-5">
-                <i class="bi bi-star display-1 text-muted"></i>
-                <h4 class="fw-light mt-3">Nenhuma avaliação ainda</h4>
-                <p class="text-muted">Seja o primeiro a avaliar este produto!</p>
-            </div>
-        <% } %>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <i class="bi bi-star display-1 text-muted"></i>
+                    <h4 class="fw-light mt-3">Nenhuma avaliação ainda</h4>
+                    <p class="text-muted">Seja o primeiro a avaliar este produto!</p>
+                </div>
+            <% } %>
+        </div>
     </div>
 </section>
 
 <!-- Produtos Relacionados -->
 <% if (relacionados && relacionados.length > 0) { %>
-<section class="py-5">
+<section class="relacionados-section">
     <div class="container">
         <h2 class="fw-light mb-4">Produtos <span class="fw-bold">Relacionados</span></h2>
+        
         <div class="row g-4">
             <% relacionados.forEach(rel => { %>
             <div class="col-md-3">
-                <a href="/produto/<%= rel.id %>" class="text-decoration-none">
-                    <div class="card-elegante">
-                        <div class="product-image-elegante" style="height: 150px;">
-                            <% if (rel.imagemUrl) { %>
-                                <img src="<%= rel.imagemUrl %>" alt="<%= rel.name %>">
-                            <% } else { %>
-                                <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-image text-secondary"></i>
-                                </div>
-                            <% } %>
-                        </div>
-                        <div class="p-3">
-                            <h6 class="text-truncate"><%= rel.name %></h6>
-                            <span class="text-primary fw-bold"><%= rel.precoFormatado %></span>
-                        </div>
+                <a href="/produto/<%= rel.id %>" class="relacionado-card">
+                    <div class="relacionado-imagem">
+                        <% if (rel.imagemUrl) { %>
+                            <img src="<%= rel.imagemUrl %>" alt="<%= rel.name %>">
+                        <% } else { %>
+                            <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                                <i class="bi bi-image text-secondary"></i>
+                            </div>
+                        <% } %>
+                    </div>
+                    <div class="relacionado-info">
+                        <h5 class="relacionado-nome"><%= rel.name %></h5>
+                        <span class="relacionado-preco"><%= rel.precoFormatado %></span>
                     </div>
                 </a>
             </div>
@@ -205,8 +666,13 @@
     function adicionarAoCarrinho(produtoId) {
         fetch('/carrinho/adicionar', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ produtoId: produtoId, quantidade: 1 })
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                produtoId: produtoId, 
+                quantidade: 1 
+            })
         })
         .then(res => res.json())
         .then(data => {
@@ -220,19 +686,12 @@
             } else if (data.error) {
                 alert(data.error);
             }
+        })
+        .catch(err => {
+            console.error('Erro:', err);
+            alert('Erro ao adicionar ao carrinho');
         });
     }
 </script>
-
-<style>
-    .product-image-elegante { overflow: hidden; }
-    .product-image-elegante img { transition: transform 0.3s ease; }
-    .product-image-elegante:hover img { transform: scale(1.05); }
-    input[type="radio"] { display: none; }
-    input[type="radio"] + label { cursor: pointer; transition: color 0.2s; }
-    input[type="radio"]:checked + label { color: #ffd700; }
-    input[type="radio"]:not(:checked) + label { color: #e0e0e0; }
-    input[type="radio"] + label:hover { color: #ffd700; }
-</style>
 
 <%- include('./includes/footer') %>

@@ -1,0 +1,241 @@
+<%- include('../includes/head') %>
+<%- include('../includes/nav1') %>
+
+<style>
+    .cupom-card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--primary);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+    }
+    .cupom-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateX(5px);
+    }
+    .cupom-codigo {
+        font-family: monospace;
+        font-size: 1.2rem;
+        font-weight: 700;
+        background: #f1f5f9;
+        padding: 4px 12px;
+        border-radius: 30px;
+        display: inline-block;
+    }
+    .cupom-valor {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+    .badge-ativo {
+        background: #48bb78;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 30px;
+        font-size: 0.7rem;
+    }
+    .badge-inativo {
+        background: #a0aec0;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 30px;
+        font-size: 0.7rem;
+    }
+    .form-card {
+        background: white;
+        border-radius: 24px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow-md);
+    }
+</style>
+
+<!-- Header -->
+<section class="hero-section" style="min-height: 30vh; padding: 40px 0;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="hero-title">
+                    Gerenciar <span>Cupons</span>
+                </h1>
+                <p class="hero-subtitle">Crie e gerencie cupons de desconto</p>
+            </div>
+            <a href="/admin" class="btn-elegante outline">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</section>
+
+<div class="container py-4">
+    <!-- Mensagens Flash -->
+    <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+        <div class="alert alert-danger"><%= errors %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <!-- Formulário de Criar Cupom -->
+    <div class="form-card">
+        <h4 class="mb-3"><i class="bi bi-plus-circle text-primary me-2"></i>Criar Novo Cupom</h4>
+        <form action="/admin/cupons/criar" method="POST">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Código *</label>
+                    <input type="text" name="codigo" class="form-control" placeholder="DESCONTO10" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tipo</label>
+                    <select name="tipo" class="form-select" id="tipoCupom">
+                        <option value="percentual">Percentual (%)</option>
+                        <option value="fixo">Fixo (R$)</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" id="valorLabel">Valor (%) *</label>
+                    <input type="number" name="valor" class="form-control" step="0.01" min="0" placeholder="10" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Validade</label>
+                    <input type="datetime-local" name="validade" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Uso Máximo</label>
+                    <input type="number" name="uso_maximo" class="form-control" value="1" min="1">
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn-elegante primary w-100">Criar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lista de Cupons -->
+    <h4 class="mb-3"><i class="bi bi-tags text-primary me-2"></i>Cupons Ativos</h4>
+    
+    <% if (cupons && cupons.length > 0) { %>
+        <% cupons.forEach(cupom => { %>
+        <div class="cupom-card">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="cupom-codigo"><%= cupom.codigo %></div>
+                </div>
+                <div class="col-md-2">
+                    <span class="cupom-valor">
+                        <%= cupom.tipo === 'percentual' ? cupom.valor + '%' : 'R$ ' + cupom.valor.toFixed(2) %>
+                    </span>
+                </div>
+                <div class="col-md-2">
+                    <span class="<%= cupom.ativo ? 'badge-ativo' : 'badge-inativo' %>">
+                        <%= cupom.ativo ? 'Ativo' : 'Inativo' %>
+                    </span>
+                </div>
+                <div class="col-md-2">
+                    <small class="text-muted">
+                        Usos: <%= cupom.usos_total || 0 %>/<%= cupom.uso_maximo %>
+                    </small>
+                </div>
+                <div class="col-md-2">
+                    <small class="text-muted">
+                        Validade: <%= cupom.validade ? new Date(cupom.validade).toLocaleDateString('pt-BR') : 'Sem data' %>
+                    </small>
+                </div>
+                <div class="col-md-1 text-end">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal<%= cupom.id %>">
+                                    <i class="bi bi-pencil me-2"></i>Editar
+                                </button>
+                            </li>
+                            <li>
+                                <a href="/admin/cupons/<%= cupom.id %>/deletar" class="dropdown-item text-danger" 
+                                   onclick="return confirm('Deletar este cupom?')">
+                                    <i class="bi bi-trash me-2"></i>Deletar
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Editar -->
+        <div class="modal fade" id="editModal<%= cupom.id %>" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Cupom</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="/admin/cupons/<%= cupom.id %>/editar" method="POST">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Código</label>
+                                <input type="text" name="codigo" class="form-control" value="<%= cupom.codigo %>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tipo</label>
+                                <select name="tipo" class="form-select">
+                                    <option value="percentual" <%= cupom.tipo === 'percentual' ? 'selected' : '' %>>Percentual (%)</option>
+                                    <option value="fixo" <%= cupom.tipo === 'fixo' ? 'selected' : '' %>>Fixo (R$)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Valor</label>
+                                <input type="number" name="valor" class="form-control" step="0.01" value="<%= cupom.valor %>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Validade</label>
+                                <input type="datetime-local" name="validade" class="form-control" 
+                                       value="<%= cupom.validade ? new Date(cupom.validade).toISOString().slice(0,16) : '' %>">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Uso Máximo</label>
+                                <input type="number" name="uso_maximo" class="form-control" value="<%= cupom.uso_maximo %>">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Status</label>
+                                <select name="ativo" class="form-select">
+                                    <option value="1" <%= cupom.ativo ? 'selected' : '' %>>Ativo</option>
+                                    <option value="0" <%= !cupom.ativo ? 'selected' : '' %>>Inativo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-elegante secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn-elegante primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% }) %>
+    <% } else { %>
+        <div class="text-center py-5">
+            <i class="bi bi-tags display-1 text-muted"></i>
+            <h4 class="fw-light mt-3">Nenhum cupom criado</h4>
+            <p class="text-muted">Crie seu primeiro cupom acima!</p>
+        </div>
+    <% } %>
+</div>
+
+<script>
+    // Atualizar label do valor baseado no tipo
+    document.getElementById('tipoCupom')?.addEventListener('change', function() {
+        const label = document.getElementById('valorLabel');
+        if (this.value === 'percentual') {
+            label.textContent = 'Valor (%) *';
+        } else {
+            label.textContent = 'Valor (R$) *';
+        }
+    });
+</script>
+
+<%- include('../includes/footer') %>

@@ -1,9 +1,18 @@
 const db = require('../database/connection');
 
-// Listar produtos do usuário logado
+function processarImagem(imagem) {
+    if (!imagem) return null;
+    if (imagem.startsWith('http://') || imagem.startsWith('https://')) {
+        return imagem;
+    }
+    if (imagem.includes('uploads/')) {
+        return `/${imagem}`;
+    }
+    return `/uploads/produtos/${imagem.split('/').pop()}`;
+}
+
 exports.index = async (req, res) => {
     try {
-        // Verificar se usuário está logado
         if (!req.session.user) {
             req.flash('errors', 'Você precisa estar logado para acessar seus produtos');
             return res.redirect('/login/index');
@@ -11,23 +20,20 @@ exports.index = async (req, res) => {
 
         const usuarioId = req.session.user.id;
 
-        // Buscar produtos do banco de dados
         const produtos = await db.all(
             `SELECT * FROM products WHERE usuario_id = ? ORDER BY id DESC`,
             [usuarioId]
         );
 
-        // Processar produtos para adicionar imagemUrl e outras propriedades
         const produtosProcessados = produtos.map(produto => ({
             ...produto,
-            imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
+            imagemUrl: processarImagem(produto.imagem),
             precoFormatado: Number(produto.price).toLocaleString('pt-BR', { 
                 style: 'currency', 
                 currency: 'BRL' 
             })
         }));
 
-        // Flash messages para feedback
         const success = req.flash('success');
         const errors = req.flash('errors');
 
@@ -45,12 +51,10 @@ exports.index = async (req, res) => {
     }
 };
 
-// Listar produtos de um usuário específico (para perfil público)
 exports.listarPorUsuarioId = async (req, res) => {
     try {
         const usuarioId = req.params.id;
 
-        // Buscar produtos do banco de dados com informações do vendedor
         const produtos = await db.all(
             `SELECT p.*, u.email as usuario_email, u.avatar as usuario_avatar
              FROM products p 
@@ -60,10 +64,9 @@ exports.listarPorUsuarioId = async (req, res) => {
             [usuarioId]
         );
 
-        // Processar produtos para adicionar imagemUrl
         const produtosProcessados = produtos.map(produto => ({
             ...produto,
-            imagemUrl: produto.imagem ? `/uploads/produtos/${produto.imagem.split('/').pop()}` : null,
+            imagemUrl: processarImagem(produto.imagem),
             precoFormatado: Number(produto.price).toLocaleString('pt-BR', { 
                 style: 'currency', 
                 currency: 'BRL' 
