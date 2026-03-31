@@ -23,6 +23,25 @@ exports.index = async (req, res) => {
             ORDER BY ordem ASC
         `);
 
+        // ========== BUSCAR CATEGORIAS PARA O MENU LATERAL ==========
+        const categoriasSidebar = await db.all(`
+            SELECT categoria, COUNT(*) as total 
+            FROM products 
+            WHERE categoria IS NOT NULL AND categoria != '' AND status = 'ativo'
+            GROUP BY categoria 
+            ORDER BY total DESC
+        `);
+
+        // Se não houver categorias no banco, usar as categorias padrão
+        let categoriasSidebarFinal = categoriasSidebar;
+        if (categoriasSidebar.length === 0) {
+            // Criar categorias padrão com contagem zero
+            categoriasSidebarFinal = categorias.map(cat => ({
+                categoria: cat,
+                total: 0
+            }));
+        }
+
         // Buscar produtos em destaque
         const produtosDestaque = await db.all(`
             SELECT p.*, u.email, u.avatar,
@@ -168,19 +187,31 @@ exports.index = async (req, res) => {
             maioresDescontos: maioresDescontosProcessados,
             promocoesRecentes: promocoesRecentesProcessados,
             categorias: categorias,
+            categoriasSidebar: categoriasSidebarFinal, // NOVO: para o menu lateral
+            categoriaAtiva: '', // NOVO: categoria ativa (vazia na home)
             stats: stats,
             user: req.session.user || null
         });
 
     } catch (error) {
         console.error('Erro na home:', error);
+        
+        // Categorias padrão para fallback
+        const categoriasPadrao = ['Café da manhã', 'Doces', 'Salgados', 'Bebidas', 'Descartáveis'];
+        const categoriasSidebarPadrao = categoriasPadrao.map(cat => ({
+            categoria: cat,
+            total: 0
+        }));
+        
         res.render('index', {
             banners: [],
             produtosDestaque: [],
             produtosPorCategoria: {},
             maioresDescontos: [],
             promocoesRecentes: [],
-            categorias: ['Café da manhã', 'Doces', 'Salgados', 'Bebidas', 'Descartáveis'],
+            categorias: categoriasPadrao,
+            categoriasSidebar: categoriasSidebarPadrao, // NOVO: para o menu lateral
+            categoriaAtiva: '', // NOVO: categoria ativa (vazia na home)
             stats: { vendedores: 0, produtos: 0, clientesSatisfeitos: 0 },
             user: req.session.user || null
         });

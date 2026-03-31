@@ -172,6 +172,49 @@
         color: white;
     }
 
+    /* Estilos para mensagens flash */
+    .alert {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: none;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .btn-close {
+        margin-left: auto;
+        background: transparent;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        opacity: 0.7;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-close:hover {
+        opacity: 1;
+    }
+
     /* ===== RESPONSIVIDADE ===== */
     @media (max-width: 768px) {
         .table-responsive {
@@ -206,12 +249,21 @@
 
 <!-- Conteúdo -->
 <div class="container">
-    <!-- Mensagens Flash -->
-    <% if (typeof errors !== 'undefined' && errors) { %>
-        <div class="alert alert-danger"><%= errors %></div>
+    <!-- Mensagens Flash - CORRIGIDAS -->
+    <% if (locals.errors && errors && errors.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <%= Array.isArray(errors) ? errors[0] : errors %>
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';">×</button>
+        </div>
     <% } %>
-    <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-success"><%= success %></div>
+
+    <% if (locals.success && success && success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <%= Array.isArray(success) ? success[0] : success %>
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';">×</button>
+        </div>
     <% } %>
 
     <!-- Filtros e Busca -->
@@ -224,7 +276,7 @@
     <!-- Tabela de Usuários -->
     <div class="table-section">
         <div class="table-responsive">
-            <table id="usersTable">
+            <table id="usersTable" style="min-width: 800px;">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -244,10 +296,10 @@
                         <td><%= user.id %></td>
                         <td>
                             <% if (user.avatar) { %>
-                                <img src="/<%= user.avatar %>" class="user-avatar-sm">
+                                <img src="/<%= user.avatar %>" class="user-avatar-sm" alt="Avatar">
                             <% } else { %>
-                                <div class="user-avatar-sm bg-light d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-person-circle"></i>
+                                <div class="user-avatar-sm bg-light d-flex align-items-center justify-content-center" style="display: flex;">
+                                    <i class="bi bi-person-circle" style="font-size: 24px;"></i>
                                 </div>
                             <% } %>
                         </td>
@@ -259,13 +311,13 @@
                         </td>
                         <td>
                             <% if (user.isAdmin) { %>
-                                <span class="badge admin">Admin</span>
+                                <span class="badge admin"><i class="bi bi-shield-check"></i> Admin</span>
                             <% } else { %>
-                                <span class="badge user">Usuário</span>
+                                <span class="badge user"><i class="bi bi-person"></i> Usuário</span>
                             <% } %>
                         </td>
                         <td>
-                            <span class="badge produtos"><%= user.total_produtos || 0 %></span>
+                            <span class="badge produtos"><i class="bi bi-box"></i> <%= user.total_produtos || 0 %></span>
                         </td>
                         <td><%= user.total_avaliacoes_recebidas || 0 %></td>
                         <td>
@@ -286,14 +338,14 @@
                                     <a href="/admin/usuarios/<%= user.id %>/tornar-admin" 
                                        class="btn-sm promote"
                                        title="Tornar administrador"
-                                       onclick="return confirm('Tornar este usuário administrador?')">
-                                        <i class="bi bi-shield"></i>
+                                       onclick="return confirm('Tornar este usuário administrador? Ele terá acesso total ao painel admin.')">
+                                        <i class="bi bi-shield-plus"></i>
                                     </a>
                                 <% } else if (user.id != session.user.id) { %>
                                     <a href="/admin/usuarios/<%= user.id %>/remover-admin" 
                                        class="btn-sm edit"
                                        title="Remover status de admin"
-                                       onclick="return confirm('Remover status de admin?')">
+                                       onclick="return confirm('Remover status de administrador deste usuário?')">
                                         <i class="bi bi-shield-slash"></i>
                                     </a>
                                 <% } %>
@@ -302,7 +354,7 @@
                                     <a href="/admin/usuarios/<%= user.id %>/deletar" 
                                        class="btn-sm delete"
                                        title="Deletar usuário"
-                                       onclick="return confirm('Tem certeza? Todos os produtos e avaliações deste usuário também serão deletados.')">
+                                       onclick="return confirm('Tem certeza? Todos os produtos e avaliações deste usuário também serão deletados. Esta ação não pode ser desfeita.')">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 <% } %>
@@ -312,25 +364,59 @@
                     <% }) %>
                 </tbody>
             </table>
+            
+            <% if (usuarios.length === 0) { %>
+                <div class="text-center py-5">
+                    <i class="bi bi-people" style="font-size: 3rem; color: var(--text-light);"></i>
+                    <p class="text-muted mt-3">Nenhum usuário encontrado.</p>
+                </div>
+            <% } %>
         </div>
     </div>
 </div>
 
 <script>
     // Filtro de busca
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('.user-row');
-        
-        rows.forEach(row => {
-            const email = row.getAttribute('data-email');
-            if (email.includes(searchTerm)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.user-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const email = row.getAttribute('data-email');
+                if (email && email.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Mostrar mensagem se nenhum resultado encontrado
+            const tableBody = document.querySelector('#usersTable tbody');
+            const noResultMsg = document.getElementById('noResultMessage');
+            
+            if (visibleCount === 0 && rows.length > 0) {
+                if (!noResultMsg) {
+                    const tr = document.createElement('tr');
+                    tr.id = 'noResultMessage';
+                    const td = document.createElement('td');
+                    td.colSpan = 9;
+                    td.className = 'text-center py-5';
+                    td.innerHTML = `
+                        <i class="bi bi-search" style="font-size: 2rem; color: var(--text-light);"></i>
+                        <p class="text-muted mt-2">Nenhum usuário encontrado para "${searchTerm}"</p>
+                    `;
+                    tr.appendChild(td);
+                    tableBody.appendChild(tr);
+                }
+            } else if (noResultMsg) {
+                noResultMsg.remove();
             }
         });
-    });
+    }
 </script>
 
 <%- include('../includes/footer') %>

@@ -1,113 +1,67 @@
 <%- include('./includes/head') %>
 <%- include('./includes/nav1') %>
 
-<style>
-    /* Carrossel de Banners */
-    .carousel-container {
-        position: relative;
-        margin-bottom: 40px;
-    }
-    .carousel-item {
-        position: relative;
-        border-radius: 24px;
-        overflow: hidden;
-        height: 400px;
-    }
-    .carousel-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .carousel-caption {
-        position: absolute;
-        bottom: 20%;
-        left: 10%;
-        right: auto;
-        text-align: left;
-        background: linear-gradient(90deg, rgba(0,0,0,0.7), transparent);
-        padding: 30px;
-        border-radius: 20px;
-        max-width: 500px;
-    }
-    .carousel-caption h3 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 10px;
-        color: white;
-    }
-    .carousel-caption p {
-        font-size: 1rem;
-        margin-bottom: 20px;
-        color: rgba(255,255,255,0.9);
-    }
-    .carousel-caption .btn {
-        background: white;
-        color: #667eea;
-        border-radius: 50px;
-        padding: 10px 25px;
-        font-weight: 500;
-        text-decoration: none;
-    }
-    .carousel-control-prev, .carousel-control-next {
-        width: 50px;
-        height: 50px;
-        background: white;
-        border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 0.8;
-    }
-    .carousel-control-prev:hover, .carousel-control-next:hover {
-        opacity: 1;
-    }
-    .carousel-control-prev-icon, .carousel-control-next-icon {
-        filter: invert(1);
-    }
-    .carousel-indicators button {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin: 0 5px;
-        background: white;
-    }
-    .carousel-indicators button.active {
-        background: #667eea;
-    }
-</style>
-
-<!-- Carrossel de Banners -->
+<!-- Banner Carrossel - Centralizado dentro do container -->
 <% if (banners && banners.length > 0) { %>
-<div class="container mt-4">
-    <div id="mainCarousel" class="carousel slide carousel-container" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <% banners.forEach((banner, index) => { %>
-            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="<%= index %>" 
-                    class="<%= index === 0 ? 'active' : '' %>"></button>
-            <% }) %>
-        </div>
-        <div class="carousel-inner">
-            <% banners.forEach((banner, index) => { %>
-            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                <img src="<%= banner.imagem %>" alt="<%= banner.titulo %>">
-                <div class="carousel-caption">
-                    <h3><%= banner.titulo %></h3>
-                    <p><%= banner.descricao %></p>
-                    <a href="<%= banner.link || '#' %>" class="btn">Saiba mais</a>
+<div class="container">
+    <div class="banner-carousel">
+        <div id="bannerCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+            <div class="carousel-inner">
+                <% banners.forEach((banner, index) => { %>
+                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                    <% if (banner.link && banner.link.trim() !== '') { %>
+                        <a href="<%= banner.link %>" class="banner-link" onclick="return verificarLink(event, '<%= banner.link %>')">
+                            <img src="<%= banner.imagem %>" class="d-block w-100" alt="<%= banner.titulo %>">
+                        </a>
+                    <% } else { %>
+                        <img src="<%= banner.imagem %>" class="d-block w-100" alt="<%= banner.titulo %>">
+                    <% } %>
                 </div>
+                <% }) %>
             </div>
-            <% }) %>
+            <% if (banners.length > 1) { %>
+            <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+            </button>
+            <% } %>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Próximo</span>
-        </button>
     </div>
 </div>
 <% } %>
+
+<style>
+    .banner-link {
+        display: block;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    
+    .banner-link:hover {
+        opacity: 0.95;
+        transition: opacity 0.3s ease;
+    }
+    
+    .carousel-item {
+        cursor: pointer;
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 5%;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+    
+    .carousel-control-prev:hover,
+    .carousel-control-next:hover {
+        opacity: 1;
+    }
+</style>
 
 <!-- Hero Section -->
 <section class="hero-section">
@@ -312,41 +266,58 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
 <script>
+    // Função para verificar se o link existe antes de redirecionar
+    async function verificarLink(event, url) {
+        if (!url || url === '') return true;
+        
+        event.preventDefault();
+        
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            
+            if (response.ok) {
+                window.location.href = url;
+            } else if (response.status === 404) {
+                window.location.href = '/404';
+            } else {
+                window.location.href = '/404';
+            }
+        } catch (error) {
+            console.error('Erro ao verificar link:', error);
+            window.location.href = '/404';
+        }
+        
+        return false;
+    }
+    
     $(document).ready(function() {
+        // Configuração para transições mais fluidas e rápidas
+        const slickSettings = {
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 4000,
+            dots: true,
+            arrows: true,
+            infinite: true,
+            speed: 400,
+            adaptiveHeight: false,
+            cssEase: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            prevArrow: '<button type="button" class="slick-prev" aria-label="Previous"></button>',
+            nextArrow: '<button type="button" class="slick-next" aria-label="Next"></button>',
+            responsive: [
+                { breakpoint: 768, settings: { slidesToShow: 1 } }
+            ]
+        };
+        
         // Inicializar carrossel de maiores descontos
         if ($('#maioresDescontosCarousel').length) {
-            $('#maioresDescontosCarousel').slick({
-                slidesToShow: 2,
-                slidesToScroll: 1,
-                autoplay: true,
-                autoplaySpeed: 5000,
-                dots: true,
-                arrows: true,
-                infinite: true,
-                speed: 500,
-                adaptiveHeight: false,
-                responsive: [
-                    { breakpoint: 768, settings: { slidesToShow: 1 } }
-                ]
-            });
+            $('#maioresDescontosCarousel').slick(slickSettings);
         }
         
         // Inicializar carrossel de promoções recentes
         if ($('#promocoesRecentesCarousel').length) {
-            $('#promocoesRecentesCarousel').slick({
-                slidesToShow: 2,
-                slidesToScroll: 1,
-                autoplay: true,
-                autoplaySpeed: 5000,
-                dots: true,
-                arrows: true,
-                infinite: true,
-                speed: 500,
-                adaptiveHeight: false,
-                responsive: [
-                    { breakpoint: 768, settings: { slidesToShow: 1 } }
-                ]
-            });
+            $('#promocoesRecentesCarousel').slick(slickSettings);
         }
         
         // Contadores animados
@@ -382,7 +353,33 @@
         document.querySelectorAll('.category-card-elegante, .product-card-elegante, .stat-card-elegante').forEach(el => {
             observer.observe(el);
         });
+        
+        // Remover qualquer texto residual dos botões após inicialização
+        setTimeout(function() {
+            $('.slick-prev, .slick-next').each(function() {
+                $(this).html('');
+                $(this).find('*').remove();
+            });
+        }, 100);
+        
+        // Adicionar evento de clique nos banners para verificar links
+        $('.carousel-item').on('click', function(e) {
+            if (!$(e.target).closest('a').length) {
+                const link = $(this).find('a').attr('href');
+                if (link && link !== '') {
+                    verificarLink(e, link);
+                }
+            }
+        });
     });
 </script>
+
+<!-- ... todo o conteúdo existente ... -->
+
+<!-- Menu Lateral Flutuante - Versão Compacta -->
+<%- include('./includes/sidebar-floating', { 
+    categorias: categoriasSidebar, 
+    categoriaAtiva: categoriaAtiva 
+}) %>
 
 <%- include('./includes/footer') %>

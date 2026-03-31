@@ -1,0 +1,324 @@
+<!-- Menu Lateral Flutuante - Versão Compacta (Oculto no mobile) -->
+<style>
+    /* ===== MENU LATERAL FLUTUANTE - COMPACTO ===== */
+    .floating-sidebar {
+        position: fixed !important;
+        left: 20px !important;
+        bottom: 80px !important;
+        width: 220px !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+        z-index: 1000 !important;
+        transition: all 0.3s ease !important;
+        border: 1px solid rgba(102, 126, 234, 0.2) !important;
+        overflow: hidden !important;
+    }
+    
+    /* Ocultar no mobile */
+    @media (max-width: 768px) {
+        .floating-sidebar {
+            display: none !important;
+        }
+    }
+    
+    /* Cabeçalho do menu - Mais compacto */
+    .sidebar-header-floating {
+        background: var(--gradient) !important;
+        padding: 10px 12px !important;
+        color: white !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    
+    .sidebar-header-floating i {
+        font-size: 1rem !important;
+    }
+    
+    .sidebar-header-floating h4 {
+        margin: 0 !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        flex: 1 !important;
+    }
+    
+    .sidebar-header-floating p {
+        margin: 0 !important;
+        font-size: 0.6rem !important;
+        opacity: 0.9 !important;
+        display: none !important;
+    }
+    
+    /* Conteúdo do menu */
+    .sidebar-menu-floating {
+        max-height: 320px !important;
+        overflow-y: auto !important;
+        padding: 6px 0 !important;
+    }
+    
+    /* Scrollbar personalizada - Mais fina */
+    .sidebar-menu-floating::-webkit-scrollbar {
+        width: 3px !important;
+    }
+    
+    .sidebar-menu-floating::-webkit-scrollbar-track {
+        background: var(--border-light) !important;
+    }
+    
+    .sidebar-menu-floating::-webkit-scrollbar-thumb {
+        background: var(--primary) !important;
+        border-radius: 3px !important;
+    }
+    
+    /* Lista de categorias */
+    .categories-list-floating {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .category-floating-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 6px 12px !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .category-floating-item:hover {
+        background: var(--light-bg) !important;
+        padding-left: 16px !important;
+    }
+    
+    .category-floating-item.active {
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), transparent) !important;
+        border-left: 2px solid var(--primary) !important;
+    }
+    
+    .category-floating-icon {
+        width: 28px !important;
+        height: 28px !important;
+        background: var(--light-bg) !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 0.85rem !important;
+        color: var(--primary) !important;
+        flex-shrink: 0 !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .category-floating-item:hover .category-floating-icon {
+        background: var(--gradient) !important;
+        color: white !important;
+        transform: scale(1.02) !important;
+    }
+    
+    .category-floating-info {
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+    
+    .category-floating-name {
+        font-size: 0.75rem !important;
+        font-weight: 500 !important;
+        color: var(--text-dark) !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+    
+    .category-floating-count {
+        font-size: 0.6rem !important;
+        color: var(--text-light) !important;
+        background: var(--light-bg) !important;
+        padding: 1px 4px !important;
+        border-radius: 12px !important;
+    }
+    
+    .category-floating-desc {
+        display: none !important;
+    }
+    
+    /* Separador - Mais fino */
+    .sidebar-divider-floating {
+        height: 1px !important;
+        background: linear-gradient(90deg, transparent, var(--border-light), transparent) !important;
+        margin: 6px 12px !important;
+    }
+    
+    /* Botão ver todas - Mais compacto */
+    .view-all-floating {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        padding: 8px 12px !important;
+        margin: 6px 12px 12px !important;
+        background: var(--light-bg) !important;
+        color: var(--primary) !important;
+        text-decoration: none !important;
+        font-size: 0.7rem !important;
+        font-weight: 500 !important;
+        border-radius: 10px !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .view-all-floating:hover {
+        background: var(--gradient) !important;
+        color: white !important;
+    }
+    
+    .view-all-floating i {
+        transition: transform 0.2s ease !important;
+        font-size: 0.7rem !important;
+    }
+    
+    .view-all-floating:hover i {
+        transform: translateX(3px) !important;
+    }
+    
+    /* Responsividade - Já oculto no mobile, mas ajuste para telas médias */
+    @media (max-width: 992px) {
+        .floating-sidebar {
+            left: 15px !important;
+            bottom: 70px !important;
+            width: 210px !important;
+            border-radius: 14px !important;
+        }
+        
+        .sidebar-header-floating {
+            padding: 8px 10px !important;
+        }
+        
+        .sidebar-header-floating i {
+            font-size: 0.9rem !important;
+        }
+        
+        .sidebar-header-floating h4 {
+            font-size: 0.75rem !important;
+        }
+        
+        .category-floating-item {
+            padding: 5px 10px !important;
+        }
+        
+        .category-floating-icon {
+            width: 24px !important;
+            height: 24px !important;
+            font-size: 0.75rem !important;
+        }
+        
+        .category-floating-name {
+            font-size: 0.7rem !important;
+        }
+        
+        .view-all-floating {
+            padding: 6px 10px !important;
+            font-size: 0.65rem !important;
+        }
+    }
+    
+    /* Animação de entrada */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .floating-sidebar {
+        animation: slideUp 0.3s ease !important;
+    }
+</style>
+
+<div class="floating-sidebar" id="floatingSidebar">
+    <div class="sidebar-header-floating">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+        <h4>Categorias</h4>
+    </div>
+    
+    <div class="sidebar-menu-floating">
+        <div class="categories-list-floating">
+            <% if (categorias && categorias.length > 0) { %>
+                <% 
+                    // Mapeamento de ícones por categoria
+                    const iconMap = {
+                        'Café da manhã': 'bi-cup-hot-fill',
+                        'Doces': 'bi-cake-fill',
+                        'Salgados': 'bi-egg-fried',
+                        'Bebidas': 'bi-cup-straw',
+                        'Descartáveis': 'bi-box-seam',
+                        'Padaria': 'bi-basket-fill',
+                        'Bebidas Alcoólicas': 'bi-wine',
+                        'Congelados': 'bi-snow2',
+                        'Hortifruti': 'bi-tree-fill',
+                        'Limpeza': 'bi-bucket',
+                        'Higiene': 'bi-droplet',
+                        'Eletrônicos': 'bi-laptop',
+                        'Roupas': 'bi-tags',
+                        'Acessórios': 'bi-gem'
+                    };
+                    const defaultIcon = 'bi-tag-fill';
+                %>
+                
+                <% categorias.forEach(cat => { 
+                    const iconClass = iconMap[cat.categoria] || defaultIcon;
+                    const categoriaUrl = '/categoria/' + encodeURIComponent(cat.categoria);
+                    const isActive = categoriaAtiva === cat.categoria;
+                %>
+                    <a href="<%= categoriaUrl %>" 
+                       class="category-floating-item <%= isActive ? 'active' : '' %>"
+                       data-category="<%= cat.categoria %>">
+                        <div class="category-floating-icon">
+                            <i class="bi <%= iconClass %>"></i>
+                        </div>
+                        <div class="category-floating-info">
+                            <div class="category-floating-name">
+                                <%= cat.categoria %>
+                                <span class="category-floating-count"><%= cat.total || 0 %></span>
+                            </div>
+                        </div>
+                    </a>
+                <% }) %>
+            <% } else { %>
+                <div style="text-align: center; padding: 20px;">
+                    <i class="bi bi-inbox" style="font-size: 1.5rem; color: var(--text-light);"></i>
+                    <p style="font-size: 0.65rem; color: var(--text-light); margin-top: 5px;">Nenhuma categoria</p>
+                </div>
+            <% } %>
+        </div>
+        
+        <div class="sidebar-divider-floating"></div>
+        
+        <a href="/categorias" class="view-all-floating">
+            <i class="bi bi-compass"></i>
+            <span>Ver todas</span>
+            <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>
+
+<script>
+    // Destacar categoria ativa baseado na URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const categoryLinks = document.querySelectorAll('.category-floating-item');
+        
+        categoryLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && currentPath === href) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>

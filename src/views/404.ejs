@@ -1,9 +1,161 @@
-<%-include('./includes/head') %>
-<%-include('./includes/nav1') %>
+<%- include('./includes/head') %>
+<%- include('./includes/nav1') %>
 
-<div class="container">
-       <h1>Erro 404</h1>
-       <h2>Página não encontrada!</h2>
-</div>
+<style>
+    .error-404-section {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        text-align: center;
+        padding: 60px 0;
+    }
+    
+    .error-404-content {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .error-404-icon {
+        font-size: 6rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .error-404-title {
+        font-size: 6rem;
+        font-weight: 800;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+        line-height: 1;
+    }
+    
+    .error-404-subtitle {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 15px;
+    }
+    
+    .error-404-text {
+        color: var(--text-light);
+        margin-bottom: 30px;
+        font-size: 1rem;
+    }
+    
+    .error-404-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+    
+    .back-home-btn {
+        background: var(--gradient);
+        color: white;
+        padding: 12px 28px;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+    
+    .back-home-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+        color: white;
+    }
+    
+    .back-btn-404 {
+        background: white;
+        color: var(--primary);
+        padding: 12px 28px;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        border: 2px solid var(--primary);
+    }
+    
+    .back-btn-404:hover {
+        background: var(--gradient);
+        color: white;
+        transform: translateY(-2px);
+        border-color: transparent;
+    }
+    
+    .suggestion-links {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .suggestion-links h4 {
+        font-size: 1rem;
+        color: var(--text-light);
+        margin-bottom: 15px;
+    }
+    
+    .suggestion-links a {
+        color: var(--primary);
+        text-decoration: none;
+        margin: 0 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .suggestion-links a:hover {
+        color: var(--secondary);
+        text-decoration: underline;
+    }
+</style>
 
-<%-include('./includes/footer') %>
+<section class="error-404-section">
+    <div class="container">
+        <div class="error-404-content">
+            <div class="error-404-icon">
+                <i class="bi bi-compass"></i>
+            </div>
+            <h1 class="error-404-title">404</h1>
+            <h2 class="error-404-subtitle">Página não encontrada!</h2>
+            <p class="error-404-text">
+                Ops! Parece que você se perdeu no caminho.<br>
+                A página que você está procurando não existe ou foi movida.
+            </p>
+            <div class="error-404-buttons">
+                <a href="/" class="back-home-btn">
+                    <i class="bi bi-house-door"></i> Voltar para o início
+                </a>
+                <button onclick="history.back()" class="back-btn-404">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </button>
+            </div>
+            <div class="suggestion-links">
+                <h4>Você pode tentar:</h4>
+                <a href="/produtos">Produtos</a>
+                <a href="/categorias">Categorias</a>
+                <a href="/contato">Contato</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('./includes/footer') %>

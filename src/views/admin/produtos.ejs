@@ -14,10 +14,22 @@
         --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
     }
 
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     .header-section {
         background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
         padding: 40px 0;
         margin-bottom: 30px;
+        border-radius: 0 0 30px 30px;
     }
 
     .filter-section {
@@ -34,6 +46,7 @@
         padding: 10px 20px;
         width: 100%;
         transition: all 0.3s ease;
+        background: white;
     }
 
     .search-box:focus, .filter-select:focus {
@@ -67,6 +80,7 @@
         padding: 15px 12px;
         border-bottom: 1px solid rgba(0,0,0,0.05);
         color: var(--text-dark);
+        vertical-align: middle;
     }
 
     tr:hover td {
@@ -74,26 +88,42 @@
     }
 
     .product-image-sm {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         border-radius: 10px;
         object-fit: cover;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        display: block;
+    }
+
+    .image-placeholder-sm {
+        width: 50px;
+        height: 50px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #adb5bd;
+        border: 1px solid #e9ecef;
     }
 
     .badge {
         padding: 5px 12px;
         border-radius: 50px;
         font-size: 0.8rem;
+        display: inline-block;
     }
 
-    .badge.categoria {
-        background: var(--light-bg);
+    .badge-categoria {
+        background: #f0f2ff;
         color: var(--primary);
         border: 1px solid rgba(102, 126, 234, 0.2);
     }
 
     .btn-sm {
-        padding: 5px 10px;
+        padding: 6px 12px;
         border-radius: 8px;
         font-size: 0.85rem;
         text-decoration: none;
@@ -101,21 +131,24 @@
         align-items: center;
         gap: 5px;
         transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
     }
 
-    .btn-sm.view {
+    .btn-sm-view {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
     }
 
-    .btn-sm.delete {
+    .btn-sm-delete {
         background: linear-gradient(135deg, #f56565, #c53030);
         color: white;
     }
 
-    .btn-sm:hover {
+    .btn-sm-view:hover, .btn-sm-delete:hover {
         transform: translateY(-2px);
         box-shadow: var(--shadow-md);
+        color: white;
     }
 
     .pagination {
@@ -144,19 +177,135 @@
     .star-rating {
         color: #ffd700;
     }
+    
+    /* Estilos para mensagens flash */
+    .alert {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: none;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .btn-close {
+        margin-left: auto;
+        background: transparent;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        opacity: 0.7;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-close:hover {
+        opacity: 1;
+    }
+    
+    .d-flex {
+        display: flex;
+    }
+    
+    .gap-2 {
+        gap: 8px;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+    
+    .py-5 {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+    
+    .mt-3 {
+        margin-top: 1rem;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+    
+    .fw-light {
+        font-weight: 300;
+    }
+    
+    .fw-bold {
+        font-weight: 700;
+    }
+    
+    .text-muted {
+        color: var(--text-light);
+    }
+    
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .col-md-2, .col-md-4, .col-md-6 {
+        flex: 0 0 auto;
+        padding: 0 12px;
+    }
+    
+    .col-md-2 { width: 16.666%; }
+    .col-md-4 { width: 33.333%; }
+    .col-md-6 { width: 50%; }
+    
+    .g-3 {
+        margin: -0.5rem;
+    }
+    
+    .g-3 > [class*="col-"] {
+        padding: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-2, .col-md-4, .col-md-6 {
+            width: 100%;
+        }
+    }
 </style>
 
 <!-- Header -->
 <section class="header-section">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="row" style="justify-content: space-between; align-items: center;">
             <div>
                 <h1 class="fw-light">Gerenciar <span class="fw-bold" style="background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Produtos</span></h1>
                 <p class="text-muted">Total de <%= total %> produtos cadastrados</p>
             </div>
-            <a href="/admin" class="btn-sm view">
-                <i class="bi bi-arrow-left"></i> Voltar
-            </a>
+            <div>
+                <a href="/admin" class="btn-sm btn-sm-view" style="text-decoration: none;">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -171,33 +320,45 @@
             <div class="col-md-4">
                 <select name="categoria" class="filter-select">
                     <option value="">Todas as categorias</option>
-                    <% categorias.forEach(cat => { %>
-                        <option value="<%= cat.categoria %>" <%= categoriaFiltro === cat.categoria ? 'selected' : '' %>>
-                            <%= cat.categoria %> (<%= cat.total %>)
-                        </option>
-                    <% }) %>
+                    <% if (typeof categorias !== 'undefined' && categorias && categorias.length > 0) { %>
+                        <% categorias.forEach(cat => { %>
+                            <option value="<%= cat.categoria %>" <%= categoriaFiltro === cat.categoria ? 'selected' : '' %>>
+                                <%= cat.categoria %> (<%= cat.total %>)
+                            </option>
+                        <% }) %>
+                    <% } %>
                 </select>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn-sm view" style="width: 100%;">
+                <button type="submit" class="btn-sm btn-sm-view" style="width: 100%;">
                     <i class="bi bi-search"></i> Filtrar
                 </button>
             </div>
         </form>
     </div>
 
-    <!-- Mensagens Flash -->
-    <% if (typeof errors !== 'undefined' && errors) { %>
-        <div class="alert alert-danger"><%= errors %></div>
+    <!-- Mensagens Flash - CORRIGIDAS -->
+    <% if (locals.errors && errors && errors.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <%= Array.isArray(errors) ? errors[0] : errors %>
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';">×</button>
+        </div>
     <% } %>
-    <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-success"><%= success %></div>
+
+    <% if (locals.success && success && success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <%= Array.isArray(success) ? success[0] : success %>
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';">×</button>
+        </div>
     <% } %>
 
     <!-- Tabela de Produtos -->
     <div class="table-section">
-        <div class="table-responsive">
-            <table>
+        <div class="table-responsive" style="overflow-x: auto;">
+            <% if (typeof produtos !== 'undefined' && produtos && produtos.length > 0) { %>
+            <table style="width: 100%; min-width: 800px;">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -210,25 +371,47 @@
                         <th>Avaliações</th>
                         <th>Média</th>
                         <th>Ações</th>
-                    </tr>
-                </thead>
+                    </thead>
                 <tbody>
-                    <% produtos.forEach(prod => { %>
+                    <% produtos.forEach(prod => { 
+                        // Função para determinar a URL da imagem
+                        let imageUrl = null;
+                        if (prod.imagem && prod.imagem.trim() !== '') {
+                            // Verifica se é uma URL completa (http:// ou https://)
+                            if (prod.imagem.startsWith('http://') || prod.imagem.startsWith('https://')) {
+                                imageUrl = prod.imagem;
+                            } 
+                            // Verifica se é um caminho local que começa com /
+                            else if (prod.imagem.startsWith('/')) {
+                                imageUrl = prod.imagem;
+                            }
+                            // Caso contrário, assume que é apenas o nome do arquivo na pasta uploads
+                            else {
+                                imageUrl = `/uploads/produtos/${prod.imagem}`;
+                            }
+                        }
+                    %>
                     <tr>
                         <td><%= prod.id %></td>
                         <td>
-                            <% if (prod.imagem) { %>
-                                <img src="/uploads/produtos/<%= prod.imagem.split('/').pop() %>" class="product-image-sm">
+                            <% if (imageUrl) { %>
+                                <img src="<%= imageUrl %>" 
+                                     class="product-image-sm" 
+                                     alt="<%= prod.name %>"
+                                     onerror="this.style.display='none'; this.parentElement.querySelector('.image-placeholder-sm').style.display='flex';">
+                                <div class="image-placeholder-sm" style="display: none;">
+                                    <i class="bi bi-image" style="font-size: 20px;"></i>
+                                </div>
                             <% } else { %>
-                                <div class="product-image-sm bg-light d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-image text-secondary"></i>
+                                <div class="image-placeholder-sm">
+                                    <i class="bi bi-image" style="font-size: 20px;"></i>
                                 </div>
                             <% } %>
                         </td>
-                        <td><%= prod.name %></td>
-                        <td><%= prod.vendedor_email.split('@')[0] %></td>
+                        <td><strong><%= prod.name %></strong></td>
+                        <td><%= prod.vendedor_email ? prod.vendedor_email.split('@')[0] : 'N/A' %></td>
                         <td>
-                            <span class="badge categoria"><%= prod.categoria %></span>
+                            <span class="badge badge-categoria"><%= prod.categoria %></span>
                         </td>
                         <td>R$ <%= Number(prod.price).toFixed(2) %></td>
                         <td><%= prod.estoque || 0 %></td>
@@ -242,12 +425,12 @@
                         </td>
                         <td>
                             <div class="d-flex gap-2">
-                                <a href="/admin/produtos/<%= prod.id %>" class="btn-sm view">
+                                <a href="/admin/produtos/<%= prod.id %>" class="btn-sm btn-sm-view" style="text-decoration: none;">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="/admin/produtos/<%= prod.id %>/deletar" 
-                                   class="btn-sm delete"
-                                   onclick="return confirm('Deletar este produto?')">
+                                   class="btn-sm btn-sm-delete" style="text-decoration: none;"
+                                   onclick="return confirm('Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita.')">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>
@@ -256,11 +439,17 @@
                     <% }) %>
                 </tbody>
             </table>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem; color: var(--text-light);"></i>
+                    <p class="text-muted mt-3">Nenhum produto encontrado.</p>
+                </div>
+            <% } %>
         </div>
     </div>
 
     <!-- Paginação -->
-    <% if (totalPaginas > 1) { %>
+    <% if (typeof totalPaginas !== 'undefined' && totalPaginas > 1) { %>
     <div class="pagination">
         <% for (let i = 1; i <= totalPaginas; i++) { %>
             <a href="?page=<%= i %><%= search ? '&search=' + search : '' %><%= categoriaFiltro ? '&categoria=' + categoriaFiltro : '' %>" 

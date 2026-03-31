@@ -89,7 +89,7 @@ exports.listarUsuarios = async (req, res) => {
         // PASSANDO A SESSÃO COMPLETA PARA A VIEW
         res.render('admin/usuarios', {
             usuarios: usuarios,
-            session: req.session, // <--- IMPORTANTE: passando a sessão
+            session: req.session,
             errors: req.flash('errors'),
             success: req.flash('success')
         });
@@ -151,7 +151,7 @@ exports.verUsuario = async (req, res) => {
             usuario: usuario,
             produtos: produtos,
             avaliacoes: avaliacoesRecebidas,
-            session: req.session, // <--- IMPORTANTE
+            session: req.session,
             errors: req.flash('errors'),
             success: req.flash('success')
         });
@@ -332,7 +332,7 @@ exports.listarProdutos = async (req, res) => {
             totalPaginas: totalPaginas,
             search: search,
             categoriaFiltro: categoria,
-            session: req.session, // <--- IMPORTANTE
+            session: req.session,
             errors: req.flash('errors'),
             success: req.flash('success')
         });
@@ -378,7 +378,7 @@ exports.verProduto = async (req, res) => {
         res.render('admin/produto-detalhes', {
             produto: produto,
             avaliacoes: avaliacoes,
-            session: req.session, // <--- IMPORTANTE
+            session: req.session,
             errors: req.flash('errors'),
             success: req.flash('success')
         });
@@ -451,5 +451,114 @@ exports.deletarAvaliacao = async (req, res) => {
         console.error('Erro ao deletar avaliação:', error);
         req.flash('errors', 'Erro ao deletar avaliação');
         res.redirect('back');
+    }
+};
+
+// ========== NOVA FUNÇÃO: LISTAR TODAS AS AVALIAÇÕES (ADMIN) ==========
+exports.listarTodasAvaliacoes = async (req, res) => {
+    try {
+        // Verificar se é admin
+        if (!req.session.user || !req.session.user.isAdmin) {
+            req.flash('errors', 'Acesso negado. Área restrita para administradores.');
+            return res.redirect('/');
+        }
+
+        const { search = '', nota = '', ordenar = 'recentes', page = 1 } = req.query;
+        const limit = 20;
+        const offset = (page - 1) * limit;
+        
+        let sql = `
+            SELECT 
+                a.id,
+                a.produto_id,
+                a.usuario_id,
+                a.nota,
+                a.comentario,
+                a.data_avaliacao,
+                p.name as produto_name,
+                p.imagem as produto_imagem,
+                p.categoria as produto_categoria,
+                u.email as avaliador_email,
+                u.avatar as avaliador_avatar
+            FROM avaliacoes a
+            JOIN products p ON a.produto_id = p.id
+            JOIN usuarios u ON a.usuario_id = u.id
+            WHERE 1=1
+        `;
+        
+        const params = [];
+        
+        if (search) {
+            sql += ` AND (p.name LIKE ? OR a.comentario LIKE ? OR u.email LIKE ?)`;
+            params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+        }
+        
+        if (nota) {
+            sql += ` AND a.nota = ?`;
+            params.push(parseInt(nota));
+        }
+        
+        // Ordenação
+        switch(ordenar) {
+            case 'antigas':
+                sql += ` ORDER BY a.data_avaliacao ASC`;
+                break;
+            case 'maior_nota':
+                sql += ` ORDER BY a.nota DESC, a.data_avaliacao DESC`;
+                break;
+            case 'menor_nota':
+                sql += ` ORDER BY a.nota ASC, a.data_avaliacao DESC`;
+                break;
+            default:
+                sql += ` ORDER BY a.data_avaliacao DESC`;
+        }
+        
+        // Contagem total
+        const countSql = sql.replace(/SELECT.*FROM/, 'SELECT COUNT(*) as total FROM');
+        const countResult = await db.all(countSql, params);
+        const totalAvaliacoes = countResult[0]?.total || 0;
+        
+        // Paginação
+        sql += ` LIMIT ? OFFSET ?`;
+        params.push(limit, offset);
+        
+        const avaliacoes = await db.all(sql, params);
+        
+        // Estatísticas
+        const stats = await db.all(`
+            SELECT 
+                COUNT(*) as total,
+                AVG(nota) as media,
+                COUNT(DISTINCT usuario_id) as avaliadores,
+                COUNT(DISTINCT produto_id) as produtos_avaliados
+            FROM avaliacoes
+        `);
+        
+        const totalAvaliadores = stats[0]?.avaliadores || 0;
+        const totalProdutosAvaliados = stats[0]?.produtos_avaliados || 0;
+        const mediaGeral = stats[0]?.media ? Number(stats[0].media).toFixed(1) : '0.0';
+        
+        const totalPaginas = Math.ceil(totalAvaliacoes / limit);
+        
+        res.render('admin/avaliacoes', {
+            avaliacoes,
+            totalAvaliacoes,
+            totalAvaliadores,
+            totalProdutosAvaliados,
+            mediaGeral,
+            search,
+            notaFiltro: nota,
+            ordenar,
+            paginaAtual: parseInt(page),
+            totalPaginas,
+            session: req.session,
+            errors: req.flash('errors'),
+            success: req.flash('success')
+        });
+        
+    } catch (error) {
+        console.error('Erro ao listar todas as avaliações:', error);
+        req.flash('errors', 'Erro ao carregar avaliações');
+        res.redirect('/admin');
     }
 };

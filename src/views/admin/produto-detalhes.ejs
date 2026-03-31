@@ -14,10 +14,22 @@
         --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
     }
 
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     .header-section {
         background: linear-gradient(135deg, #f5f0ff 0%, #f0f5ff 100%);
         padding: 40px 0;
         margin-bottom: 30px;
+        border-radius: 0 0 30px 30px;
     }
 
     .product-image {
@@ -26,6 +38,7 @@
         object-fit: cover;
         border-radius: 30px;
         box-shadow: var(--shadow-lg);
+        background-color: #f8f9fa;
     }
 
     .image-placeholder {
@@ -38,6 +51,7 @@
         justify-content: center;
         font-size: 4rem;
         color: var(--text-light);
+        border: 2px dashed rgba(102, 126, 234, 0.2);
     }
 
     .info-card {
@@ -87,10 +101,11 @@
         padding: 5px 12px;
         border-radius: 50px;
         font-size: 0.85rem;
+        display: inline-block;
     }
 
-    .badge.categoria {
-        background: var(--light-bg);
+    .badge-categoria {
+        background: #f0f2ff;
         color: var(--primary);
         border: 1px solid rgba(102, 126, 234, 0.2);
     }
@@ -120,6 +135,7 @@
         padding: 15px 12px;
         border-bottom: 1px solid rgba(0,0,0,0.05);
         color: var(--text-dark);
+        vertical-align: middle;
     }
 
     tr:hover td {
@@ -127,29 +143,32 @@
     }
 
     .btn-sm {
-        padding: 5px 10px;
+        padding: 8px 16px;
         border-radius: 8px;
         font-size: 0.85rem;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 8px;
         transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
     }
 
-    .btn-sm.view {
+    .btn-sm-view {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
     }
 
-    .btn-sm.delete {
+    .btn-sm-delete {
         background: linear-gradient(135deg, #f56565, #c53030);
         color: white;
     }
 
-    .btn-sm:hover {
+    .btn-sm-view:hover, .btn-sm-delete:hover {
         transform: translateY(-2px);
         box-shadow: var(--shadow-md);
+        color: white;
     }
 
     .back-btn {
@@ -173,6 +192,156 @@
     .star-rating {
         color: #ffd700;
     }
+    
+    .btn-delete-product {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    .review-comment {
+        max-width: 300px;
+        word-wrap: break-word;
+    }
+    
+    /* Estilos para mensagens flash */
+    .alert {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: none;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .btn-close {
+        margin-left: auto;
+        background: transparent;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        opacity: 0.7;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-close:hover {
+        opacity: 1;
+    }
+    
+    .d-flex {
+        display: flex;
+    }
+    
+    .gap-2 {
+        gap: 8px;
+    }
+    
+    .gap-3 {
+        gap: 16px;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+    
+    .py-5 {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+    
+    .py-4 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .mt-3 {
+        margin-top: 1rem;
+    }
+    
+    .mt-4 {
+        margin-top: 1.5rem;
+    }
+    
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+    
+    .fw-light {
+        font-weight: 300;
+    }
+    
+    .text-muted {
+        color: var(--text-light);
+    }
+    
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
+    }
+    
+    .col-md-4, .col-md-8 {
+        flex: 0 0 auto;
+        padding: 0 15px;
+    }
+    
+    .col-md-4 { width: 33.333%; }
+    .col-md-8 { width: 66.666%; }
+    
+    .d-grid {
+        display: grid;
+    }
+    
+    .gap-2 {
+        gap: 8px;
+    }
+    
+    .d-block {
+        display: block;
+    }
+    
+    .align-items-center {
+        align-items: center;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-4, .col-md-8 {
+            width: 100%;
+        }
+        
+        .review-comment {
+            max-width: 150px;
+        }
+    }
 </style>
 
 <!-- Header -->
@@ -184,8 +353,32 @@
         
         <div class="row align-items-center mt-4">
             <div class="col-md-4">
-                <% if (produto.imagem) { %>
-                    <img src="/uploads/produtos/<%= produto.imagem.split('/').pop() %>" class="product-image">
+                <% 
+                    // Função para determinar a URL da imagem
+                    let imageUrl = null;
+                    if (typeof produto !== 'undefined' && produto.imagem && produto.imagem.trim() !== '') {
+                        // Verifica se é uma URL completa (http:// ou https://)
+                        if (produto.imagem.startsWith('http://') || produto.imagem.startsWith('https://')) {
+                            imageUrl = produto.imagem;
+                        } 
+                        // Verifica se é um caminho local que começa com /
+                        else if (produto.imagem.startsWith('/')) {
+                            imageUrl = produto.imagem;
+                        }
+                        // Caso contrário, assume que é apenas o nome do arquivo na pasta uploads
+                        else {
+                            imageUrl = `/uploads/produtos/${produto.imagem}`;
+                        }
+                    }
+                %>
+                <% if (imageUrl) { %>
+                    <img src="<%= imageUrl %>" 
+                         class="product-image" 
+                         alt="<%= produto.name %>"
+                         onerror="this.style.display='none'; this.parentElement.querySelector('.image-placeholder').style.display='flex';">
+                    <div class="image-placeholder" style="display: none;">
+                        <i class="bi bi-image"></i>
+                    </div>
                 <% } else { %>
                     <div class="image-placeholder">
                         <i class="bi bi-image"></i>
@@ -195,14 +388,16 @@
             <div class="col-md-8">
                 <h1 class="fw-light mb-3"><%= produto.name %></h1>
                 <div class="d-flex align-items-center gap-3 mb-3">
-                    <span class="badge categoria"><%= produto.categoria %></span>
+                    <span class="badge badge-categoria"><%= produto.categoria %></span>
                     <span class="star-rating">
                         <% if (produto.media_avaliacoes) { %>
                             <%= Number(produto.media_avaliacoes).toFixed(1) %> ⭐
+                        <% } else { %>
+                            Sem avaliações
                         <% } %>
                     </span>
                 </div>
-                <p class="text-muted"><%= produto.description %></p>
+                <p class="text-muted"><%= produto.description || 'Sem descrição' %></p>
             </div>
         </div>
     </div>
@@ -210,12 +405,21 @@
 
 <!-- Conteúdo -->
 <div class="container">
-    <!-- Mensagens Flash -->
-    <% if (typeof errors !== 'undefined' && errors) { %>
-        <div class="alert alert-danger"><%= errors %></div>
+    <!-- Mensagens Flash - CORRIGIDAS -->
+    <% if (locals.errors && errors && errors.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <%= Array.isArray(errors) ? errors[0] : errors %>
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';">×</button>
+        </div>
     <% } %>
-    <% if (typeof success !== 'undefined' && success) { %>
-        <div class="alert alert-success"><%= success %></div>
+
+    <% if (locals.success && success && success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <%= Array.isArray(success) ? success[0] : success %>
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';">×</button>
+        </div>
     <% } %>
 
     <div class="row">
@@ -232,7 +436,9 @@
                 <div class="info-row">
                     <span class="info-label">Vendedor:</span>
                     <span class="info-value">
-                        <a href="/admin/usuarios/<%= produto.vendedor_id %>"><%= produto.vendedor_email %></a>
+                        <a href="/admin/usuarios/<%= produto.vendedor_id %>" style="color: var(--primary); text-decoration: none;">
+                            <%= produto.vendedor_email %>
+                        </a>
                     </span>
                 </div>
                 
@@ -262,15 +468,26 @@
                 
                 <div class="info-row">
                     <span class="info-label">Total de avaliações:</span>
-                    <span class="info-value"><%= avaliacoes.length %></span>
+                    <span class="info-value"><%= typeof avaliacoes !== 'undefined' ? avaliacoes.length : 0 %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Média de avaliações:</span>
+                    <span class="info-value star-rating">
+                        <% if (produto.media_avaliacoes) { %>
+                            <%= Number(produto.media_avaliacoes).toFixed(1) %> ⭐
+                        <% } else { %>
+                            -
+                        <% } %>
+                    </span>
                 </div>
             </div>
             
             <!-- Ações Rápidas -->
             <div class="d-grid gap-2">
                 <a href="/admin/produtos/<%= produto.id %>/deletar?redirect=/admin/produtos" 
-                   class="btn-sm delete d-block text-center"
-                   onclick="return confirm('Deletar este produto?')">
+                   class="btn-sm btn-sm-delete btn-delete-product"
+                   onclick="return confirm('Tem certeza que deseja deletar este produto? Todas as avaliações também serão removidas. Esta ação não pode ser desfeita.')">
                     <i class="bi bi-trash"></i> Deletar Produto
                 </a>
             </div>
@@ -279,11 +496,11 @@
         <!-- Coluna da Direita - Avaliações -->
         <div class="col-md-8">
             <div class="review-table">
-                <h4><i class="bi bi-star"></i> Avaliações do Produto (<%= avaliacoes.length %>)</h4>
+                <h4><i class="bi bi-star"></i> Avaliações do Produto (<%= typeof avaliacoes !== 'undefined' ? avaliacoes.length : 0 %>)</h4>
                 
-                <% if (avaliacoes.length > 0) { %>
-                    <div class="table-responsive">
-                        <table>
+                <% if (typeof avaliacoes !== 'undefined' && avaliacoes && avaliacoes.length > 0) { %>
+                    <div class="table-responsive" style="overflow-x: auto;">
+                        <table style="min-width: 500px;">
                             <thead>
                                 <tr>
                                     <th>Avaliador</th>
@@ -296,13 +513,14 @@
                             <tbody>
                                 <% avaliacoes.forEach(av => { %>
                                 <tr>
-                                    <td><%= av.avaliador_email.split('@')[0] %></td>
+                                    <td><%= av.avaliador_email ? av.avaliador_email.split('@')[0] : 'Anônimo' %></td>
                                     <td class="star-rating"><%= av.nota %> ⭐</td>
-                                    <td><%= av.comentario || '-' %></td>
+                                    <td class="review-comment"><%= av.comentario || '-' %></td>
                                     <td><%= new Date(av.data_avaliacao).toLocaleDateString('pt-BR') %></td>
                                     <td>
                                         <a href="/admin/avaliacao/<%= av.id %>/deletar?redirect=/admin/produtos/<%= produto.id %>" 
-                                           class="btn-sm delete"
+                                           class="btn-sm btn-sm-delete"
+                                           style="text-decoration: none;"
                                            onclick="return confirm('Deletar esta avaliação?')">
                                             <i class="bi bi-trash"></i>
                                         </a>
@@ -313,7 +531,10 @@
                         </table>
                     </div>
                 <% } else { %>
-                    <p class="text-muted text-center py-4">Este produto não possui avaliações.</p>
+                    <div class="text-center py-5">
+                        <i class="bi bi-chat-dots" style="font-size: 3rem; color: var(--text-light);"></i>
+                        <p class="text-muted mt-3">Este produto não possui avaliações ainda.</p>
+                    </div>
                 <% } %>
             </div>
         </div>
