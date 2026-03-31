@@ -1,4 +1,4 @@
-# 🚀 Marketplace - Versão 2.0
+# 🚀 Marketplace - Versão 3.0
 
 ## ✨ Um marketplace completo com chat em tempo real, carrinho de compras, avaliações, central de análise de dados e painel administrativo!
 
